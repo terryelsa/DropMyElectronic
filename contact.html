@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - Drop My Electronic</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="animated-bg"></div>
+  
+  <div class="page-container">
+    <div class="nav-top">
+      <a href="index.html" class="nav-btn">🏠 Home</a>
+      <a href="map.html" class="nav-btn">🗺️ Recycling Centers</a>
+    </div>
+
+    <header class="header fade-in-up">
+      <h1>Contact Us</h1>
+      <p class="delay-1">Get in touch with our e-waste awareness team</p>
+    </header>
+
+    <div class="contact-container slide-in-up">
+      <div class="contact-grid">
+        <!-- Contact Information -->
+        <div class="contact-info slide-in-left">
+          <h3>📞 Get In Touch</h3>
+          
+          <div class="contact-item fade-in-up delay-1">
+            <div style="margin-right: 15px; font-size: 1.2em;">📍</div>
+            <div>
+              <h4>Our Location</h4>
+              <p>Green Towers, 5th Floor<br>Westlands, Nairobi, Kenya</p>
+            </div>
+          </div>
+
+          <div class="contact-item fade-in-up delay-1">
+            <div style="margin-right: 15px; font-size: 1.2em;">📧</div>
+            <div>
+              <h4>Email Us</h4>
+              <p>info@dropmyelectronic.co.ke<br>support@dropmyelectronic.co.ke</p>
+            </div>
+          </div>
+
+          <div class="contact-item fade-in-up delay-2">
+            <div style="margin-right: 15px; font-size: 1.2em;">📱</div>
+            <div>
+              <h4>Call Us</h4>
+              <p>+254 700 123 456<br>+254 711 987 654</p>
+            </div>
+          </div>
+
+          <div class="contact-item fade-in-up delay-2">
+            <div style="margin-right: 15px; font-size: 1.2em;">🕒</div>
+            <div>
+              <h4>Business Hours</h4>
+              <p>Monday - Friday: 8:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 2:00 PM</p>
+            </div>
+          </div>
+
+          <div style="margin-top: 30px;">
+            <h4 style="margin-bottom: 15px; color: white;">Follow Us</h4>
+            <div style="display: flex; gap: 15px;">
+              <a href="#" class="social-link">📘</a>
+              <a href="#" class="social-link">🐦</a>
+              <a href="#" class="social-link">📷</a>
+              <a href="#" class="social-link">💼</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form slide-in-right">
+          <h3>💬 Send us a Message</h3>
+          <form id="contactForm">
+            <div class="form-group">
+              <input type="text" id="name" name="name" required placeholder="Full Name *">
+            </div>
+
+            <div class="form-group">
+              <input type="email" id="email" name="email" required placeholder="Email Address *">
+            </div>
+
+            <div class="form-group">
+              <input type="tel" id="phone" name="phone" placeholder="Phone Number">
+            </div>
+
+            <div class="form-group">
+              <select id="subject" name="subject" required>
+                <option value="">Select a subject *</option>
+                <option value="e-waste-collection">E-Waste Collection Inquiry</option>
+                <option value="recycling-info">Recycling Information</option>
+                <option value="partnership">Partnership Opportunity</option>
+                <option value="volunteer">Volunteer Program</option>
+                <option value="complaint">Complaint</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <textarea id="message" name="message" required placeholder="Tell us about your e-waste concerns or questions... *" rows="5"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+              Send Message 📤
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const submitBtn = this.querySelector('.submit-btn');
+      const originalText = submitBtn.textContent;
+      
+      // Show success state
+      submitBtn.textContent = '✅ Message Sent!';
+      submitBtn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+      submitBtn.disabled = true;
+      
+      // Simulate form submission
+      console.log('Form submitted with:', {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value
+      });
+      
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        this.reset();
+        submitBtn.textContent = originalText;
+        submitBtn.style.background = '';
+        submitBtn.disabled = false;
+      }, 3000);
+    });
+  </script>
+
+  <style>
+    .social-link {
+      display: inline-block;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      text-align: center;
+      width: 45px;
+      height: 45px;
+      font-size: 1.2em;
+    }
+
+    .social-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-3px);
+    }
+  </style>
+</body>
+</html>

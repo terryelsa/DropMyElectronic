@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recycling Centers - Drop My Electronic</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <div class="animated-bg"></div>
+  
+  <div class="page-container">
+    <div class="nav-top">
+      <a href="index.html" class="nav-btn">🏠 Home</a>
+      <a href="quiz.html" class="nav-btn">🧠 Take Quiz</a>
+      <a href="contact.html" class="nav-btn contact">📞 Contact Us</a>
+    </div>
+
+    <header class="header fade-in-up">
+      <h1>Nairobi Recycling Centers</h1>
+      <p class="delay-1">Find e-waste recycling facilities near you</p>
+    </header>
+
+    <div class="map-page-container slide-in-up">
+      <!-- Left Side - Recycling Centers List -->
+      <div class="centers-sidebar slide-in-left">
+        <div class="search-box">
+          <input type="text" id="locationSearch" placeholder="Search Nairobi areas...">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button onclick="searchLocation()">Search Area</button>
+            <button onclick="useCurrentLocation()">My Location</button>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: 20px; color: #2c3e50;">📍 Recycling Centers</h3>
+        
+        <div class="centers-list" id="centerList">
+          <!-- Centers will be populated here -->
+        </div>
+      </div>
+
+      <!-- Right Side - Map -->
+      <div class="map-side slide-in-right">
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const recyclingCenters = [
+      {
+        id: 1, name: "WEEE Centre - Nairobi",
+        lat: -1.2689, lng: 36.8031,
+        address: "Mlolongo, Mombasa Road, Nairobi",
+        phone: "0722 205 900", 
+        hours: "Mon-Fri: 8AM-5PM, Sat: 9AM-1PM",
+        accepts: "Computers, phones, TVs, printers, batteries"
+      },
+      {
+        id: 2, name: "E-Waste Solutions Kenya", 
+        lat: -1.2921, lng: 36.8219,
+        address: "Koinange Street, CBD, Nairobi",
+        phone: "0700 000 000", 
+        hours: "Mon-Sat: 8:30AM-6PM",
+        accepts: "All electronics, mobile devices, cables"
+      },
+      {
+        id: 3, name: "GreenTech Recyclers",
+        lat: -1.2584, lng: 36.7927,
+        address: "Industrial Area, Nairobi", 
+        phone: "0712 345 678", 
+        hours: "Mon-Fri: 7AM-4PM",
+        accepts: "Computers, monitors, servers, network equipment"
+      },
+      {
+        id: 4, name: "Safaricom E-Waste Drop-off",
+        lat: -1.2733, lng: 36.8067,
+        address: "Safaricom House, Westlands, Nairobi",
+        phone: "100", 
+        hours: "Mon-Fri: 8AM-5PM",
+        accepts: "Mobile phones, tablets, accessories, batteries"
+      },
+      {
+        id: 5, name: "EcoCycle Kenya",
+        lat: -1.2356, lng: 36.8843,
+        address: "Ruiru, Nairobi Metropolitan",
+        phone: "0733 987 654", 
+        hours: "Mon-Sat: 8AM-5PM",
+        accepts: "All e-waste including large equipment"
+      },
+      {
+        id: 6, name: "Nairobi County E-Waste Center",
+        lat: -1.2833, lng: 36.8167,
+        address: "City Hall, CBD, Nairobi",
+        phone: "020 224 4111", 
+        hours: "Mon-Fri: 8AM-4PM",
+        accepts: "Government e-waste, public drop-offs"
+      }
+    ];
+
+    let map, userMarker, recyclingMarkers = [];
+    let activeCenterId = null;
+
+    function initMap() {
+      // Initialize map centered on Nairobi
+      map = L.map('map').setView([-1.286389, 36.817223], 11);
+      
+      // Add OpenStreetMap tiles with error handling
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+      }).addTo(map);
+      
+      // Add a fallback in case tiles don't load
+      map.on('tileerror', function(error) {
+        console.log('Tile loading error:', error);
+        // You could add a fallback background here
+      });
+
+      addRecyclingCenters();
+      updateCenterList();
+      
+      // Add Nairobi boundary for context
+      addNairobiBoundary();
+    }
+
+    function addNairobiBoundary() {
+      // Approximate Nairobi county boundary coordinates
+      const nairobiBoundary = [
+        [-1.510, 36.650], // Southwest
+        [-1.510, 37.050], // Northwest
+        [-1.050, 37.050], // Northeast
+        [-1.050, 36.650], // Southeast
+        [-1.510, 36.650]  // Close the polygon
+      ];
+      
+      // Add a subtle boundary polygon
+      L.polygon(nairobiBoundary, {
+        color: '#667eea',
+        weight: 2,
+        opacity: 0.3,
+        fillColor: '#667eea',
+        fillOpacity: 0.05
+      }).addTo(map).bindPopup('Nairobi County Area');
+    }
+
+    function addRecyclingCenters() {
+      recyclingCenters.forEach(center => {
+        // Create custom icon for recycling centers
+        const recyclerIcon = L.divIcon({
+          html: '📍',
+          className: 'recycler-marker',
+          iconSize: [30, 30],
+          iconAnchor: [15, 30]
+        });
+        
+        const marker = L.marker([center.lat, center.lng], { icon: recyclerIcon }).addTo(map)
+          .bindPopup(`
+            <div style="text-align: left; min-width: 250px; font-family: Arial, sans-serif;">
+              <h4 style="margin: 0 0 10px 0; color: #2c3e50;">${center.name}</h4>
+              <p style="margin: 5px 0;"><strong>📞 Phone:</strong> ${center.phone}</p>
+              <p style="margin: 5px 0;"><strong>📍 Address:</strong> ${center.address}</p>
+              <p style="margin: 5px 0;"><strong>🕒 Hours:</strong> ${center.hours}</p>
+              <p style="margin: 5px 0;"><strong>✅ Accepts:</strong> ${center.accepts}</p>
+              <button onclick="focusOnCenter(${center.id})" style="width: 100%; padding: 10px; margin-top: 10px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">View Details</button>
+            </div>
+          `);
+        
+        marker.on('click', function() {
+          setActiveCenter(center.id);
+        });
+        
+        recyclingMarkers.push({marker, centerId: center.id});
+      });
+    }
+
+    function updateCenterList() {
+      const centerList = document.getElementById('centerList');
+      centerList.innerHTML = '';
+      
+      recyclingCenters.forEach((center, index) => {
+        const card = document.createElement('div');
+        card.className = 'center-card stagger-item';
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.innerHTML = `
+          <h4 style="margin: 0 0 10px 0; color: #2c3e50;">${center.name}</h4>
+          <div class="contact-details">
+            <p><strong>📍</strong> ${center.address}</p>
+            <p><strong>📞</strong> ${center.phone}</p>
+            <p><strong>🕒</strong> ${center.hours}</p>
+            <p><strong>✅</strong> ${center.accepts}</p>
+          </div>
+        `;
+        
+        card.addEventListener('click', () => {
+          focusOnCenter(center.id);
+          setActiveCenter(center.id);
+        });
+        
+        centerList.appendChild(card);
+      });
+    }
+
+    function setActiveCenter(centerId) {
+      // Remove active class from all cards
+      document.querySelectorAll('.center-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      
+      // Add active class to clicked card
+      const cards = document.querySelectorAll('.center-card');
+      const centerIndex = recyclingCenters.findIndex(c => c.id === centerId);
+      if (centerIndex !== -1 && cards[centerIndex]) {
+        cards[centerIndex].classList.add('active');
+        
+        // Scroll to active card
+        cards[centerIndex].scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest'
+        });
+      }
+      
+      activeCenterId = centerId;
+    }
+
+    function focusOnCenter(centerId) {
+      const center = recyclingCenters.find(c => c.id === centerId);
+      if (center) {
+        map.setView([center.lat, center.lng], 15);
+        
+        // Find and open the corresponding marker popup
+        const markerObj = recyclingMarkers.find(m => m.centerId === centerId);
+        if (markerObj) {
+          markerObj.marker.openPopup();
+        }
+      }
+    }
+
+    function searchLocation() {
+      const searchText = document.getElementById('locationSearch').value.trim();
+      if (!searchText) {
+        alert('Please enter a Nairobi area to search.');
+        return;
+      }
+      
+      const nairobiAreas = {
+        'cbd': [-1.286389, 36.817223], 
+        'westlands': [-1.2659, 36.8067],
+        'kilimani': [-1.2950, 36.7860], 
+        'karen': [-1.3159, 36.8342],
+        'industrial area': [-1.3083, 36.8469],
+        'lavington': [-1.2684, 36.7749],
+        'parklands': [-1.2597, 36.8186],
+        'embakasi': [-1.3076, 36.9182],
+        'kasarani': [-1.2186, 36.8925]
+      };
+      
+      const areaKey = searchText.toLowerCase();
+      if (nairobiAreas[areaKey]) {
+        map.setView(nairobiAreas[areaKey], 14);
+        document.getElementById('locationSearch').value = ''; // Clear search
+      } else {
+        alert('Area not found. Try: CBD, Westlands, Kilimani, Karen, Industrial Area, Lavington, Parklands, Embakasi, or Kasarani');
+        map.setView([-1.286389, 36.817223], 11);
+      }
+    }
+
+    function useCurrentLocation() {
+      if (navigator.geolocation) {
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = 'Locating...';
+        button.disabled = true;
+        
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            // Check if user is in Nairobi area (approximate bounds)
+            const isInNairobi = lat >= -1.55 && lat <= -1.05 && lng >= 36.65 && lng <= 37.05;
+            
+            if (isInNairobi) {
+              map.setView([lat, lng], 14);
+              
+              // Create custom user location icon
+              const userIcon = L.divIcon({
+                html: '🎯',
+                className: 'user-marker',
+                iconSize: [30, 30],
+                iconAnchor: [15, 30]
+              });
+              
+              if (userMarker) {
+                userMarker.setLatLng([lat, lng]);
+              } else {
+                userMarker = L.marker([lat, lng], { icon: userIcon })
+                  .addTo(map)
+                  .bindPopup('Your Current Location in Nairobi')
+                  .openPopup();
+              }
+              
+              button.textContent = 'Location Found!';
+              setTimeout(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+              }, 2000);
+            } else {
+              alert('You appear to be outside Nairobi. The map has been centered on Nairobi CBD.');
+              map.setView([-1.286389, 36.817223], 11);
+              button.textContent = originalText;
+              button.disabled = false;
+            }
+          },
+          error => {
+            alert('Unable to get your location. Please ensure location services are enabled or search for a Nairobi area manually.');
+            console.error('Geolocation error:', error);
+            button.textContent = originalText;
+            button.disabled = false;
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+          }
+        );
+      } else {
+        alert('Geolocation is not supported by your browser. Please search for a Nairobi area manually.');
+      }
+    }
+
+    // Initialize map when page loads
+    document.addEventListener('DOMContentLoaded', initMap);
+  </script>
+
+  <style>
+    /* Custom marker styles */
+    .recycler-marker {
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      text-align: center;
+    }
+    
+    .user-marker {
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      text-align: center;
+      filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
+    }
+    
+    .leaflet-popup-content {
+      font-family: 'Arial', sans-serif;
+    }
+    
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+  </style>
+</body>
+</html>
