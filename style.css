@@ -367,6 +367,8 @@ button:disabled { cursor: not-allowed; opacity: 0.8; animation: none; }
   width: 95%;
   margin: 20px auto;
   align-items: start;
+  min-height: 600px;
+  height: auto;
 }
 
 .centers-sidebar, .map-side {
@@ -377,9 +379,16 @@ button:disabled { cursor: not-allowed; opacity: 0.8; animation: none; }
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.4);
   height: 600px;
+  position: relative;
 }
 
 .centers-sidebar { overflow-y: auto; }
+
+.map-side {
+  padding: 15px; /* Reduce padding for more map space */
+  display: flex;
+  flex-direction: column;
+}
 
 #map {
   height: 100%;
@@ -387,6 +396,19 @@ button:disabled { cursor: not-allowed; opacity: 0.8; animation: none; }
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
   border: 2px solid rgba(255,255,255,0.8);
+  position: relative; 
+  z-index: 1;
+}
+
+.leaflet-container {
+  background: #f8f9fa;
+  font-family: inherit;
+}
+
+.leaflet-layer,
+.leaflet-control-zoom a,
+.leaflet-control-attribution {
+  border-radius: 8px;
 }
 
 .centers-list {
