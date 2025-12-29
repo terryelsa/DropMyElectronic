@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DropMyElectronic - E-Waste Awareness</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        /* Base Styles */
         :root {
-            /* Light mode variables */
             --primary-color: #2e7d32;
             --primary-light: #4caf50;
             --primary-dark: #1b5e20;
@@ -25,8 +24,7 @@
             --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
             --header-bg: #ffffff;
         }
-        
-        /* Dark mode variables */
+
         .dark-mode {
             --primary-color: #4caf50;
             --primary-light: #66bb6a;
@@ -43,127 +41,29 @@
             --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             --header-bg: #1e1e1e;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            transition: background-color 0.3s, color 0.3s;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
             background-color: var(--light-bg);
+            color: var(--text-color);
         }
-        
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        
+
+        a { text-decoration: none; color: inherit; }
+
         .container {
-            width: 90%;
             max-width: 1200px;
-            margin: 0 auto;
+            margin: auto;
             padding: 0 15px;
         }
-        
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary-color);
-        }
-        
-        .btn-secondary:hover {
-            background-color: #e68900;
-        }
-        
-        section {
-            padding: 60px 0;
-        }
-        
-        h1, h2, h3, h4 {
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-        
-        /* Dark Mode Toggle */
-        .dark-mode-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 8px 15px;
-            border-radius: 30px;
-            box-shadow: var(--shadow);
-        }
-        
-        .dark-mode-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-        
-        .dark-mode-switch {
-            position: relative;
-            width: 50px;
-            height: 24px;
-            background-color: #ccc;
-            border-radius: 34px;
-            transition: background-color 0.3s;
-        }
-        
-        .dark-mode-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-        
-        #dark-mode-checkbox:checked + .dark-mode-switch {
-            background-color: var(--primary-color);
-        }
-        
-        #dark-mode-checkbox:checked + .dark-mode-switch::after {
-            transform: translateX(26px);
-        }
-        
-        #dark-mode-checkbox {
-            display: none;
-        }
-        
-        /* Header Styles */
+
+        /* HEADER */
         header {
             background-color: var(--header-bg);
             box-shadow: var(--shadow);
@@ -171,588 +71,183 @@
             top: 0;
             z-index: 100;
         }
-        
+
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 0;
+            gap: 20px;
         }
-        
+
         .logo {
             font-size: 1.8rem;
-            font-weight: 700;
+            font-weight: bold;
             color: var(--primary-color);
         }
-        
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .nav-links {
             display: flex;
             list-style: none;
+            align-items: center;
+            gap: 20px;
         }
-        
-        .nav-links li {
-            margin-left: 30px;
-        }
-        
-        .nav-links a {
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-links a:hover {
-            color: var(--primary-color);
-        }
-        
+
+        .nav-links a:hover,
         .nav-links .active {
             color: var(--primary-color);
             font-weight: 600;
         }
-        
-        /* Hero Section */
-        .hero {
-            background: var(--hero-gradient);
-            color: white;
-            text-align: center;
-            padding: 25px 0;
-        }
-        
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1.0rem;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 1.5rem;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        /* Features Section */
-        .features {
-            background-color: var(--white);
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .section-title h2 {
-            font-size: 2.2rem;
-            color: var(--primary-dark);
-        }
-        
-        .section-title p {
-            color: var(--text-color);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .feature-card {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .feature-header {
-            padding: 20px;
-            text-align: center;
-            background-color: var(--primary-light);
-            color: white;
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .feature-title {
-            font-size: 1.3rem;
+
+        /* BUTTONS */
+        .btn {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 4px;
             font-weight: 600;
+            border: none;
+            cursor: pointer;
         }
-        
-        .feature-body {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
+
+        .btn:hover {
+            background: var(--primary-dark);
         }
-        
-        .feature-description {
-            margin-bottom: 15px;
-            flex-grow: 1;
+
+        /* DARK MODE TOGGLE (FIXED) */
+        .dark-mode-toggle {
+            position: relative;
+            z-index: 10;
         }
-        
-        .feature-actions {
-            margin-top: auto;
-        }
-        
-        /* Info Section */
-        .info-section {
-            background-color: var(--light-bg);
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-        
-        .info-card {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 30px;
-            transition: transform 0.3s ease;
-        }
-        
-        .info-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .info-card h4 {
-            font-size: 1.3rem;
-            color: var(--primary-dark);
-            margin-bottom: 15px;
+
+        .dark-mode-label {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
         }
-        
-        .info-card ul {
-            padding-left: 20px;
+
+        .dark-mode-switch {
+            width: 44px;
+            height: 22px;
+            background: #ccc;
+            border-radius: 20px;
+            position: relative;
         }
-        
-        .info-card li {
-            margin-bottom: 10px;
+
+        .dark-mode-switch::after {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
         }
-        
-        /* Stats Section */
-        .stats-section {
-            background-color: var(--white);
+
+        #dark-mode-checkbox:checked + .dark-mode-switch {
+            background: var(--primary-color);
         }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
+
+        #dark-mode-checkbox:checked + .dark-mode-switch::after {
+            transform: translateX(22px);
         }
-        
-        .stat-card {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 30px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin: 10px 0;
-        }
-        
-        .stat-label {
-            font-size: 1.1rem;
-            color: var(--text-color);
-        }
-        
-        /* CTA Section */
-        .cta {
+
+        #dark-mode-checkbox { display: none; }
+
+        /* HERO */
+        .hero {
             background: var(--hero-gradient);
-            color: white;
+            color: #fff;
             text-align: center;
             padding: 40px 0;
         }
-        
-        .cta h2 {
-            font-size: 2.0rem;
-            margin-bottom: 1.0rem;
-        }
-        
-        .cta p {
-            font-size: 1.0rem;
-            max-width: 700px;
-            margin: 0 auto 1.5rem;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--footer-bg);
-            color: var(--footer-text);
-            padding: 50px 0 20px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .footer-column h3 {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-light);
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-links a {
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: var(--primary-light);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-        
-        /* Responsive Styles */
+
+        .hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
+
+        /* MOBILE */
         @media (max-width: 768px) {
             .header-container {
                 flex-direction: column;
             }
-            
-            .nav-links {
-                margin-top: 20px;
+
+            .header-right {
                 flex-wrap: wrap;
                 justify-content: center;
             }
-            
-            .nav-links li {
-                margin: 5px 10px;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .hero-buttons, .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .hero-buttons .btn, .cta-buttons .btn {
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .dark-mode-toggle {
-                top: 15px;
-                right: 15px;
-                padding: 6px 12px;
-            }
-            
+
             .dark-mode-label span {
                 display: none;
             }
         }
-        
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-            
-            .section-title h2 {
-                font-size: 1.8rem;
-            }
-        }
     </style>
 </head>
-<body>
-    <!-- Dark Mode Toggle -->
-    <div class="dark-mode-toggle">
-        <label for="dark-mode-checkbox" class="dark-mode-label">
-            <i class="fas fa-moon"></i>
-            <span>Dark Mode</span>
-            <input type="checkbox" id="dark-mode-checkbox">
-            <div class="dark-mode-switch"></div>
-        </label>
-    </div>
 
-    <!-- Header -->
-    <header>
-        <div class="container header-container">
-            <a href="index.html" class="logo">DropMyElectronic</a>
+<body>
+
+<header>
+    <div class="container header-container">
+        <a href="index.html" class="logo">DropMyElectronic</a>
+
+        <div class="header-right">
             <ul class="nav-links">
-                <li><a href="index.html" class="active">Home</a></li>   
+                <li><a href="index.html" class="active">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="reward.html">Rewards</a></li>
                 <li><a href="support.html">Support</a></li>
-                 <li><a href="sign.html" class="btn">Start now</a></li>
+                <li><a href="sign.html" class="btn">Start now</a></li>
             </ul>
-        </div>
-    </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>E-waste made easy, for everyone</h1>
-            <p>Quickly find local e-waste drop-off points and learn how to recycle electronics the right way. Discover simple tips for safe battery and device disposal, and see how your actions help build a cleaner, more sustainable world.</p>
-            <p>Ready to make a difference? Let's get started together.</p>
-            <div class="hero-buttons">
-                <a href="map.html" class="btn">Find nearby</a>
-                <a href="#recycling-made-easy" class="btn">Learn more</a>
+            <!-- DARK MODE TOGGLE (MOVED INTO HEADER) -->
+            <div class="dark-mode-toggle">
+                <label class="dark-mode-label">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
+                    <input type="checkbox" id="dark-mode-checkbox">
+                    <div class="dark-mode-switch"></div>
+                </label>
             </div>
         </div>
-    </section>
+    </div>
+</header>
 
-    <!-- Features Section -->
-    <section class="features" id="recycling-made-easy">
-        <div class="container">
-            <div class="section-title">
-                <h2>E-waste recycling made easy</h2>
-                <p>Drop-off sites • Recycling advice</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-header">
-                        <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <div class="feature-title">Find locations</div>
-                    </div>
-                    <div class="feature-body">
-                        <p class="feature-description">Enter your zip code to discover certified e-waste drop-off centers nearby. Choose the most convenient spot for safe, eco-friendly disposal.</p>
-                        <div class="feature-actions">
-                            <a href="map.html" class="btn" style="width: 100%;">Search →</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-header">
-                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                        <div class="feature-title">Trusted centers</div>
-                    </div>
-                    <div class="feature-body">
-                        <p class="feature-description">All listed recycling partners meet strict environmental standards, so you can recycle with confidence and peace of mind.</p>
-                        <div class="feature-actions">
-                            <a href="about.html" class="btn" style="width: 100%;">See partners →</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<section class="hero">
+    <div class="container">
+        <h1>E-waste made easy, for everyone</h1>
+        <p>Recycle electronics responsibly and help build a sustainable future.</p>
+    </div>
+</section>
 
-    <!-- Stats Section -->
-    <section class="stats-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>E-Waste Impact in Numbers</h2>
-                <p>Understanding the scale of the e-waste challenge</p>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value">3,000+ Tons</div>
-                    <div class="stat-label">E-waste generated monthly in Nairobi</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">17%</div>
-                    <div class="stat-label">Of e-waste is properly recycled globally</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">90%</div>
-                    <div class="stat-label">Valuable materials recoverable from old devices</div>
-                </div>
-            </div>
-        </div>
-    </section>
+<script>
+    const checkbox = document.getElementById('dark-mode-checkbox');
+    const body = document.body;
 
-    <!-- Info Section -->
-    <section class="info-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>E-waste made easy. Start here.</h2>
-                <p>E-WASTE ESSENTIALS</p>
-            </div>
-            <div class="info-grid">
-                <div class="info-card">
-                    <h4><i class="fas fa-question-circle"></i> Why recycle your electronics?</h4>
-                    <ul>
-                        <li>Learn how recycling electronics helps the planet</li>
-                        <li>Saves valuable resources and reduces mining</li>
-                        <li>Keeps toxic waste out of landfills</li>
-                        <li>Get simple steps to begin today</li>
-                    </ul>
-                </div>
-                <div class="info-card">
-                    <h4><i class="fas fa-map-marked-alt"></i> Where to recycle near you</h4>
-                    <ul>
-                        <li>Quickly find trusted drop-off locations</li>
-                        <li>Locations for batteries, phones, and more</li>
-                        <li>Our guide makes safe disposal simple</li>
-                        <li>Stress-free recycling experience</li>
-                    </ul>
-                </div>
-                <div class="info-card">
-                    <h4><i class="fas fa-tools"></i> How to prep your devices</h4>
-                    <ul>
-                        <li>Follow easy tips to wipe your data</li>
-                        <li>Pack devices safely for transport</li>
-                        <li>Ensure your e-waste is recycled responsibly</li>
-                        <li>Step-by-step preparation guide</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+    function updateIcon(isDark) {
+        document.querySelector('.dark-mode-label i').className =
+            isDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
 
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <h2>Ready to Make a Difference?</h2>
-            <p>Join thousands of people who are already recycling their e-waste responsibly. Start today and help build a cleaner, more sustainable world.</p>
-            <div class="cta-buttons">
-                <a href="quiz.html" class="btn btn-secondary">Test Your Knowledge</a>
-                <a href="map.html" class="btn">Find Recycling Centers</a>
-                <a href="reward.html" class="btn">Earn Rewards</a>
-            </div>
-        </div>
-    </section>
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark-mode');
+        checkbox.checked = true;
+        updateIcon(true);
+    }
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>DropMyElectronic</h3>
-                    <p>Making e-waste recycling simple and accessible for everyone.</p>
-                </div>
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="reward.html">Rewards</a></li>
-                        <li><a href="support.html">Support</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Resources</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Support</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Contact</h3>
-                    <ul class="footer-links">
-                        <li><a href="mailto:info@dropmyelectronic.com">Email</a></li>
-                        <li><a href="#">Twitter</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 DropMyElectronic. All rights reserved. | Made with ❤️ for a sustainable future</p>
-            </div>
-        </div>
-    </footer>
+    checkbox.addEventListener('change', () => {
+        body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', checkbox.checked ? 'dark' : 'light');
+        updateIcon(checkbox.checked);
+    });
+</script>
 
-    <script>
-        // Dark Mode Functionality
-        const darkModeToggle = document.getElementById('dark-mode-checkbox');
-        const body = document.body;
-        
-        // Check for saved theme preference or system preference
-        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-        const currentTheme = localStorage.getItem('theme');
-        
-        // Function to update icon based on theme
-        function updateDarkModeIcon(isDark) {
-            const icon = document.querySelector('.dark-mode-label i');
-            const label = document.querySelector('.dark-mode-label span');
-            
-            if (isDark) {
-                icon.className = 'fas fa-sun';
-                label.textContent = 'Light Mode';
-            } else {
-                icon.className = 'fas fa-moon';
-                label.textContent = 'Dark Mode';
-            }
-        }
-        
-        // Set initial theme based on localStorage or system preference
-        if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
-            body.classList.add('dark-mode');
-            darkModeToggle.checked = true;
-            updateDarkModeIcon(true);
-        }
-        
-        // Toggle dark mode when checkbox changes
-        darkModeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                body.classList.add('dark-mode');
-                localStorage.setItem('theme', 'dark');
-                updateDarkModeIcon(true);
-            } else {
-                body.classList.remove('dark-mode');
-                localStorage.setItem('theme', 'light');
-                updateDarkModeIcon(false);
-            }
-        });
-        
-        // Listen for system theme changes
-        prefersDarkScheme.addEventListener('change', function(e) {
-            // Only apply system theme if user hasn't set a preference
-            if (!localStorage.getItem('theme')) {
-                if (e.matches) {
-                    body.classList.add('dark-mode');
-                    darkModeToggle.checked = true;
-                    updateDarkModeIcon(true);
-                } else {
-                    body.classList.remove('dark-mode');
-                    darkModeToggle.checked = false;
-                    updateDarkModeIcon(false);
-                }
-            }
-        });
-    </script>
 </body>
 </html>
