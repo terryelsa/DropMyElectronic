@@ -8,6 +8,7 @@
     <style>
         /* Base Styles */
         :root {
+            /* Light mode variables */
             --primary-color: #2e7d32;
             --primary-light: #4caf50;
             --primary-dark: #1b5e20;
@@ -19,12 +20,35 @@
             --card-bg: #ffffff;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --radius: 8px;
+            --footer-bg: #1a1a1a;
+            --footer-text: #ffffff;
+            --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            --header-bg: #ffffff;
+        }
+        
+        /* Dark mode variables */
+        .dark-mode {
+            --primary-color: #4caf50;
+            --primary-light: #66bb6a;
+            --primary-dark: #388e3c;
+            --secondary-color: #ffb74d;
+            --accent-color: #64b5f6;
+            --text-color: #e0e0e0;
+            --light-bg: #121212;
+            --white: #1e1e1e;
+            --card-bg: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --footer-bg: #0a0a0a;
+            --footer-text: #e0e0e0;
+            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            --header-bg: #1e1e1e;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         
         body {
@@ -81,9 +105,67 @@
             line-height: 1.2;
         }
         
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 8px 15px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .dark-mode-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .dark-mode-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        #dark-mode-checkbox:checked + .dark-mode-switch {
+            background-color: var(--primary-color);
+        }
+        
+        #dark-mode-checkbox:checked + .dark-mode-switch::after {
+            transform: translateX(26px);
+        }
+        
+        #dark-mode-checkbox {
+            display: none;
+        }
+        
         /* Header Styles */
         header {
-            background-color: var(--white);
+            background-color: var(--header-bg);
             box-shadow: var(--shadow);
             position: sticky;
             top: 0;
@@ -128,7 +210,7 @@
         
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            background: var(--hero-gradient);
             color: white;
             text-align: center;
             padding: 15px 0;
@@ -147,7 +229,7 @@
         
         /* Quiz Section */
         .quiz-section {
-            background-color: var(--white);
+            background-color: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             padding: 30px;
@@ -161,7 +243,7 @@
             align-items: center;
             margin-bottom: 25px;
             padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--light-bg);
         }
         
         .quiz-stats {
@@ -196,18 +278,19 @@
         }
         
         .option-btn {
-            background-color: var(--light-bg);
-            border: 2px solid #ddd;
+            background-color: var(--white);
+            border: 2px solid var(--light-bg);
             border-radius: var(--radius);
             padding: 15px 20px;
             font-size: 1.1rem;
             text-align: left;
             cursor: pointer;
             transition: all 0.3s ease;
+            color: var(--text-color);
         }
         
         .option-btn:hover {
-            background-color: #e8f5e9;
+            background-color: var(--light-bg);
             border-color: var(--primary-light);
             transform: translateY(-2px);
         }
@@ -218,14 +301,27 @@
             color: var(--primary-dark);
         }
         
+        .dark-mode .option-btn.correct {
+            background-color: #1b5e20;
+            border-color: #4caf50;
+            color: #e8f5e9;
+        }
+        
         .option-btn.incorrect {
             background-color: #ffebee;
             border-color: #f44336;
             color: #c62828;
         }
         
+        .dark-mode .option-btn.incorrect {
+            background-color: #8b0000;
+            border-color: #ff5252;
+            color: #ffcdd2;
+        }
+        
         .option-btn:disabled {
             cursor: not-allowed;
+            opacity: 0.7;
         }
         
         .result-container {
@@ -240,6 +336,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            background-color: var(--light-bg);
+            color: var(--text-color);
         }
         
         .result-container.correct {
@@ -247,9 +345,19 @@
             color: var(--primary-dark);
         }
         
+        .dark-mode .result-container.correct {
+            background-color: #1b5e20;
+            color: #e8f5e9;
+        }
+        
         .result-container.incorrect {
             background-color: #ffebee;
             color: #c62828;
+        }
+        
+        .dark-mode .result-container.incorrect {
+            background-color: #8b0000;
+            color: #ffcdd2;
         }
         
         .result-container.complete {
@@ -257,11 +365,17 @@
             color: var(--primary-dark);
         }
         
+        .dark-mode .result-container.complete {
+            background-color: #0d47a1;
+            color: #e3f2fd;
+        }
+        
         .explanation {
             font-size: 1rem;
             font-weight: normal;
             margin-top: 10px;
-            color: #666;
+            color: var(--text-color);
+            opacity: 0.9;
         }
         
         .quiz-actions {
@@ -290,7 +404,7 @@
         .progress-container {
             width: 100%;
             height: 8px;
-            background-color: #e0e0e0;
+            background-color: var(--light-bg);
             border-radius: 4px;
             margin-bottom: 30px;
             overflow: hidden;
@@ -326,8 +440,8 @@
         
         /* Footer */
         footer {
-            background-color: #1a1a1a;
-            color: white;
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
             padding: 50px 0 20px;
         }
         
@@ -401,6 +515,16 @@
             .quiz-stats {
                 justify-content: center;
             }
+            
+            .dark-mode-toggle {
+                top: 15px;
+                right: 15px;
+                padding: 6px 12px;
+            }
+            
+            .dark-mode-label span {
+                display: none;
+            }
         }
         
         @media (max-width: 480px) {
@@ -420,6 +544,16 @@
     </style>
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle">
+        <label for="dark-mode-checkbox" class="dark-mode-label">
+            <i class="fas fa-moon"></i>
+            <span>Dark Mode</span>
+            <input type="checkbox" id="dark-mode-checkbox">
+            <div class="dark-mode-switch"></div>
+        </label>
+    </div>
+
     <!-- Header -->
     <header>
         <div class="container header-container">
@@ -428,6 +562,7 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="reward.html">Rewards</a></li>
+                <li><a href="quiz.html" class="active">Quiz</a></li>
                 <li><a href="support.html">Support</a></li>
                  <li><a href="sign.html" class="btn">Start now</a></li>
             </ul>
@@ -497,7 +632,6 @@
                 <div class="footer-column">
                     <h3>Resources</h3>
                     <ul class="footer-links">
-     
                         <li><a href="#">FAQ</a></li>
                         <li><a href="#">Support</a></li>
                     </ul>
@@ -507,7 +641,6 @@
                     <ul class="footer-links">
                         <li><a href="mailto:info@dropmyelectronic.com">Email</a></li>
                         <li><a href="#">Twitter</a></li>
-
                     </ul>
                 </div>
             </div>
@@ -713,6 +846,64 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById("total").textContent = questions.length;
             loadQuestion();
+        });
+
+        // Dark Mode Functionality
+        const darkModeToggle = document.getElementById('dark-mode-checkbox');
+        const body = document.body;
+        
+        // Check for saved theme preference or system preference
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        const currentTheme = localStorage.getItem('theme');
+        
+        // Function to update icon based on theme
+        function updateDarkModeIcon(isDark) {
+            const icon = document.querySelector('.dark-mode-label i');
+            const label = document.querySelector('.dark-mode-label span');
+            
+            if (isDark) {
+                icon.className = 'fas fa-sun';
+                label.textContent = 'Light Mode';
+            } else {
+                icon.className = 'fas fa-moon';
+                label.textContent = 'Dark Mode';
+            }
+        }
+        
+        // Set initial theme based on localStorage or system preference
+        if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+            body.classList.add('dark-mode');
+            darkModeToggle.checked = true;
+            updateDarkModeIcon(true);
+        }
+        
+        // Toggle dark mode when checkbox changes
+        darkModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+                updateDarkModeIcon(true);
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+                updateDarkModeIcon(false);
+            }
+        });
+        
+        // Listen for system theme changes
+        prefersDarkScheme.addEventListener('change', function(e) {
+            // Only apply system theme if user hasn't set a preference
+            if (!localStorage.getItem('theme')) {
+                if (e.matches) {
+                    body.classList.add('dark-mode');
+                    darkModeToggle.checked = true;
+                    updateDarkModeIcon(true);
+                } else {
+                    body.classList.remove('dark-mode');
+                    darkModeToggle.checked = false;
+                    updateDarkModeIcon(false);
+                }
+            }
         });
     </script>
 </body>
