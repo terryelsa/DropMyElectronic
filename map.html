@@ -9,6 +9,7 @@
     <style>
         /* Base Styles */
         :root {
+            /* Light mode variables */
             --primary-color: #2e7d32;
             --primary-light: #4caf50;
             --primary-dark: #1b5e20;
@@ -20,12 +21,35 @@
             --card-bg: #ffffff;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --radius: 8px;
+            --footer-bg: #1a1a1a;
+            --footer-text: #ffffff;
+            --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            --header-bg: #ffffff;
+        }
+        
+        /* Dark mode variables */
+        .dark-mode {
+            --primary-color: #4caf50;
+            --primary-light: #66bb6a;
+            --primary-dark: #388e3c;
+            --secondary-color: #ffb74d;
+            --accent-color: #64b5f6;
+            --text-color: #e0e0e0;
+            --light-bg: #121212;
+            --white: #1e1e1e;
+            --card-bg: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --footer-bg: #0a0a0a;
+            --footer-text: #e0e0e0;
+            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            --header-bg: #1e1e1e;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         
         body {
@@ -82,9 +106,67 @@
             line-height: 1.2;
         }
         
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 8px 15px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .dark-mode-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .dark-mode-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        #dark-mode-checkbox:checked + .dark-mode-switch {
+            background-color: var(--primary-color);
+        }
+        
+        #dark-mode-checkbox:checked + .dark-mode-switch::after {
+            transform: translateX(26px);
+        }
+        
+        #dark-mode-checkbox {
+            display: none;
+        }
+        
         /* Header Styles */
         header {
-            background-color: var(--white);
+            background-color: var(--header-bg);
             box-shadow: var(--shadow);
             position: sticky;
             top: 0;
@@ -129,7 +211,7 @@
         
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            background: var(--hero-gradient);
             color: white;
             text-align: center;
             padding: 15px 0;
@@ -160,7 +242,7 @@
         
         /* Sidebar */
         .sidebar {
-            background-color: var(--white);
+            background-color: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             padding: 25px;
@@ -176,10 +258,12 @@
         .search-box input {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--text-color);
             border-radius: 4px;
             font-size: 1rem;
             margin-bottom: 15px;
+            background-color: var(--white);
+            color: var(--text-color);
         }
         
         .search-actions {
@@ -206,7 +290,7 @@
         
         /* Center Card */
         .center-card {
-            background-color: var(--light-bg);
+            background-color: var(--white);
             border-radius: var(--radius);
             padding: 20px;
             margin-bottom: 15px;
@@ -222,7 +306,7 @@
         }
         
         .center-card.active {
-            background-color: #e8f5e9;
+            background-color: var(--light-bg);
             border-left-color: var(--primary-color);
         }
         
@@ -245,7 +329,7 @@
         
         /* Map */
         .map-wrapper {
-            background-color: var(--white);
+            background-color: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             overflow: hidden;
@@ -255,6 +339,14 @@
         #map {
             height: 100%;
             width: 100%;
+        }
+        
+        /* Dark mode map adjustments */
+        .dark-mode .leaflet-layer,
+        .dark-mode .leaflet-control-zoom-in,
+        .dark-mode .leaflet-control-zoom-out,
+        .dark-mode .leaflet-control-attribution {
+            filter: brightness(0.6) invert(1) hue-rotate(180deg) contrast(3);
         }
         
         /* Custom marker styles */
@@ -280,6 +372,20 @@
         .leaflet-popup-content-wrapper {
             border-radius: var(--radius);
             box-shadow: var(--shadow);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .leaflet-popup-tip {
+            background-color: var(--card-bg);
+        }
+        
+        .leaflet-container a.leaflet-popup-close-button {
+            color: var(--text-color);
+        }
+        
+        .leaflet-container a.leaflet-popup-close-button:hover {
+            color: var(--primary-color);
         }
         
         /* Info Section */
@@ -298,7 +404,7 @@
         }
         
         .section-title p {
-            color: #666;
+            color: var(--text-color);
             max-width: 600px;
             margin: 0 auto;
         }
@@ -310,7 +416,7 @@
         }
         
         .info-card {
-            background-color: var(--light-bg);
+            background-color: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             padding: 30px;
@@ -335,8 +441,8 @@
         
         /* Footer */
         footer {
-            background-color: #1a1a1a;
-            color: white;
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
             padding: 50px 0 20px;
         }
         
@@ -413,6 +519,16 @@
             .search-actions .btn {
                 width: 100%;
             }
+            
+            .dark-mode-toggle {
+                top: 15px;
+                right: 15px;
+                padding: 6px 12px;
+            }
+            
+            .dark-mode-label span {
+                display: none;
+            }
         }
         
         @media (max-width: 480px) {
@@ -427,6 +543,16 @@
     </style>
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle">
+        <label for="dark-mode-checkbox" class="dark-mode-label">
+            <i class="fas fa-moon"></i>
+            <span>Dark Mode</span>
+            <input type="checkbox" id="dark-mode-checkbox">
+            <div class="dark-mode-switch"></div>
+        </label>
+    </div>
+
     <!-- Header -->
     <header>
         <div class="container header-container">
@@ -526,7 +652,6 @@
                 <div class="footer-column">
                     <h3>Resources</h3>
                     <ul class="footer-links">
-      
                         <li><a href="#">FAQ</a></li>
                         <li><a href="#">Support</a></li>
                     </ul>
@@ -536,7 +661,6 @@
                     <ul class="footer-links">
                         <li><a href="mailto:info@dropmyelectronic.com">Email</a></li>
                         <li><a href="#">Twitter</a></li>
-
                     </ul>
                 </div>
             </div>
@@ -823,6 +947,64 @@
 
         // Initialize map when page loads
         document.addEventListener('DOMContentLoaded', initMap);
+
+        // Dark Mode Functionality
+        const darkModeToggle = document.getElementById('dark-mode-checkbox');
+        const body = document.body;
+        
+        // Check for saved theme preference or system preference
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        const currentTheme = localStorage.getItem('theme');
+        
+        // Function to update icon based on theme
+        function updateDarkModeIcon(isDark) {
+            const icon = document.querySelector('.dark-mode-label i');
+            const label = document.querySelector('.dark-mode-label span');
+            
+            if (isDark) {
+                icon.className = 'fas fa-sun';
+                label.textContent = 'Light Mode';
+            } else {
+                icon.className = 'fas fa-moon';
+                label.textContent = 'Dark Mode';
+            }
+        }
+        
+        // Set initial theme based on localStorage or system preference
+        if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+            body.classList.add('dark-mode');
+            darkModeToggle.checked = true;
+            updateDarkModeIcon(true);
+        }
+        
+        // Toggle dark mode when checkbox changes
+        darkModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+                updateDarkModeIcon(true);
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+                updateDarkModeIcon(false);
+            }
+        });
+        
+        // Listen for system theme changes
+        prefersDarkScheme.addEventListener('change', function(e) {
+            // Only apply system theme if user hasn't set a preference
+            if (!localStorage.getItem('theme')) {
+                if (e.matches) {
+                    body.classList.add('dark-mode');
+                    darkModeToggle.checked = true;
+                    updateDarkModeIcon(true);
+                } else {
+                    body.classList.remove('dark-mode');
+                    darkModeToggle.checked = false;
+                    updateDarkModeIcon(false);
+                }
+            }
+        });
     </script>
 </body>
 </html>
