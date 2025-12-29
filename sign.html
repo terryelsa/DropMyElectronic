@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
+            /* Light mode variables */
             --primary-color: #2e7d32;
             --primary-light: #4caf50;
             --primary-dark: #1b5e20;
@@ -17,41 +18,113 @@
             --white: #ffffff;
             --error: #f44336;
             --success: #4caf50;
+            --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            --header-bg: #ffffff;
+            --footer-bg: #1a1a1a;
+            --footer-text: #ffffff;
+            --card-bg: #ffffff;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
         
-        [data-theme="dark"] {
+        /* Dark mode variables */
+        .dark-mode {
             --text-color: #e0e0e0;
-            --light-bg: #1a1a1a;
-            --white: #2d2d2d;
+            --light-bg: #121212;
+            --white: #1e1e1e;
+            --card-bg: #2d2d2d;
+            --error: #ff5252;
+            --success: #66bb6a;
+            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            background: var(--hero-gradient);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            color: var(--text-color);
+        }
+        
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 8px 15px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .dark-mode-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .dark-mode-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        #dark-mode-checkbox:checked + .dark-mode-switch {
+            background-color: var(--primary-color);
+        }
+        
+        #dark-mode-checkbox:checked + .dark-mode-switch::after {
+            transform: translateX(26px);
+        }
+        
+        #dark-mode-checkbox {
+            display: none;
         }
         
         .auth-container {
-            background: var(--white);
+            background: var(--card-bg);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow);
             max-width: 450px;
             width: 100%;
             overflow: hidden;
         }
         
         .auth-header {
-            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            background: var(--hero-gradient);
             color: white;
             padding: 40px 30px;
             text-align: center;
@@ -77,7 +150,7 @@
         
         .auth-tabs {
             display: flex;
-            background: #f0f0f0;
+            background: var(--light-bg);
         }
         
         .tab-btn {
@@ -87,7 +160,7 @@
             border: none;
             font-size: 1.1rem;
             font-weight: 600;
-            color: #666;
+            color: var(--text-color);
             cursor: pointer;
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
@@ -95,7 +168,7 @@
         
         .tab-btn.active {
             color: var(--primary-color);
-            background: white;
+            background: var(--card-bg);
             border-bottom: 3px solid var(--primary-color);
         }
         
@@ -137,13 +210,14 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #999;
+            color: var(--text-color);
+            opacity: 0.7;
         }
         
         .form-group input {
             width: 100%;
             padding: 12px 15px 12px 45px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--light-bg);
             border-radius: 10px;
             font-size: 1rem;
             transition: all 0.3s ease;
@@ -183,9 +257,14 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #999;
+            color: var(--text-color);
             cursor: pointer;
             font-size: 1.1rem;
+            opacity: 0.7;
+        }
+        
+        .password-toggle:hover {
+            opacity: 1;
         }
         
         .remember-forgot {
@@ -205,10 +284,21 @@
             text-decoration: underline;
         }
         
+        .remember-forgot label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-color);
+        }
+        
+        .remember-forgot input[type="checkbox"] {
+            margin: 0;
+        }
+        
         .submit-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            background: var(--hero-gradient);
             color: white;
             border: none;
             border-radius: 10px;
@@ -241,14 +331,15 @@
             top: 50%;
             width: 100%;
             height: 1px;
-            background: #e0e0e0;
+            background: var(--light-bg);
         }
         
         .divider span {
-            background: var(--white);
+            background: var(--card-bg);
             padding: 0 15px;
             position: relative;
-            color: #999;
+            color: var(--text-color);
+            opacity: 0.7;
         }
         
         .social-login {
@@ -259,7 +350,7 @@
         
         .social-btn {
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--light-bg);
             border-radius: 10px;
             background: var(--white);
             color: var(--text-color);
@@ -274,7 +365,7 @@
         
         .social-btn:hover {
             border-color: var(--primary-color);
-            background: #f8f8f8;
+            background: var(--light-bg);
         }
         
         .back-link {
@@ -294,7 +385,7 @@
         
         .strength-meter {
             height: 5px;
-            background: #e0e0e0;
+            background: var(--light-bg);
             border-radius: 5px;
             margin-top: 8px;
             overflow: hidden;
@@ -306,9 +397,36 @@
             transition: all 0.3s ease;
         }
         
-        .strength-weak { background: #f44336; width: 33%; }
-        .strength-medium { background: #ff9800; width: 66%; }
-        .strength-strong { background: #4caf50; width: 100%; }
+        .strength-weak { background: var(--error); width: 33%; }
+        .strength-medium { background: var(--secondary-color); width: 66%; }
+        .strength-strong { background: var(--success); width: 100%; }
+        
+        /* Terms checkbox styling */
+        .form-group label input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        .form-group label a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .form-group label a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .dark-mode-toggle {
+                top: 15px;
+                right: 15px;
+                padding: 6px 12px;
+            }
+            
+            .dark-mode-label span {
+                display: none;
+            }
+        }
         
         @media (max-width: 480px) {
             .auth-container {
@@ -322,10 +440,24 @@
             .social-login {
                 grid-template-columns: 1fr;
             }
+            
+            body {
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle">
+        <label for="dark-mode-checkbox" class="dark-mode-label">
+            <i class="fas fa-moon"></i>
+            <span>Dark Mode</span>
+            <input type="checkbox" id="dark-mode-checkbox">
+            <div class="dark-mode-switch"></div>
+        </label>
+    </div>
+
     <div class="auth-container">
         <div class="auth-header">
             <div class="auth-logo">
@@ -644,6 +776,64 @@
                 window.location.href = 'index.html';
             }
         }
+
+        // Dark Mode Functionality
+        const darkModeToggle = document.getElementById('dark-mode-checkbox');
+        const body = document.body;
+        
+        // Check for saved theme preference or system preference
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        const currentTheme = localStorage.getItem('theme');
+        
+        // Function to update icon based on theme
+        function updateDarkModeIcon(isDark) {
+            const icon = document.querySelector('.dark-mode-label i');
+            const label = document.querySelector('.dark-mode-label span');
+            
+            if (isDark) {
+                icon.className = 'fas fa-sun';
+                label.textContent = 'Light Mode';
+            } else {
+                icon.className = 'fas fa-moon';
+                label.textContent = 'Dark Mode';
+            }
+        }
+        
+        // Set initial theme based on localStorage or system preference
+        if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+            body.classList.add('dark-mode');
+            darkModeToggle.checked = true;
+            updateDarkModeIcon(true);
+        }
+        
+        // Toggle dark mode when checkbox changes
+        darkModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+                updateDarkModeIcon(true);
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+                updateDarkModeIcon(false);
+            }
+        });
+        
+        // Listen for system theme changes
+        prefersDarkScheme.addEventListener('change', function(e) {
+            // Only apply system theme if user hasn't set a preference
+            if (!localStorage.getItem('theme')) {
+                if (e.matches) {
+                    body.classList.add('dark-mode');
+                    darkModeToggle.checked = true;
+                    updateDarkModeIcon(true);
+                } else {
+                    body.classList.remove('dark-mode');
+                    darkModeToggle.checked = false;
+                    updateDarkModeIcon(false);
+                }
+            }
+        });
     </script>
 </body>
 </html>
