@@ -234,6 +234,59 @@
             {id: 3, name: "Eco Create & Innovate - ECANDI", lat: -1.2156578760311965, lng: 36.797297222022095, address: "32824, Limuru Rd, Nairobi", phone: "0741777986", hours: "Mon-Fri: 9AM-6PM \n Sat: 9AM-4PM \n Sun: Closed", accepts: "All electronics, appliances, batteries"},
             {id: 4, name: "GreenTech Solutions", lat: -1.2762636825707399, lng: 36.8267353691281, address: "Next to Nyayo Market, Ngara, Nairobi.", phone: "0722969219", hours: "Mon-Sat: 9AM-5PM\nSun: Closed", accepts: "Phones, laptops, small electronics"}
         ];
+
+        const nairobiAreas = {
+            // Central & West
+            'cbd': [-1.286389, 36.817223],
+            'westlands': [-1.2659, 36.8067],
+            'parklands': [-1.2597, 36.8186],
+            'upper hill': [-1.2986, 36.8090],
+            'ngara': [-1.2752, 36.8271],
+
+            // South & South-West
+            'kilimani': [-1.2950, 36.7860],
+            'lavington': [-1.2684, 36.7749],
+            'karen': [-1.3159, 36.8342],
+            'langata': [-1.3424, 36.7466],
+            'rongai': [-1.3926, 36.7500],
+            'south b': [-1.3190, 36.8345],
+            'south c': [-1.3216, 36.8254],
+
+            // Eastlands
+            'industrial area': [-1.3083, 36.8469],
+            'embakasi': [-1.3076, 36.9182],
+            'embakasi east': [-1.3271, 36.9226],
+            'embakasi west': [-1.2986, 36.8977],
+            'donholm': [-1.3092, 36.8866],
+            'umoja': [-1.2797, 36.8982],
+            'buruburu': [-1.2706, 36.8756],
+            'kayole': [-1.2732, 36.9233],
+            'pipeline': [-1.3206, 36.8755],
+            'ruai': [-1.2401, 37.0096],
+
+            // North & North-East
+            'kasarani': [-1.2186, 36.8925],
+            'ruaraka': [-1.2486, 36.8892],
+            'kahawa': [-1.1911, 36.9275],
+            'kahawa west': [-1.2056, 36.9184],
+            'githurai': [-1.2064, 36.9057],
+            'roisambu': [-1.2164, 36.8895],
+            'thome': [-1.2330, 36.9004],
+            'garden estate': [-1.2397, 36.8756],
+
+            // West & North-West
+            'kawangware': [-1.2763, 36.7632],
+            'uthiru': [-1.2582, 36.7416],
+            'kinoo': [-1.2603, 36.7157],
+            'ruaka': [-1.2069, 36.7845],
+            'rosslyn': [-1.2306, 36.7611],
+
+            // Informal settlements (optional but realistic)
+            'kibera': [-1.3134, 36.7844],
+            'mathare': [-1.2575, 36.8597],
+            'mukuru': [-1.3250, 36.8722]
+        };
+
         let map, userMarker, recyclingMarkers = [], activeCenterId = null;
 
         function initMap() {
@@ -310,17 +363,15 @@
         function searchLocation() {
             const searchText = document.getElementById('locationSearch').value.trim();
             if (!searchText) { alert('Please enter a Nairobi area to search.'); return; }
-            const nairobiAreas = {
-                'cbd': [-1.286389, 36.817223], 'westlands': [-1.2659, 36.8067], 'kilimani': [-1.2950, 36.7860],
-                'karen': [-1.3159, 36.8342], 'industrial area': [-1.3083, 36.8469], 'lavington': [-1.2684, 36.7749],
-                'parklands': [-1.2597, 36.8186], 'embakasi': [-1.3076, 36.9182], 'kasarani': [-1.2186, 36.8925]
-            };
+            
             const areaKey = searchText.toLowerCase();
             if (nairobiAreas[areaKey]) {
                 map.setView(nairobiAreas[areaKey], 14);
                 document.getElementById('locationSearch').value = '';
             } else {
-                alert('Area not found. Try: CBD, Westlands, Kilimani, Karen, Industrial Area, Lavington, Parklands, Embakasi, or Kasarani');
+                // Create a list of available areas for the alert message
+                const areaList = Object.keys(nairobiAreas).join(', ');
+                alert(`Area "${searchText}" not found. Try one of these areas:\n\n${areaList}`);
                 map.setView([-1.286389, 36.817223], 11);
             }
         }
