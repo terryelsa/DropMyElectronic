@@ -6,513 +6,96 @@
     <title>About Us - DropMyElectronic</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Base Styles */
         :root {
-            /* Light mode variables */
-            --primary-color: #2e7d32;
-            --primary-light: #4caf50;
-            --primary-dark: #1b5e20;
-            --secondary-color: #ff9800;
-            --accent-color: #2196f3;
-            --text-color: #333;
-            --light-bg: #f5f5f5;
-            --white: #ffffff;
-            --card-bg: #ffffff;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --radius: 8px;
-            --footer-bg: #1a1a1a;
-            --footer-text: #ffffff;
-            --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            --primary-color: #2e7d32; --primary-light: #4caf50; --primary-dark: #1b5e20;
+            --secondary-color: #ff9800; --accent-color: #2196f3; --text-color: #333;
+            --light-bg: #f5f5f5; --white: #ffffff; --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1); --radius: 8px; --footer-bg: #1a1a1a;
+            --footer-text: #ffffff; --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
             --header-bg: #ffffff;
         }
-        
-        /* Dark mode variables */
         .dark-mode {
-            --primary-color: #4caf50;
-            --primary-light: #66bb6a;
-            --primary-dark: #388e3c;
-            --secondary-color: #ffb74d;
-            --accent-color: #64b5f6;
-            --text-color: #e0e0e0;
-            --light-bg: #121212;
-            --white: #1e1e1e;
-            --card-bg: #2d2d2d;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            --footer-bg: #0a0a0a;
-            --footer-text: #e0e0e0;
-            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            --header-bg: #1e1e1e;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--light-bg);
-        }
-        
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary-color);
-        }
-        
-        .btn-secondary:hover {
-            background-color: #e68900;
-        }
-        
-        section {
-            padding: 60px 0;
-        }
-        
-        h1, h2, h3, h4 {
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-        
-        /* Dark Mode Toggle */
-        .dark-mode-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 8px 15px;
-            border-radius: 30px;
-            box-shadow: var(--shadow);
-        }
-        
-        .dark-mode-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-        
-        .dark-mode-switch {
-            position: relative;
-            width: 50px;
-            height: 24px;
-            background-color: #ccc;
-            border-radius: 34px;
-            transition: background-color 0.3s;
-        }
-        
-        .dark-mode-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-        
-        #dark-mode-checkbox:checked + .dark-mode-switch {
-            background-color: var(--primary-color);
-        }
-        
-        #dark-mode-checkbox:checked + .dark-mode-switch::after {
-            transform: translateX(26px);
-        }
-        
-        #dark-mode-checkbox {
-            display: none;
-        }
-        
-        /* Header Styles */
-        header {
-            background-color: var(--header-bg);
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-        
-        .nav-links li {
-            margin-left: 30px;
-        }
-        
-        .nav-links a {
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-links a:hover {
-            color: var(--primary-color);
-        }
-        
-        .nav-links .active {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        /* Hero Section */
-        .hero {
-            background: var(--hero-gradient);
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-        }
-        
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-        }
-        
-        /* About Content */
-        .about-content {
-            background-color: var(--white);
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .section-title h2 {
-            font-size: 2.2rem;
-            color: var(--primary-dark);
-        }
-        
-        .section-title p {
-            color: var(--text-color);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .about-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-        
-        .about-card {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 30px;
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .about-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .about-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .about-card h3 {
-            font-size: 1.5rem;
-            color: var(--primary-dark);
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        /* Team Section */
-        .team-section {
-            background-color: var(--light-bg);
-            display: none; /* Hide the team section */
-        }
-        
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        
-        .team-card {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            text-align: center;
-        }
-        
-        .team-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .team-img {
-            width: 100%;
-            height: 200px;
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 4rem;
-        }
-        
-        .dark-mode .team-img {
-            background-color: #333;
-            color: #666;
-        }
-        
-        .team-info {
-            padding: 20px;
-        }
-        
-        .team-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin-bottom: 5px;
-        }
-        
-        .team-role {
-            color: var(--primary-color);
-            font-weight: 500;
-            margin-bottom: 15px;
-        }
-        
-        /* Values Section */
-        .values-section {
-            background-color: var(--white);
-        }
-        
-        .values-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-        }
-        
-        .value-card {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 30px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        
-        .value-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .value-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-        
-        .value-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin-bottom: 15px;
-        }
-        
-        /* CTA Section */
-        .cta {
-            background: var(--hero-gradient);
-            color: white;
-            text-align: center;
-            padding: 80px 0;
-        }
-        
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .cta p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--footer-bg);
-            color: var(--footer-text);
-            padding: 50px 0 20px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .footer-column h3 {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-light);
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-links a {
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: var(--primary-light);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-        
-        /* Responsive Styles */
+            --primary-color: #4caf50; --primary-light: #66bb6a; --primary-dark: #388e3c;
+            --secondary-color: #ffb74d; --accent-color: #64b5f6; --text-color: #e0e0e0;
+            --light-bg: #121212; --white: #1e1e1e; --card-bg: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0,0,0,0.3); --footer-bg: #0a0a0a; --footer-text: #e0e0e0;
+            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); --header-bg: #1e1e1e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: var(--text-color); background-color: var(--light-bg); }
+        a { text-decoration: none; color: inherit; }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .btn { display: inline-block; background-color: var(--primary-color); color: white; padding: 12px 24px; border-radius: 4px; font-weight: 600; transition: all 0.3s ease; border: none; cursor: pointer; text-align: center; }
+        .btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+        .btn-secondary { background-color: var(--secondary-color); }
+        .btn-secondary:hover { background-color: #e68900; }
+        section { padding: 60px 0; }
+        h1, h2, h3, h4 { margin-bottom: 1rem; line-height: 1.2; }
+        .dark-mode-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; gap: 10px; background-color: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 30px; box-shadow: var(--shadow); }
+        .dark-mode-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; color: var(--text-color); }
+        .dark-mode-switch { position: relative; width: 50px; height: 24px; background-color: #ccc; border-radius: 34px; transition: background-color 0.3s; }
+        .dark-mode-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: white; border-radius: 50%; transition: transform 0.3s; }
+        #dark-mode-checkbox:checked + .dark-mode-switch { background-color: var(--primary-color); }
+        #dark-mode-checkbox:checked + .dark-mode-switch::after { transform: translateX(26px); }
+        #dark-mode-checkbox { display: none; }
+        header { background-color: var(--header-bg); box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
+        .logo { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
+        .nav-links { display: flex; list-style: none; }
+        .nav-links li { margin-left: 30px; }
+        .nav-links a { font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover, .nav-links .active { color: var(--primary-color); font-weight: 600; }
+        .hero { background: var(--hero-gradient); color: white; text-align: center; padding: 15px 0; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem; }
+        .about-content { background-color: var(--white); }
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { font-size: 2.2rem; color: var(--primary-dark); }
+        .section-title p { color: var(--text-color); max-width: 600px; margin: 0 auto; }
+        .about-grid, .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .about-card, .value-card { background-color: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 30px; transition: transform 0.3s ease; text-align: center; }
+        .about-card:hover, .value-card:hover { transform: translateY(-5px); }
+        .about-card { display: flex; flex-direction: column; height: 100%; }
+        .about-icon, .value-icon { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px; }
+        .about-card h3, .value-title { font-size: 1.5rem; color: var(--primary-dark); margin-bottom: 15px; }
+        .values-section { background-color: var(--white); }
+        .team-section { display: none; }
+        .cta { background: var(--hero-gradient); color: white; text-align: center; padding: 80px 0; }
+        .cta h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        .cta p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem; }
+        .cta-buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        footer { background-color: var(--footer-bg); color: var(--footer-text); padding: 50px 0 20px; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-bottom: 30px; }
+        .footer-column h3 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--primary-light); }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { transition: color 0.3s ease; }
+        .footer-links a:hover { color: var(--primary-light); }
+        .copyright { text-align: center; padding-top: 20px; border-top: 1px solid #333; font-size: 0.9rem; color: #aaa; }
         @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-            }
-            
-            .nav-links {
-                margin-top: 20px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .nav-links li {
-                margin: 5px 10px;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .cta-buttons .btn {
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .dark-mode-toggle {
-                top: 15px;
-                right: 15px;
-                padding: 6px 12px;
-            }
-            
-            .dark-mode-label span {
-                display: none;
-            }
+            .header-container { flex-direction: column; }
+            .nav-links { margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+            .nav-links li { margin: 5px 10px; }
+            .hero h1 { font-size: 2rem; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+            .cta-buttons .btn { width: 100%; max-width: 300px; }
+            .dark-mode-toggle { top: 15px; right: 15px; padding: 6px 12px; }
+            .dark-mode-label span { display: none; }
         }
-        
         @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-            
-            .section-title h2 {
-                font-size: 1.8rem;
-            }
+            .hero h1 { font-size: 1.8rem; }
+            .section-title h2 { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Dark Mode Toggle -->
     <div class="dark-mode-toggle">
         <label for="dark-mode-checkbox" class="dark-mode-label">
-            <i class="fas fa-moon"></i>
-            <span>Dark Mode</span>
+            <i class="fas fa-moon"></i><span>Dark Mode</span>
             <input type="checkbox" id="dark-mode-checkbox">
             <div class="dark-mode-switch"></div>
         </label>
     </div>
-
-    <!-- Header -->
     <header>
         <div class="container header-container">
             <a href="index.html" class="logo">DropMyElectronic</a>
@@ -525,157 +108,38 @@
             </ul>
         </div>
     </header>
-
-    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <h1>About DropMyElectronic</h1>
             <p>Learn about our mission to make e-waste recycling accessible, our vision for a sustainable future, and the team behind our initiative.</p>
         </div>
     </section>
-
-    <!-- About Content Section -->
     <section class="about-content">
         <div class="container">
             <div class="section-title">
                 <h2>Who We Are</h2>
                 <p>DropMyElectronic is a passionate team dedicated to solving the growing e-waste problem through innovative solutions and community engagement.</p>
             </div>
-            
             <div class="about-grid">
-                <div class="about-card">
-                    <div class="about-icon">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
-                    <h3>Our Mission</h3>
-                    <p>To make e-waste recycling simple, accessible, and rewarding for everyone by connecting people with certified recycling centers.</p>
-                </div>
-                
-                <div class="about-card">
-                    <div class="about-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <h3>Our Vision</h3>
-                    <p>A world where electronic waste becomes a valuable resource for sustainable innovation and communities actively participate in creating cleaner environments.</p>
-                </div>
-                
-                <!--
-                <div class="about-card">
-                    <div class="about-icon">
-                        <i class="fas fa-history"></i>
-                    </div>
-                    <h3>Our Story</h3>
-                    <p>Founded in 2020, DropMyElectronic began as a university project focused on Nairobi's growing e-waste problem. Our founders witnessed firsthand how difficult it was for people to find proper disposal options for their old electronics.</p>
-                    <p>What started as a simple directory of recycling locations has evolved into a comprehensive platform that educates, incentivizes, and simplifies the e-waste recycling process for thousands of users across Kenya.</p>
-                </div>
-                -->
+                <div class="about-card"><div class="about-icon"><i class="fas fa-bullseye"></i></div><h3>Our Mission</h3><p>To make e-waste recycling simple, accessible, and rewarding for everyone by connecting people with certified recycling centers.</p></div>
+                <div class="about-card"><div class="about-icon"><i class="fas fa-eye"></i></div><h3>Our Vision</h3><p>A world where electronic waste becomes a valuable resource for sustainable innovation and communities actively participate in creating cleaner environments.</p></div>
             </div>
         </div>
     </section>
-
-    <!-- Values Section -->
     <section class="values-section">
         <div class="container">
             <div class="section-title">
                 <h2>Our Values</h2>
                 <p>The principles that guide everything we do at DropMyElectronic</p>
             </div>
-            
             <div class="values-grid">
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <h3 class="value-title">Environmental Stewardship</h3>
-                    <p>We believe in protecting our planet for future generations by promoting sustainable practices and reducing electronic waste.</p>
-                </div>
-                
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3 class="value-title">Community Focus</h3>
-                    <p>We prioritize accessibility and education to empower communities to take action against e-waste in their neighborhoods.</p>
-                </div>
-                
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h3 class="value-title">Innovation</h3>
-                    <p>We continuously seek new ways to make e-waste recycling more efficient, accessible, and rewarding for everyone involved.</p>
-                </div>
-                
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <h3 class="value-title">Partnership</h3>
-                    <p>We collaborate with certified recycling centers, environmental organizations, and communities to maximize our impact.</p>
-                </div>
+                <div class="value-card"><div class="value-icon"><i class="fas fa-leaf"></i></div><h3 class="value-title">Environmental Stewardship</h3><p>We believe in protecting our planet for future generations by promoting sustainable practices and reducing electronic waste.</p></div>
+                <div class="value-card"><div class="value-icon"><i class="fas fa-users"></i></div><h3 class="value-title">Community Focus</h3><p>We prioritize accessibility and education to empower communities to take action against e-waste in their neighborhoods.</p></div>
+                <div class="value-card"><div class="value-icon"><i class="fas fa-lightbulb"></i></div><h3 class="value-title">Innovation</h3><p>We continuously seek new ways to make e-waste recycling more efficient, accessible, and rewarding for everyone involved.</p></div>
+                <div class="value-card"><div class="value-icon"><i class="fas fa-handshake"></i></div><h3 class="value-title">Partnership</h3><p>We collaborate with certified recycling centers, environmental organizations, and communities to maximize our impact.</p></div>
             </div>
         </div>
     </section>
-
-    <!-- Team Section (Commented Out) -->
-    <!--
-    <section class="team-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>Our Team</h2>
-                <p>Meet the passionate individuals driving our mission forward</p>
-            </div>
-            
-            <div class="team-grid">
-                <div class="team-card">
-                    <div class="team-img">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="team-info">
-                        <h3 class="team-name">Sarah Johnson</h3>
-                        <p class="team-role">CEO & Founder</p>
-                        <p>Environmental scientist with 10+ years experience in waste management solutions.</p>
-                    </div>
-                </div>
-                
-                <div class="team-card">
-                    <div class="team-img">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="team-info">
-                        <h3 class="team-name">David Kimani</h3>
-                        <p class="team-role">CTO</p>
-                        <p>Tech innovator passionate about using technology to solve environmental challenges.</p>
-                    </div>
-                </div>
-                
-                <div class="team-card">
-                    <div class="team-img">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="team-info">
-                        <h3 class="team-name">Grace Omondi</h3>
-                        <p class="team-role">Community Manager</p>
-                        <p>Dedicated to building relationships and expanding our network of recycling partners.</p>
-                    </div>
-                </div>
-                
-                <div class="team-card">
-                    <div class="team-img">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="team-info">
-                        <h3 class="team-name">Michael Chen</h3>
-                        <p class="team-role">Education Director</p>
-                        <p>Creates engaging content to raise awareness about e-waste and proper recycling practices.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    -->
-
-    <!-- CTA Section -->
     <section class="cta">
         <div class="container">
             <h2>Join Our Mission</h2>
@@ -686,8 +150,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -724,38 +186,25 @@
             </div>
         </div>
     </footer>
-
     <script>
-        // Dark Mode Functionality
         const darkModeToggle = document.getElementById('dark-mode-checkbox');
         const body = document.body;
-        
-        // Check for saved theme preference or system preference
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
         const currentTheme = localStorage.getItem('theme');
         
-        // Function to update icon based on theme
         function updateDarkModeIcon(isDark) {
             const icon = document.querySelector('.dark-mode-label i');
             const label = document.querySelector('.dark-mode-label span');
-            
-            if (isDark) {
-                icon.className = 'fas fa-sun';
-                label.textContent = 'Light Mode';
-            } else {
-                icon.className = 'fas fa-moon';
-                label.textContent = 'Dark Mode';
-            }
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
         }
         
-        // Set initial theme based on localStorage or system preference
         if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
             body.classList.add('dark-mode');
             darkModeToggle.checked = true;
             updateDarkModeIcon(true);
         }
         
-        // Toggle dark mode when checkbox changes
         darkModeToggle.addEventListener('change', function() {
             if (this.checked) {
                 body.classList.add('dark-mode');
@@ -768,9 +217,7 @@
             }
         });
         
-        // Listen for system theme changes
         prefersDarkScheme.addEventListener('change', function(e) {
-            // Only apply system theme if user hasn't set a preference
             if (!localStorage.getItem('theme')) {
                 if (e.matches) {
                     body.classList.add('dark-mode');
