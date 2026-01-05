@@ -6,481 +6,103 @@
     <title>Support - DropMyElectronic</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Base Styles */
         :root {
-            /* Light mode variables */
-            --primary-color: #2e7d32;
-            --primary-light: #4caf50;
-            --primary-dark: #1b5e20;
-            --secondary-color: #ff9800;
-            --accent-color: #2196f3;
-            --text-color: #333;
-            --light-bg: #f5f5f5;
-            --white: #ffffff;
-            --card-bg: #ffffff;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --radius: 8px;
-            --footer-bg: #1a1a1a;
-            --footer-text: #ffffff;
-            --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            --primary-color: #2e7d32; --primary-light: #4caf50; --primary-dark: #1b5e20;
+            --secondary-color: #ff9800; --accent-color: #2196f3; --text-color: #333;
+            --light-bg: #f5f5f5; --white: #ffffff; --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1); --radius: 8px; --footer-bg: #1a1a1a;
+            --footer-text: #ffffff; --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
             --header-bg: #ffffff;
         }
-        
-        /* Dark mode variables */
         .dark-mode {
-            --primary-color: #4caf50;
-            --primary-light: #66bb6a;
-            --primary-dark: #388e3c;
-            --secondary-color: #ffb74d;
-            --accent-color: #64b5f6;
-            --text-color: #e0e0e0;
-            --light-bg: #121212;
-            --white: #1e1e1e;
-            --card-bg: #2d2d2d;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            --footer-bg: #0a0a0a;
-            --footer-text: #e0e0e0;
-            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            --header-bg: #1e1e1e;
+            --primary-color: #4caf50; --primary-light: #66bb6a; --primary-dark: #388e3c;
+            --secondary-color: #ffb74d; --accent-color: #64b5f6; --text-color: #e0e0e0;
+            --light-bg: #121212; --white: #1e1e1e; --card-bg: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0,0,0,0.3); --footer-bg: #0a0a0a; --footer-text: #e0e0e0;
+            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); --header-bg: #1e1e1e;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--light-bg);
-        }
-        
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary-color);
-        }
-        
-        .btn-secondary:hover {
-            background-color: #e68900;
-        }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-        }
-        
-        .btn-outline:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        section {
-            padding: 60px 0;
-        }
-        
-        h1, h2, h3, h4 {
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-        
-        /* Dark Mode Toggle */
-        .dark-mode-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 8px 15px;
-            border-radius: 30px;
-            box-shadow: var(--shadow);
-        }
-        
-        .dark-mode-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-        
-        .dark-mode-switch {
-            position: relative;
-            width: 50px;
-            height: 24px;
-            background-color: #ccc;
-            border-radius: 34px;
-            transition: background-color 0.3s;
-        }
-        
-        .dark-mode-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-        
-        #dark-mode-checkbox:checked + .dark-mode-switch {
-            background-color: var(--primary-color);
-        }
-        
-        #dark-mode-checkbox:checked + .dark-mode-switch::after {
-            transform: translateX(26px);
-        }
-        
-        #dark-mode-checkbox {
-            display: none;
-        }
-        
-        /* Header Styles */
-        header {
-            background-color: var(--header-bg);
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-        
-        .nav-links li {
-            margin-left: 20px;
-        }
-        
-        .nav-links a {
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-links a:hover {
-            color: var(--primary-color);
-        }
-        
-        .nav-links .active {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        /* Hero Section */
-        .hero {
-            background: var(--hero-gradient);
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-        }
-        
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-        }
-        
-        /* Support Options Section */
-        .support-options {
-            background-color: var(--white);
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .section-title h2 {
-            font-size: 2.2rem;
-            color: var(--primary-dark);
-        }
-        
-        .section-title p {
-            color: var(--text-color);
-            max-width: 600px;
-            margin: 0 auto;
-            opacity: 0.9;
-        }
-        
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-        
-        .option-card {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 30px;
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            text-align: center;
-        }
-        
-        .option-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px var(--shadow);
-        }
-        
-        .option-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-        
-        .option-card h3 {
-            font-size: 1.5rem;
-            color: var(--primary-dark);
-            margin-bottom: 15px;
-        }
-        
-        .option-card p {
-            color: var(--text-color);
-            opacity: 0.9;
-            flex-grow: 1;
-        }
-        
-        /* FAQ Section */
-        .faq-section {
-            background-color: var(--light-bg);
-        }
-        
-        .faq-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .faq-item {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 15px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-        
-        .faq-item:hover {
-            transform: translateY(-3px);
-        }
-        
-        .faq-question {
-            padding: 20px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s ease;
-            color: var(--text-color);
-        }
-        
-        .faq-question:hover {
-            background-color: var(--light-bg);
-        }
-        
-        .faq-answer {
-            padding: 0 20px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease, padding 0.3s ease;
-            color: var(--text-color);
-            opacity: 0.9;
-        }
-        
-        .faq-answer.active {
-            padding: 0 20px 20px;
-            max-height: 500px;
-        }
-        
-        .faq-answer ul {
-            margin-left: 20px;
-            margin-top: 10px;
-        }
-        
-        .faq-answer li {
-            margin-bottom: 8px;
-            padding-left: 5px;
-        }
-        
-        .faq-toggle {
-            font-size: 1.2rem;
-            transition: transform 0.3s ease;
-            color: var(--primary-color);
-        }
-        
-        .faq-toggle.active {
-            transform: rotate(180deg);
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--footer-bg);
-            color: var(--footer-text);
-            padding: 50px 0 20px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .footer-column h3 {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-light);
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-links a {
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: var(--primary-light);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-        
-        /* Responsive Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: var(--text-color); background-color: var(--light-bg); }
+        a { text-decoration: none; color: inherit; }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .btn { display: inline-block; background-color: var(--primary-color); color: white; padding: 12px 24px; border-radius: 4px; font-weight: 600; transition: all 0.3s ease; border: none; cursor: pointer; text-align: center; }
+        .btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+        .btn-secondary { background-color: var(--secondary-color); }
+        .btn-secondary:hover { background-color: #e68900; }
+        section { padding: 60px 0; }
+        h1, h2, h3, h4 { margin-bottom: 1rem; line-height: 1.2; }
+        .dark-mode-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; gap: 10px; background-color: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 30px; box-shadow: var(--shadow); }
+        .dark-mode-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; color: var(--text-color); }
+        .dark-mode-switch { position: relative; width: 50px; height: 24px; background-color: #ccc; border-radius: 34px; transition: background-color 0.3s; }
+        .dark-mode-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: white; border-radius: 50%; transition: transform 0.3s; }
+        #dark-mode-checkbox:checked + .dark-mode-switch { background-color: var(--primary-color); }
+        #dark-mode-checkbox:checked + .dark-mode-switch::after { transform: translateX(26px); }
+        #dark-mode-checkbox { display: none; }
+        header { background-color: var(--header-bg); box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); }
+        .nav-links { display: flex; list-style: none; }
+        .nav-links li { margin-left: 20px; }
+        .nav-links a { font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover, .nav-links .active { color: var(--primary-color); font-weight: 600; }
+        .hero { background: var(--hero-gradient); color: white; text-align: center; padding: 20px 0; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem; }
+        .support-options { background-color: var(--white); }
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { font-size: 2.2rem; color: var(--primary-dark); }
+        .section-title p { color: var(--text-color); max-width: 600px; margin: 0 auto; opacity: 0.9; }
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .option-card { background-color: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 30px; transition: transform 0.3s ease; display: flex; flex-direction: column; height: 100%; text-align: center; }
+        .option-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px var(--shadow); }
+        .option-icon { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px; }
+        .option-card h3 { font-size: 1.5rem; color: var(--primary-dark); margin-bottom: 15px; }
+        .option-card p { color: var(--text-color); opacity: 0.9; flex-grow: 1; }
+        .faq-section { background-color: var(--light-bg); }
+        .faq-container { max-width: 800px; margin: 0 auto; }
+        .faq-item { background-color: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 15px; overflow: hidden; transition: transform 0.3s ease; }
+        .faq-item:hover { transform: translateY(-3px); }
+        .faq-question { padding: 20px; font-size: 1.1rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.3s ease; color: var(--text-color); }
+        .faq-question:hover { background-color: var(--light-bg); }
+        .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; color: var(--text-color); opacity: 0.9; }
+        .faq-answer.active { padding: 0 20px 20px; max-height: 500px; }
+        .faq-answer ul { margin-left: 20px; margin-top: 10px; }
+        .faq-answer li { margin-bottom: 8px; padding-left: 5px; }
+        .faq-toggle { font-size: 1.2rem; transition: transform 0.3s ease; color: var(--primary-color); }
+        .faq-toggle.active { transform: rotate(180deg); }
+        footer { background-color: var(--footer-bg); color: var(--footer-text); padding: 50px 0 20px; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-bottom: 30px; }
+        .footer-column h3 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--primary-light); }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { transition: color 0.3s ease; }
+        .footer-links a:hover { color: var(--primary-light); }
+        .copyright { text-align: center; padding-top: 20px; border-top: 1px solid #333; font-size: 0.9rem; color: #aaa; }
         @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-            }
-            
-            .nav-links {
-                margin-top: 10px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .nav-links li {
-                margin: 3px 8px;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .dark-mode-toggle {
-                top: 15px;
-                right: 15px;
-                padding: 6px 12px;
-            }
-            
-            .dark-mode-label span {
-                display: none;
-            }
+            .header-container { flex-direction: column; }
+            .nav-links { margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+            .nav-links li { margin: 3px 8px; }
+            .hero h1 { font-size: 2rem; }
+            .dark-mode-toggle { top: 80px; right: 15px; padding: 6px 12px; z-index: 99; }
+            .dark-mode-label span { display: none; }
         }
-        
         @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-            
-            .section-title h2 {
-                font-size: 1.8rem;
-            }
-            
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .option-card {
-                padding: 20px;
-            }
+            .hero h1 { font-size: 1.8rem; }
+            .section-title h2 { font-size: 1.8rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .option-card { padding: 20px; }
+            .dark-mode-toggle { top: 85px; }
         }
     </style>
 </head>
 <body>
-    <!-- Dark Mode Toggle -->
     <div class="dark-mode-toggle">
         <label for="dark-mode-checkbox" class="dark-mode-label">
-            <i class="fas fa-moon"></i>
-            <span>Dark Mode</span>
+            <i class="fas fa-moon"></i><span>Dark Mode</span>
             <input type="checkbox" id="dark-mode-checkbox">
             <div class="dark-mode-switch"></div>
         </label>
     </div>
-
-    <!-- Header -->
     <header>
         <div class="container header-container">
             <a href="index.html" class="logo">DropMyElectronic</a>
@@ -493,22 +115,17 @@
             </ul>
         </div>
     </header>
-
-    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <h1>How Can We Help You?</h1>
             <p>Find answers to common questions, get in touch with our support team, or explore helpful resources for all your e-waste recycling needs.</p>
         </div>
     </section>
-
-    <!-- Support Options Section -->
     <section class="support-options">
         <div class="container">
             <div class="section-title">
                 <h2>Get Support</h2>
             </div>
-            
             <div class="options-grid">
                 <div class="option-card">
                     <div class="option-icon">
@@ -520,7 +137,6 @@
                         <a href="mailto:support@dropmyelectronic.com" class="btn" style="width: 100%;">Email Support</a>
                     </div>
                 </div>
-                
                 <div class="option-card">
                     <div class="option-icon">
                         <i class="fas fa-handshake"></i>
@@ -534,15 +150,12 @@
             </div>
         </div>
     </section>
-
-    <!-- FAQ Section -->
     <section class="faq-section">
         <div class="container">
             <div class="section-title">
                 <h2>Frequently Asked Questions</h2>
                 <p>Quick answers to common questions about our services</p>
             </div>
-            
             <div class="faq-container">
                 <div class="faq-item">
                     <div class="faq-question">
@@ -553,7 +166,6 @@
                         <p>We accept a wide range of electronics including smartphones, tablets, laptops, desktop computers, monitors, printers, televisions, small household appliances, batteries, and cables. For a complete list of accepted items, please visit our Services page.</p>
                     </div>
                 </div>
-                
                 <div class="faq-item">
                     <div class="faq-question">
                         <span>Is there a cost to recycle my electronics?</span>
@@ -563,7 +175,6 @@
                         <p>Most common household electronics can be recycled for free at our partner locations. However, some larger items or specialized equipment may incur a small recycling fee. You can check specific pricing for each location on our map before visiting.</p>
                     </div>
                 </div>
-                
                 <div class="faq-item">
                     <div class="faq-question">
                         <span>How do I prepare my devices for recycling?</span>
@@ -580,7 +191,6 @@
                         For detailed preparation guides for specific device types, check our Resources section.</p>
                     </div>
                 </div>
-                
                 <div class="faq-item">
                     <div class="faq-question">
                         <span>What happens to my electronics after I drop them off?</span>
@@ -590,7 +200,6 @@
                         <p>All electronics collected through our partner centers are processed according to strict environmental standards. Devices are sorted, dismantled, and separated into material types. Working devices may be refurbished and reused, while others are broken down to recover valuable materials like gold, silver, copper, and rare earth metals. Hazardous components are safely disposed of following environmental regulations.</p>
                     </div>
                 </div>
-                
                 <div class="faq-item">
                     <div class="faq-question">
                         <span>How can I become a recycling partner with DropMyElectronic?</span>
@@ -603,8 +212,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -641,58 +248,40 @@
             </div>
         </div>
     </footer>
-
     <script>
-        // FAQ toggle functionality
         document.querySelectorAll('.faq-question').forEach(question => {
             question.addEventListener('click', () => {
                 const answer = question.nextElementSibling;
                 const toggle = question.querySelector('.faq-toggle');
-                
-                // Close all other open FAQs
                 document.querySelectorAll('.faq-answer').forEach(otherAnswer => {
                     if (otherAnswer !== answer && otherAnswer.classList.contains('active')) {
                         otherAnswer.classList.remove('active');
                         otherAnswer.previousElementSibling.querySelector('.faq-toggle').classList.remove('active');
                     }
                 });
-                
-                // Toggle current FAQ
                 answer.classList.toggle('active');
                 toggle.classList.toggle('active');
             });
         });
 
-        // Dark Mode Functionality
         const darkModeToggle = document.getElementById('dark-mode-checkbox');
         const body = document.body;
-        
-        // Check for saved theme preference or system preference
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
         const currentTheme = localStorage.getItem('theme');
         
-        // Function to update icon based on theme
         function updateDarkModeIcon(isDark) {
             const icon = document.querySelector('.dark-mode-label i');
             const label = document.querySelector('.dark-mode-label span');
-            
-            if (isDark) {
-                icon.className = 'fas fa-sun';
-                label.textContent = 'Light Mode';
-            } else {
-                icon.className = 'fas fa-moon';
-                label.textContent = 'Dark Mode';
-            }
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
         }
         
-        // Set initial theme based on localStorage or system preference
         if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
             body.classList.add('dark-mode');
             darkModeToggle.checked = true;
             updateDarkModeIcon(true);
         }
         
-        // Toggle dark mode when checkbox changes
         darkModeToggle.addEventListener('change', function() {
             if (this.checked) {
                 body.classList.add('dark-mode');
@@ -705,9 +294,7 @@
             }
         });
         
-        // Listen for system theme changes
         prefersDarkScheme.addEventListener('change', function(e) {
-            // Only apply system theme if user hasn't set a preference
             if (!localStorage.getItem('theme')) {
                 if (e.matches) {
                     body.classList.add('dark-mode');
