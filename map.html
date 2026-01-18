@@ -56,7 +56,7 @@
         .search-box input { width: 100%; padding: 12px 15px; border: 1px solid var(--text-color); border-radius: 4px; font-size: 1rem; margin-bottom: 15px; background-color: var(--white); color: var(--text-color); }
         .search-actions { display: flex; gap: 10px; flex-wrap: wrap; }
         .search-actions .btn { flex: 1; min-width: 120px; padding: 12px 24px; }
-        .suggested-areas { font-size: 0.85rem; color: var(--text-color); opacity: 0.8; margin-top: 10px; }
+        .results-info { margin: 10px 0; padding: 10px; background-color: var(--light-bg); border-radius: var(--radius); font-size: 0.9rem; }
         .sidebar h3 { color: var(--primary-dark); margin-bottom: 20px; font-size: 1.4rem; }
         .centers-list { flex-grow: 1; overflow-y: auto; }
         .center-card { background-color: var(--white); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease; border-left: 4px solid transparent; }
@@ -65,6 +65,7 @@
         .center-card h4 { color: var(--primary-dark); margin-bottom: 10px; font-size: 1.2rem; }
         .contact-details p { margin-bottom: 8px; display: flex; align-items: flex-start; gap: 8px; }
         .contact-details strong { min-width: 20px; }
+        .distance-badge { display: inline-block; background-color: var(--primary-light); color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; margin-top: 5px; }
         .map-wrapper { background-color: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; height: 100%; }
         #map { height: 100%; width: 100%; }
         .dark-mode .leaflet-layer,
@@ -142,7 +143,7 @@
                         <button class="btn" onclick="searchLocation()">Search Area</button>
                         <button class="btn btn-secondary" onclick="useCurrentLocation()">My Location</button>
                     </div>
-                    <div class="suggested-areas">Examples: CBD, Westlands, Kilimani, Karen, Industrial Area, Lavington, Parklands, Embakasi, Kasarani, Runda, Ngong Road, Thika Road, etc.</div>
+                    <div class="results-info" id="resultsInfo"></div>
                 </div>
                 <h3><i class="fas fa-map-marker-alt"></i> Recycling Centers</h3>
                 <div class="centers-list" id="centerList"></div>
@@ -188,7 +189,6 @@
             {id:4,name:"GreenTech Solutions",lat:-1.2762636825707399,lng:36.8267353691281,address:"Next to Nyayo Market, Ngara, Nairobi.",phone:"0722969219",hours:"Mon-Sat: 9AM-5PM\nSun: Closed",accepts:"Phones, laptops, small electronics"}
         ];
         
-        // Keep popular areas for quick reference
         const popularAreas = {
             'cbd':[-1.286389,36.817223],'westlands':[-1.2659,36.8067],'kilimani':[-1.2950,36.7860],
             'karen':[-1.3159,36.8342],'industrial area':[-1.3083,36.8469],'lavington':[-1.2684,36.7749],
@@ -199,7 +199,7 @@
             'kawangware':[-1.2650,36.7550],'dagoretti':[-1.2900,36.7200]
         };
         
-        let map, userMarker, searchMarker, markers = [], activeCenterId = null;
+        let map, userMarker, searchMarker, markers = [], activeCenterId = null, currentSearchLocation = null;
 
         function initMap() {
             map = L.map('map').setView([-1.286389, 36.817223], 11);
@@ -237,20 +237,59 @@
             
             updateCenterList();
             
-            // Allow Enter key to trigger search
             document.getElementById('locationSearch').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') searchLocation();
             });
         }
 
-        function updateCenterList() {
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in kilometers
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function updateCenterList(filteredCenters = null, searchLocation = null) {
             const centerList = document.getElementById('centerList');
-            centerList.innerHTML = centers.map((center,i) => `<div class="center-card" style="animation-delay:${i*0.1}s" onclick="focusOnCenter(${center.id});setActiveCenter(${center.id})">
-                <h4>${center.name}</h4><div class="contact-details">
-                <p><strong><i class="fas fa-map-marker-alt"></i></strong> ${center.address}</p>
-                <p><strong><i class="fas fa-phone"></i></strong> ${center.phone}</p>
-                <p><strong><i class="fas fa-clock"></i></strong> ${center.hours}</p>
-                <p><strong><i class="fas fa-check-circle"></i></strong> ${center.accepts}</p></div></div>`).join('');
+            const resultsInfo = document.getElementById('resultsInfo');
+            
+            let centersToShow = filteredCenters || centers;
+            
+            if (searchLocation && centersToShow.length > 0) {
+                // Sort centers by distance from search location
+                centersToShow = centersToShow.map(center => {
+                    const distance = calculateDistance(
+                        searchLocation.lat, searchLocation.lng,
+                        center.lat, center.lng
+                    );
+                    return { ...center, distance: distance };
+                }).sort((a, b) => a.distance - b.distance);
+                
+                // Show results info
+                resultsInfo.innerHTML = `<strong>${centersToShow.length} recycling center${centersToShow.length !== 1 ? 's' : ''} found near your search</strong>`;
+                resultsInfo.style.display = 'block';
+            } else if (searchLocation && centersToShow.length === 0) {
+                resultsInfo.innerHTML = `<strong>No recycling centers found near your search. Showing all centers.</strong>`;
+                resultsInfo.style.display = 'block';
+                centersToShow = centers;
+            } else {
+                resultsInfo.style.display = 'none';
+            }
+            
+            centerList.innerHTML = centersToShow.map((center,i) => {
+                const distanceText = center.distance ? 
+                    `<div class="distance-badge">${center.distance.toFixed(1)} km away</div>` : '';
+                return `<div class="center-card" style="animation-delay:${i*0.1}s" onclick="focusOnCenter(${center.id});setActiveCenter(${center.id})">
+                    <h4>${center.name}</h4>${distanceText}<div class="contact-details">
+                    <p><strong><i class="fas fa-map-marker-alt"></i></strong> ${center.address}</p>
+                    <p><strong><i class="fas fa-phone"></i></strong> ${center.phone}</p>
+                    <p><strong><i class="fas fa-clock"></i></strong> ${center.hours}</p>
+                    <p><strong><i class="fas fa-check-circle"></i></strong> ${center.accepts}</p></div></div>`;
+            }).join('');
         }
 
         function setActiveCenter(centerId) {
@@ -271,6 +310,13 @@
             }
         }
 
+        function findNearbyCenters(searchLat, searchLng, radiusKm = 10) {
+            return centers.filter(center => {
+                const distance = calculateDistance(searchLat, searchLng, center.lat, center.lng);
+                return distance <= radiusKm;
+            });
+        }
+
         function searchLocation() {
             const searchInput = document.getElementById('locationSearch');
             const searchTerm = searchInput.value.trim();
@@ -280,16 +326,19 @@
                 return; 
             }
             
-            // Check if it's a popular area first (quick lookup)
             const areaKey = searchTerm.toLowerCase();
+            let searchLat, searchLng, locationName;
+            
+            // Check popular areas first
             if (popularAreas[areaKey]) {
-                map.setView(popularAreas[areaKey], 14);
-                addSearchMarker(popularAreas[areaKey][0], popularAreas[areaKey][1], searchTerm);
-                searchInput.value = '';
+                searchLat = popularAreas[areaKey][0];
+                searchLng = popularAreas[areaKey][1];
+                locationName = searchTerm;
+                handleSearchResult(searchLat, searchLng, locationName, searchTerm);
                 return;
             }
             
-            // Use OpenStreetMap Nominatim API for geocoding
+            // Use OpenStreetMap API for other locations
             const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchTerm + ', Nairobi, Kenya')}&limit=1`;
             
             const btn = event?.target || document.querySelector('.btn[onclick="searchLocation()"]');
@@ -301,23 +350,23 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.length > 0) {
-                        const lat = parseFloat(data[0].lat);
-                        const lon = parseFloat(data[0].lon);
+                        searchLat = parseFloat(data[0].lat);
+                        searchLng = parseFloat(data[0].lon);
+                        locationName = data[0].display_name;
                         
-                        // Check if location is within Nairobi bounds
-                        const isInNairobi = lat >= -1.55 && lat <= -1.05 && lon >= 36.65 && lon <= 37.05;
+                        const isInNairobi = searchLat >= -1.55 && searchLat <= -1.05 && searchLng >= 36.65 && searchLng <= 37.05;
                         
                         if (isInNairobi) {
-                            map.setView([lat, lon], 14);
-                            addSearchMarker(lat, lon, data[0].display_name);
-                            searchInput.value = '';
+                            handleSearchResult(searchLat, searchLng, locationName, searchTerm);
                         } else {
                             alert('The location found appears to be outside Nairobi. Please try a more specific Nairobi location.');
                             map.setView([-1.286389, 36.817223], 11);
+                            updateCenterList(); // Reset to show all centers
                         }
                     } else {
-                        alert('Location not found. Please try a different search term or be more specific (e.g., "CBD Nairobi", "Westlands Nairobi").');
+                        alert('Location not found. Please try a different search term.');
                         map.setView([-1.286389, 36.817223], 11);
+                        updateCenterList(); // Reset to show all centers
                     }
                 })
                 .catch(error => {
@@ -331,8 +380,29 @@
                 });
         }
 
+        function handleSearchResult(searchLat, searchLng, locationName, searchTerm) {
+            currentSearchLocation = { lat: searchLat, lng: searchLng };
+            
+            // Move map to searched location
+            map.setView([searchLat, searchLng], 14);
+            
+            // Add search marker
+            addSearchMarker(searchLat, searchLng, locationName);
+            
+            // Find nearby recycling centers (within 10km)
+            const nearbyCenters = findNearbyCenters(searchLat, searchLng, 10);
+            
+            // Update the list to show only nearby centers
+            updateCenterList(nearbyCenters, currentSearchLocation);
+            
+            // Clear search input
+            document.getElementById('locationSearch').value = '';
+            
+            // Highlight nearby centers on the map
+            highlightNearbyCenters(nearbyCenters);
+        }
+
         function addSearchMarker(lat, lng, name) {
-            // Remove previous search marker
             if (searchMarker) {
                 map.removeLayer(searchMarker);
             }
@@ -350,6 +420,27 @@
                 .openPopup();
         }
 
+        function highlightNearbyCenters(nearbyCenters) {
+            // Reset all markers to default color
+            markers.forEach(markerObj => {
+                const marker = markerObj.marker;
+                const icon = marker.getIcon();
+                icon.options.html = '<i class="fas fa-recycle" style="color: #2e7d32; font-size: 24px;"></i>';
+                marker.setIcon(icon);
+            });
+            
+            // Highlight nearby centers
+            nearbyCenters.forEach(center => {
+                const markerObj = markers.find(m => m.centerId === center.id);
+                if (markerObj) {
+                    const marker = markerObj.marker;
+                    const icon = marker.getIcon();
+                    icon.options.html = '<i class="fas fa-recycle" style="color: #ff9800; font-size: 28px;"></i>';
+                    marker.setIcon(icon);
+                }
+            });
+        }
+
         function useCurrentLocation() {
             if (!navigator.geolocation) { 
                 alert('Geolocation not supported by your browser.'); 
@@ -363,7 +454,9 @@
                     const lat = position.coords.latitude, lng = position.coords.longitude;
                     const isInNairobi = lat >= -1.55 && lat <= -1.05 && lng >= 36.65 && lng <= 37.05;
                     if (isInNairobi) {
+                        currentSearchLocation = { lat: lat, lng: lng };
                         map.setView([lat, lng], 14);
+                        
                         const userIcon = L.divIcon({
                             html: '<i class="fas fa-user" style="color: #ff9800; font-size: 24px;"></i>',
                             className: 'user-marker',
@@ -378,10 +471,17 @@
                                 .bindPopup('Your Current Location')
                                 .openPopup();
                         }
+                        
+                        // Find nearby recycling centers
+                        const nearbyCenters = findNearbyCenters(lat, lng, 10);
+                        updateCenterList(nearbyCenters, currentSearchLocation);
+                        highlightNearbyCenters(nearbyCenters);
+                        
                         btn.textContent = 'Location Found!';
                     } else {
                         alert('You appear to be outside Nairobi. Centering on Nairobi CBD.');
                         map.setView([-1.286389, 36.817223], 11);
+                        updateCenterList(); // Reset to show all centers
                         btn.textContent = originalText;
                     }
                     setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
