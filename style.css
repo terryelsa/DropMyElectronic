@@ -1,0 +1,313 @@
+/* Animated Background with Dark Mode Support */
+.animated-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+}
+
+/* Light mode animated background */
+.animated-bg {
+    background: linear-gradient(-45deg, #e8f5e9, #c8e6c9, #a5d6a7, #81c784);
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite;
+}
+
+/* Dark mode animated background */
+.dark-mode .animated-bg {
+    background: linear-gradient(-45deg, #1b5e20, #2e7d32, #388e3c, #43a047);
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite;
+}
+
+.animated-bg::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 2px, transparent 0),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 1px, transparent 0);
+    background-size: 400px 400px, 300px 300px;
+    animation: float 30s linear infinite;
+}
+
+.dark-mode .animated-bg::before {
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 2px, transparent 0),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 1px, transparent 0);
+}
+
+/* Animations */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+    100% { background-position: 400px 400px, 300px 300px; }
+}
+
+@keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+    50% { box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6); }
+}
+
+@keyframes celebrate {
+    50% { transform: scale(1.1); }
+}
+
+@keyframes shake {
+    25%, 75% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+}
+
+/* Utility Classes */
+.fade-in-up { 
+    opacity: 0; 
+    transform: translateY(30px); 
+    animation: fadeInUp 0.8s ease forwards; 
+}
+
+.slide-in-right { 
+    opacity: 0; 
+    transform: translateX(50px); 
+    animation: slideInRight 0.8s ease 0.4s forwards; 
+}
+
+.slide-in-left { 
+    opacity: 0; 
+    transform: translateX(-50px); 
+    animation: slideInLeft 0.8s ease 0.6s forwards; 
+}
+
+.delay-1 { animation-delay: 0.3s; } 
+.delay-2 { animation-delay: 0.6s; } 
+.delay-3 { animation-delay: 0.9s; }
+
+/* Enhanced Cards with Dark Mode */
+.stat-card {
+    background: var(--hero-gradient);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+.dark-mode .stat-card {
+    background: linear-gradient(135deg, #1b5e20, #2e7d32);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.stat-card:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 15px 35px rgba(76, 175, 80, 0.4); 
+}
+
+.dark-mode .stat-card:hover {
+    box-shadow: 0 15px 35px rgba(27, 94, 32, 0.6);
+}
+
+/* Enhanced Info Cards */
+.info-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--primary-color);
+    text-align: left;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px var(--shadow);
+}
+
+.info-card h4 { 
+    color: var(--primary-dark); 
+    margin-bottom: 15px; 
+    font-size: 1.3em; 
+}
+
+/* Enhanced Buttons with Animation */
+.btn-pulse {
+    animation: pulse 2s infinite;
+}
+
+.cta-btn.large { 
+    padding: 18px 45px; 
+    font-size: 1.3em; 
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-btn.large::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.1)
+    );
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
+}
+
+.cta-btn.large:hover::after {
+    left: 50%;
+    top: 50%;
+}
+
+/* Enhanced Quiz Options */
+.option-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.option-btn:hover::before {
+    left: 100%;
+}
+
+.option-btn.correct {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    animation: celebrate 0.6s ease;
+}
+
+.option-btn.incorrect {
+    background: linear-gradient(135deg, #f44336, #da190b);
+    animation: shake 0.5s ease;
+}
+
+/* Enhanced Map Cards */
+.center-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: left;
+}
+
+.center-card:hover { 
+    transform: translateX(5px); 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
+}
+
+.center-card.active { 
+    border-left: 4px solid var(--success); 
+    background: linear-gradient(135deg, var(--light-bg), var(--white));
+}
+
+.dark-mode .center-card.active {
+    background: linear-gradient(135deg, #1b5e20, #2e7d32);
+}
+
+/* Enhanced Progress Bars */
+.progress-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.progress-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Loading Animation */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--light-bg);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Floating Animation for Icons */
+.floating-icon {
+    animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+    .fade-in-up, .slide-in-right, .slide-in-left {
+        animation-duration: 0.6s;
+    }
+    
+    .stat-card, .info-card, .center-card {
+        padding: 20px;
+    }
+    
+    .btn-pulse {
+        animation-duration: 1.5s;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .animated-bg, .btn-pulse, .floating-icon,
+    .fade-in-up, .slide-in-right, .slide-in-left {
+        animation: none !important;
+        display: none !important;
+    }
+    
+    .stat-card, .info-card, .center-card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+}
