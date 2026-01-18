@@ -13,14 +13,16 @@
     <meta property="og:description" content="Find local e-waste drop-off points and learn proper electronics recycling. Join the movement for a cleaner, sustainable world.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://dropmyelectronic.com">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80">
+    <!-- Updated to electronics image -->
+    <meta property="og:image" content="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80">
     <meta property="og:site_name" content="DropMyElectronic">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="DropMyElectronic - E-Waste Recycling Made Easy">
     <meta name="twitter:description" content="Find local e-waste drop-off points and learn proper electronics recycling.">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80">
+    <!-- Updated to electronics image -->
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://dropmyelectronic.com">
@@ -62,8 +64,8 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Preload critical assets -->
-    <link rel="preload" href="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1473&q=80" as="image">
+    <!-- Preload critical assets - Updated to electronics image -->
+    <link rel="preload" href="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1473&q=80" as="image">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     
     <style>
@@ -114,7 +116,8 @@
         .cta { padding: 40px 0; }
         .hero::before, .cta::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1473&q=80') center/cover;
+            /* Updated to electronics recycling image */
+            background: url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1473&q=80') center/cover;
             opacity: 0.15;
         }
         .hero::before { animation: slowZoom 20s infinite alternate; }
@@ -180,9 +183,19 @@
             height: 150px; background-size: cover; background-position: center; border-radius: var(--radius) var(--radius) 0 0;
             margin: -30px -30px 20px -30px;
         }
-        #why-recycle .info-image { background-image: url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1473&q=80'); }
-        #where-recycle .info-image { background-image: url('https://images.unsplash.com/photo-1587143185765-324ab2e88bd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1473&q=80'); }
-        #how-prep .info-image { background-image: url('https://images.unsplash.com/photo-1557261676-71423264b6f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80'); }
+        /* Updated all info-card images to electronics-themed ones */
+        #why-recycle .info-image { 
+            background-image: url('https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80');
+            background-position: center 30%;
+        }
+        #where-recycle .info-image { 
+            background-image: url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80');
+            background-position: center center;
+        }
+        #how-prep .info-image { 
+            background-image: url('https://images.unsplash.com/photo-1518432031355-d5c74a41efb5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80');
+            background-position: center center;
+        }
         
         /* Footer */
         footer { background-color: var(--footer-bg); color: var(--footer-text); padding: 50px 0 20px; }
@@ -334,7 +347,7 @@
                 </div>
                 <div class="info-grid">
                     <article class="info-card scroll-animate" id="why-recycle">
-                        <div class="info-image" role="img" aria-label="Electronic waste recycling concept"></div>
+                        <div class="info-image" role="img" aria-label="Circuit boards and electronic components being recycled"></div>
                         <h4><i class="fas fa-question-circle" aria-hidden="true"></i> Why recycle your electronics?</h4>
                         <ul>
                             <li>Learn how recycling electronics helps the planet</li>
@@ -344,7 +357,7 @@
                         </ul>
                     </article>
                     <article class="info-card scroll-animate" id="where-recycle">
-                        <div class="info-image" role="img" aria-label="Map showing recycling locations"></div>
+                        <div class="info-image" role="img" aria-label="E-waste recycling facility with sorted electronics"></div>
                         <h4><i class="fas fa-map-marked-alt" aria-hidden="true"></i> Where to recycle near you</h4>
                         <ul>
                             <li>Quickly find trusted drop-off locations</li>
@@ -354,7 +367,7 @@
                         </ul>
                     </article>
                     <article class="info-card scroll-animate" id="how-prep">
-                        <div class="info-image" role="img" aria-label="Preparing devices for recycling"></div>
+                        <div class="info-image" role="img" aria-label="Person preparing electronics for recycling"></div>
                         <h4><i class="fas fa-tools" aria-hidden="true"></i> How to prep your devices</h4>
                         <ul>
                             <li>Follow easy tips to wipe your data</li>
