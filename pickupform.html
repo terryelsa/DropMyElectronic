@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DropMyElectronic ♻️ - Eco-Friendly Recycling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .location-status {
+            background: #f0f9ff;
+            border: 2px solid #bae6fd;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .location-dot {
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(34,197,94,0); }
+            100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .recycler-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 6px solid #667eea;
+        }
+
+        .recycler-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .recycler-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .recycler-badge {
+            background: #22c55e;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .recycler-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 0.75em;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .confirmation {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .checkmark {
+            font-size: 64px;
+            color: #22c55e;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .fallback-option {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #e0e0e0;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f2ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>♻️ DropMyElectronic</h1>
+            <div class="badge">✅ Option 1: Auto-Routing by Location (MVP)</div>
+            <p style="margin-top: 15px; opacity: 0.9;">We automatically find the best recycler near you</p>
+        </div>
+
+        <div id="app">
+            <!-- Universal Pickup Form -->
+            <div id="step1" class="card">
+                <h2 style="margin-bottom: 25px; color: #333;">Schedule Your Pickup</h2>
+                
+                <div id="locationError" class="error-message hidden">
+                    ⚠️ Unable to detect location. Please enter your address manually.
+                </div>
+
+                <form id="pickupForm">
+                    <!-- Item Type -->
+                    <div class="form-group">
+                        <label>📱 What do you want to recycle?</label>
+                        <select id="itemType" required>
+                            <option value="">Select item type</option>
+                            <option value="laptop">💻 Laptop - €15</option>
+                            <option value="smartphone">📱 Smartphone - €8</option>
+                            <option value="tablet">📟 Tablet - €12</option>
+                            <option value="monitor">🖥️ Monitor - €20</option>
+                            <option value="printer">🖨️ Printer - €18</option>
+                            <option value="tv">📺 TV - €25</option>
+                            <option value="other">🔧 Other Electronics - €10</option>
+                        </select>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="form-group">
+                        <label>🔢 Quantity</label>
+                        <input type="number" id="quantity" min="1" value="1" required>
+                    </div>
+
+                    <!-- Auto Location Detection -->
+                    <div class="form-group">
+                        <label>📍 Your Location</label>
+                        <div id="locationDisplay" class="location-status">
+                            <span class="location-dot"></span>
+                            <span id="locationText">Detecting your location...</span>
+                        </div>
+                        <button type="button" id="retryLocation" class="btn-secondary" style="margin-top: 10px; padding: 8px; font-size: 14px;">
+                            🔄 Refresh location
+                        </button>
+                    </div>
+
+                    <!-- Manual Location Entry (Hidden by default) -->
+                    <div id="manualLocation" class="hidden">
+                        <div class="form-group">
+                            <label>🏠 Street Address</label>
+                            <input type="text" id="address" placeholder="Street address">
+                        </div>
+                        <div class="form-group" style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px;">
+                            <input type="text" id="postalCode" placeholder="Postal code">
+                            <input type="text" id="city" placeholder="City">
+                        </div>
+                    </div>
+
+                    <!-- Schedule -->
+                    <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label>📅 Date</label>
+                            <input type="date" id="pickupDate" required>
+                        </div>
+                        <div>
+                            <label>⏰ Time</label>
+                            <select id="pickupTime" required>
+                                <option value="">Select time</option>
+                                <option value="morning">Morning (9AM - 12PM)</option>
+                                <option value="afternoon">Afternoon (12PM - 5PM)</option>
+                                <option value="evening">Evening (5PM - 8PM)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label>📝 Additional Notes (Optional)</label>
+                        <textarea id="notes" rows="3" placeholder="Special instructions, building access, etc."></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn">
+                        <span id="btnText">🔍 Find Best Recycler & Schedule</span>
+                        <span id="btnLoading" class="loading hidden">
+                            <span class="spinner"></span> Finding best recycler...
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Auto-Assigned Recycler Results -->
+            <div id="step2" class="card hidden">
+                <div class="confirmation">
+                    <div class="checkmark">✅</div>
+                    <h2 style="color: #333; margin-bottom: 15px;">Best Recycler Found!</h2>
+                    <p style="color: #666; margin-bottom: 25px;">We've automatically routed your pickup to the most suitable recycler</p>
+                    
+                    <div id="assignedRecycler" class="recycler-card">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+
+                    <div style="margin-top: 30px; display: flex; gap: 15px;">
+                        <button onclick="confirmPickup()" class="btn" style="flex: 2;">
+                            ✅ Confirm Pickup
+                        </button>
+                        <button onclick="resetForm()" class="btn-secondary" style="flex: 1;">
+                            ↩️ Edit
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Confirmation -->
+            <div id="step3" class="card hidden">
+                <div class="confirmation">
+                    <div class="checkmark">🎉</div>
+                    <h2 style="color: #333; margin-bottom: 15px;">Pickup Confirmed!</h2>
+                    <p style="color: #666; margin-bottom: 10px;">Your pickup has been scheduled</p>
+                    <div style="background: #f0fdf4; padding: 20px; border-radius: 16px; margin: 20px 0;">
+                        <p style="font-size: 1.2em; font-weight: 600; color: #166534;">📋 Confirmation #DME-2024-{Math.floor(Math.random() * 10000)}</p>
+                        <p style="margin-top: 10px;">We'll send you SMS/email updates</p>
+                    </div>
+                    <button onclick="resetToStart()" class="btn" style="margin-top: 20px;">
+                        Schedule Another Pickup
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recycler Dashboard (Hidden by default, shows all available recyclers) -->
+            <div id="recyclerDashboard" class="card" style="margin-top: 20px;">
+                <h3 style="margin-bottom: 20px; color: #333;">🏭 Available Recyclers in Your Area</h3>
+                <div id="recyclerList">
+                    <!-- Will be populated dynamically -->
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: #666; font-size: 0.9em;">
+                    ⚡ Auto-routing selects the best match based on distance, workload, and specialization
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock Database - Recyclers with their coverage areas
+        const recyclers = [
+            {
+                id: 1,
+                name: "EcoTech Recyclers",
+                rating: 4.8,
+                distance: 2.3,
+                price: { laptop: 15, smartphone: 8, tablet: 12, monitor: 20, printer: 18, tv: 25, other: 10 },
+                coverage: ["1000", "2000", "3000"], // Postal code prefixes
+                city: "Brussels",
+                workload: 3,
+                specialization: ["laptop", "smartphone", "tablet"],
+                responseTime: "2-4 hours"
+            },
+            {
+                id: 2,
+                name: "GreenCycle Center",
+                rating: 4.6,
+                distance: 5.1,
+                price: { laptop: 14, smartphone: 7, tablet: 11, monitor: 18, printer: 16, tv: 22, other: 9 },
+                coverage: ["1000", "4000", "5000"],
+                city: "Brussels",
+                workload: 1,
+                specialization: ["monitor", "printer", "tv"],
+                responseTime: "4-6 hours"
+            },
+            {
+                id: 3,
+                name: "Circuit Reclaim",
+                rating: 4.9,
+                distance: 3.7,
+                price: { laptop: 16, smartphone: 9, tablet: 13, monitor: 22, printer: 20, tv: 28, other: 12 },
+                coverage: ["2000", "3000", "6000"],
+                city: "Antwerp",
+                workload: 2,
+                specialization: ["laptop", "monitor", "tv"],
+                responseTime: "1-3 hours"
+            },
+            {
+                id: 4,
+                name: "Battery & Beyond",
+                rating: 4.7,
+                distance: 1.8,
+                price: { laptop: 13, smartphone: 6, tablet: 10, monitor: 19, printer: 17, tv: 24, other: 8 },
+                coverage: ["1000", "2000", "7000"],
+                city: "Brussels",
+                workload: 5,
+                specialization: ["smartphone", "tablet", "other"],
+                responseTime: "3-5 hours"
+            }
+        ];
+
+        // User location state
+        let userLocation = {
+            detected: false,
+            lat: null,
+            lng: null,
+            postalCode: "1000", // Default for demo
+            city: "Brussels"
+        };
+
+        // Current selected recycler
+        let selectedRecycler = null;
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            detectLocation();
+            setMinDate();
+            displayRecyclerDashboard();
+        });
+
+        // Set minimum date to today
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('pickupDate').min = today;
+            document.getElementById('pickupDate').value = today;
+        }
+
+        // Detect user location
+        function detectLocation() {
+            const locationText = document.getElementById('locationText');
+            const locationError = document.getElementById('locationError');
+            const manualLocation = document.getElementById('manualLocation');
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        // Success - location detected
+                        userLocation.detected = true;
+                        userLocation.lat = position.coords.latitude;
+                        userLocation.lng = position.coords.longitude;
+                        
+                        // Simulate reverse geocoding (in real app, use Google Maps API)
+                        userLocation.postalCode = "1000";
+                        userLocation.city = "Brussels";
+                        
+                        locationText.innerHTML = `📍 ${userLocation.city} (${userLocation.postalCode}) - Auto-detected`;
+                        locationError.classList.add('hidden');
+                        manualLocation.classList.add('hidden');
+                        
+                        // Refresh recycler dashboard with new location
+                        displayRecyclerDashboard();
+                    },
+                    function(error) {
+                        // Error - show manual entry
+                        userLocation.detected = false;
+                        locationText.innerHTML = "❌ Location detection failed";
+                        locationError.classList.remove('hidden');
+                        manualLocation.classList.remove('hidden');
+                    }
+                );
+            } else {
+                locationText.innerHTML = "❌ Geolocation not supported";
+                locationError.classList.remove('hidden');
+                manualLocation.classList.remove('hidden');
+            }
+        }
+
+        // Retry location detection
+        document.getElementById('retryLocation').addEventListener('click', function() {
+            detectLocation();
+        });
+
+        // Auto-Routing Algorithm
+        function findBestRecycler(itemType, quantity) {
+            // Filter recyclers that accept this item type
+            const eligibleRecyclers = recyclers.filter(r => 
+                r.specialization.includes(itemType) || r.specialization.includes('other')
+            );
+
+            // Score each recycler
+            const scoredRecyclers = eligibleRecyclers.map(recycler => {
+                let score = 0;
+                
+                // Distance score (0-40 points) - closer = higher score
+                const distanceScore = Math.max(0, 40 - (recycler.distance * 2));
+                
+                // Coverage score (0-30 points)
+                let coverageScore = 0;
+                if (recycler.coverage.includes(userLocation.postalCode)) {
+                    coverageScore = 30; // Direct coverage
+                } else if (recycler.distance < 10) {
+                    coverageScore = 20; // Within reasonable distance
+                } else {
+                    coverageScore = 10; // Default
+                }
+
+                // Workload score (0-20 points) - lower workload = higher score
+                const workloadScore = Math.max(0, 20 - (recycler.workload * 3));
+
+                // Specialization score (0-10 points)
+                let specializationScore = 0;
+                if (recycler.specialization.includes(itemType)) {
+                    specializationScore = 10; // Specialized in this item
+                } else if (recycler.specialization.includes('other')) {
+                    specializationScore = 5; // Generalist
+                }
+
+                // Rating bonus
+                const ratingBonus = (recycler.rating - 4) * 5;
+
+                score = distanceScore + coverageScore + workloadScore + specializationScore + ratingBonus;
+
+                return {
+                    ...recycler,
+                    score,
+                    totalPrice: recycler.price[itemType] * quantity,
+                    distanceScore,
+                    coverageScore,
+                    workloadScore,
+                    specializationScore
+                };
+            });
+
+            // Sort by score and return best match
+            scoredRecyclers.sort((a, b) => b.score - a.score);
+            return scoredRecyclers[0];
+        }
+
+        // Handle form submission
+        document.getElementById('pickupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const itemType = document.getElementById('itemType').value;
+            const quantity = document.getElementById('quantity').value;
+            
+            if (!itemType) {
+                alert('Please select an item type');
+                return;
+            }
+
+            if (!userLocation.detected) {
+                // Use manual location if entered
+                const postalCode = document.getElementById('postalCode').value;
+                const city = document.getElementById('city').value;
+                
+                if (!postalCode || !city) {
+                    alert('Please enter your location manually');
+                    return;
+                }
+                
+                userLocation.postalCode = postalCode;
+                userLocation.city = city;
+            }
+
+            // Show loading state
+            document.getElementById('btnText').classList.add('hidden');
+            document.getElementById('btnLoading').classList.remove('hidden');
+            document.getElementById('submitBtn').disabled = true;
+
+            // Simulate API call delay
+            setTimeout(() => {
+                // Auto-route to best recycler
+                selectedRecycler = findBestRecycler(itemType, parseInt(quantity));
+                
+                // Hide loading
+                document.getElementById('btnText').classList.remove('hidden');
+                document.getElementById('btnLoading').classList.add('hidden');
+                document.getElementById('submitBtn').disabled = false;
+                
+                // Show the assigned recycler
+                showAssignedRecycler(selectedRecycler, itemType, quantity);
+            }, 1500);
+        });
+
+        // Show assigned recycler
+        function showAssignedRecycler(recycler, itemType, quantity) {
+            const assignedDiv = document.getElementById('assignedRecycler');
+            const itemNames = {
+                laptop: '💻 Laptop',
+                smartphone: '📱 Smartphone',
+                tablet: '📟 Tablet',
+                monitor: '🖥️ Monitor',
+                printer: '🖨️ Printer',
+                tv: '📺 TV',
+                other: '🔧 Other'
+            };
+
+            assignedDiv.innerHTML = `
+                <div class="recycler-header">
+                    <span class="recycler-name">🏭 ${recycler.name}</span>
+                    <span class="recycler-badge">⭐ ${recycler.rating}</span>
+                </div>
+                <p style="color: #4b5563; margin-bottom: 15px;">
+                    ✓ Automatically assigned based on your location and item type
+                </p>
+                <div class="recycler-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Distance</div>
+                        <div class="detail-value">${recycler.distance} km</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Response Time</div>
+                        <div class="detail-value">${recycler.responseTime}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Price</div>
+                        <div class="detail-value">€${recycler.totalPrice}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
+                    <p style="font-size: 0.9em; color: #059669;">
+                        <strong>🏆 Match Score:</strong> ${Math.round(recycler.score)}% • Best match from ${recyclers.length} recyclers
+                    </p>
+                    <p style="font-size: 0.8em; color: #6b7280; margin-top: 5px;">
+                        📍 Service area: ${recycler.city} • Coverage: ${recycler.coverage.join(', ')}*
+                    </p>
+                </div>
+            `;
+
+            // Store pickup details for confirmation
+            sessionStorage.setItem('currentPickup', JSON.stringify({
+                recycler: recycler,
+                itemType: itemNames[itemType],
+                quantity: quantity,
+                date: document.getElementById('pickupDate').value,
+                time: document.getElementById('pickupTime').value,
+                notes: document.getElementById('notes').value,
+                location: userLocation
+            }));
+
+            // Switch to step 2
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        // Confirm pickup
+        function confirmPickup() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+            
+            // Here you would typically send data to your backend
+            console.log('Pickup confirmed:', sessionStorage.getItem('currentPickup'));
+        }
+
+        // Reset to step 1 (edit mode)
+        function resetForm() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+        }
+
+        // Reset to start
+        function resetToStart() {
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            sessionStorage.removeItem('currentPickup');
+        }
+
+        // Display recycler dashboard
+        function displayRecyclerDashboard() {
+            const recyclerList = document.getElementById('recyclerList');
+            
+            // Sort by distance
+            const sortedRecyclers = [...recyclers].sort((a, b) => a.distance - b.distance);
+            
+            recyclerList.innerHTML = sortedRecyclers.map(recycler => `
+                <div class="recycler-card" style="margin-bottom: 15px; ${recycler.coverage.includes(userLocation.postalCode) ? 'border-left-color: #22c55e;' : ''}">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <h4 style="font-weight: 700; margin-bottom: 5px;">${recycler.name}</h4>
+                            <p style="font-size: 0.9em; color: #6b7280;">
+                                ⭐ ${recycler.rating} • 📍 ${recycler.distance} km • ⚡ ${recycler.workload} active pickups
+                            </p>
+                        </div>
+                        ${recycler.coverage.includes(userLocation.postalCode) ? 
+                            '<span style="background: #22c55e; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75em;">✓ In your area</span>' : 
+                            ''}
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        ${recycler.specialization.map(s => 
+                            `<span style="background: #f3f4f6; padding: 4px 8px; border-radius: 12px; font-size: 0.75em;">🔧 ${s}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update dashboard when manual location is entered
+        document.getElementById('postalCode').addEventListener('change', function() {
+            userLocation.postalCode = this.value;
+            displayRecyclerDashboard();
+        });
+
+        document.getElementById('city').addEventListener('change', function() {
+            userLocation.city = this.value;
+            displayRecyclerDashboard();
+        });
+    </script>
+</body>
+</html>
