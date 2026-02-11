@@ -82,6 +82,7 @@
             align-items: center;
             gap: 8px;
             font-weight: 500;
+            margin-bottom: 10px;
         }
         
         .card {
@@ -382,6 +383,23 @@
             display: none;
         }
         
+        /* Manual location entry always visible */
+        .manual-location-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,152,0,0.05);
+            border-radius: 12px;
+            border: 1px dashed var(--secondary-color);
+        }
+        
+        .manual-location-section h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -427,7 +445,7 @@
         
         <!-- Step 1: Pickup Form -->
         <div id="step1" class="card">
-            <div class="badge">✅ Auto-Routing by Location (MVP)</div>
+            <div class="badge">✅ Auto-Routing by Location</div>
             <h1>Schedule Your E-Waste Pickup</h1>
             <p class="subtitle">We'll automatically find the best certified recycler near you.</p>
             
@@ -455,30 +473,37 @@
                     </div>
                 </div>
                 
-                <!-- Location Detection -->
+                <!-- Location Detection Status -->
                 <div class="form-group">
-                    <label>📍 Your Location</label>
+                    <label>📍 Auto-Detected Location</label>
                     <div id="locationDisplay" class="location-status">
                         <span class="location-dot"></span>
                         <span id="locationText">Detecting your location...</span>
                     </div>
                     <button type="button" id="retryLocation" class="btn btn-small" style="margin-top: 10px; background: var(--secondary-color);">
-                        🔄 Refresh location
+                        🔄 Retry Auto-Detection
                     </button>
                 </div>
                 
-                <!-- Manual Location Fallback -->
-                <div id="manualLocation" class="hidden">
+                <!-- Manual Location Entry - ALWAYS VISIBLE -->
+                <div class="manual-location-section">
+                    <h4>
+                        <i class="fas fa-pencil-alt"></i>
+                        Or Enter Location Manually
+                    </h4>
                     <div class="form-row">
                         <div class="form-group">
                             <label>📮 Postal Code</label>
-                            <input type="text" id="postalCode" placeholder="e.g., 100">
+                            <input type="text" id="postalCode" placeholder="e.g., 100" value="100">
                         </div>
                         <div class="form-group">
                             <label>🏙️ City</label>
-                            <input type="text" id="city" placeholder="e.g., Nairobi">
+                            <input type="text" id="city" placeholder="e.g., Nairobi" value="Nairobi">
                         </div>
                     </div>
+                    <p style="font-size: 0.8rem; color: #6b7280; margin-top: 5px;">
+                        <i class="fas fa-info-circle"></i> Manual location will be used if auto-detection fails
+                    </p>
                 </div>
                 
                 <!-- Schedule -->
@@ -665,11 +690,24 @@
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            // Set default manual location values
+            document.getElementById('postalCode').value = "100";
+            document.getElementById('city').value = "Nairobi";
+            
             detectLocation();
             setMinDate();
             
             document.getElementById('pickupForm').addEventListener('submit', handleSubmit);
             document.getElementById('retryLocation').addEventListener('click', detectLocation);
+            
+            // Listen for manual location changes
+            document.getElementById('postalCode').addEventListener('input', function() {
+                userLocation.postalCode = this.value || "100";
+            });
+            
+            document.getElementById('city').addEventListener('input', function() {
+                userLocation.city = this.value || "Nairobi";
+            });
         });
         
         function setMinDate() {
@@ -682,7 +720,6 @@
         function detectLocation() {
             const locationText = document.getElementById('locationText');
             const locationDisplay = document.getElementById('locationDisplay');
-            const manualLocation = document.getElementById('manualLocation');
             
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -695,18 +732,24 @@
                         
                         locationText.innerHTML = `📍 ${userLocation.city} (${userLocation.postalCode}) - Auto-detected`;
                         locationDisplay.style.background = '#f0f9ff';
-                        manualLocation.classList.add('hidden');
+                        locationDisplay.style.borderColor = '#bae6fd';
+                        
+                        // Update manual fields with detected values
+                        document.getElementById('postalCode').value = "100";
+                        document.getElementById('city').value = "Nairobi";
                     },
                     function(error) {
                         userLocation.detected = false;
-                        locationText.innerHTML = "❌ Location detection failed - Enter manually";
+                        locationText.innerHTML = "❌ Auto-detection failed - Using manual location";
                         locationDisplay.style.background = '#fee2e2';
-                        manualLocation.classList.remove('hidden');
+                        locationDisplay.style.borderColor = '#fecaca';
                     }
                 );
             } else {
-                locationText.innerHTML = "❌ Geolocation not supported - Enter manually";
-                manualLocation.classList.remove('hidden');
+                userLocation.detected = false;
+                locationText.innerHTML = "❌ Geolocation not supported - Using manual location";
+                locationDisplay.style.background = '#fee2e2';
+                locationDisplay.style.borderColor = '#fecaca';
             }
         }
         
@@ -766,18 +809,18 @@
                 return;
             }
             
-            if (!userLocation.detected) {
-                const postalCode = document.getElementById('postalCode').value;
-                const city = document.getElementById('city').value;
-                
-                if (!postalCode || !city) {
-                    alert('Please enter your location manually');
-                    return;
-                }
-                
-                userLocation.postalCode = postalCode;
-                userLocation.city = city;
+            // ALWAYS use manual location values (they're always visible now)
+            const postalCode = document.getElementById('postalCode').value;
+            const city = document.getElementById('city').value;
+            
+            if (!postalCode || !city) {
+                alert('Please enter your postal code and city');
+                return;
             }
+            
+            // Update user location with manual values
+            userLocation.postalCode = postalCode;
+            userLocation.city = city;
             
             // Show loading
             document.getElementById('btnText').classList.add('hidden');
@@ -883,6 +926,8 @@
             // Reset form
             document.getElementById('pickupForm').reset();
             setMinDate();
+            document.getElementById('postalCode').value = "100";
+            document.getElementById('city').value = "Nairobi";
             detectLocation();
         }
     </script>
