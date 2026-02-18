@@ -168,6 +168,9 @@
             animation: spin 1s infinite;
             margin-right: 10px;
         }
+        .spinner-dark {
+            border-top-color: #666;
+        }
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -275,6 +278,22 @@
         #dark-mode-checkbox {
             display: none;
         }
+        .location-error {
+            background: #fee2e2 !important;
+            border-color: #fecaca !important;
+        }
+        .location-warning {
+            background: #fff3cd !important;
+            border-color: #ffeeba !important;
+        }
+        .cached-badge {
+            font-size: 0.7rem;
+            background: #6b7280;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -342,16 +361,16 @@
                         <span class="location-dot"></span>
                         <span id="locationText">Detecting...</span>
                     </div>
-                    <button type="button" id="retryLocation" class="btn btn-small" style="margin-top:10px; background:var(--secondary);">🔄 Retry</button>
+                    <button type="button" id="retryLocation" class="btn btn-small" style="margin-top:10px; background:var(--secondary);">🔄 Retry Detection</button>
                 </div>
                 
                 <div class="manual-section">
                     <h4 style="display:flex; gap:8px; color:var(--secondary); margin-bottom:15px;">
-                        <i class="fas fa-pencil-alt"></i> Manual Entry
+                        <i class="fas fa-pencil-alt"></i> Manual Entry (Override)
                     </h4>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>📮 Code</label>
+                            <label>📮 Postal Code</label>
                             <input type="text" id="postalCode" placeholder="e.g., 100" value="100">
                         </div>
                         <div class="form-group">
@@ -453,12 +472,14 @@
             {id:4,name:"Battery & Beyond",rating:4.7,distance:1.8,price:{laptop:130,smartphone:60,tablet:100,monitor:190,printer:170,tv:240,battery:40,other:80},coverage:["100","200","300"],workload:5,specialization:["smartphone","tablet","battery","other"],responseTime:"3-5h"}
         ];
         
-        let userLocation = {detected:false, postalCode:"100", city:"Nairobi"};
+        let userLocation = {detected:false, postalCode:"100", city:"Nairobi", source:"default"};
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             const dateInput = document.getElementById('pickupDate');
-            dateInput.min = dateInput.value = new Date().toISOString().split('T')[0];
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+            dateInput.value = today;
             
             document.getElementById('pickupForm').addEventListener('submit', handleSubmit);
             document.getElementById('retryLocation').addEventListener('click', detectLocation);
@@ -466,36 +487,225 @@
             ['postalCode','city'].forEach(id => {
                 document.getElementById(id).addEventListener('input', function() {
                     userLocation[this.id] = this.value || (this.id === 'postalCode' ? '100' : 'Nairobi');
+                    userLocation.source = 'manual';
+                    userLocation.detected = false;
                 });
             });
             
-            detectLocation();
+            // Check for cached location first
+            loadCachedLocation();
+            
+            // Then try to detect current location
+            setTimeout(detectLocation, 500);
         });
+        
+        function loadCachedLocation() {
+            try {
+                const cached = localStorage.getItem('lastLocation');
+                if (cached) {
+                    const loc = JSON.parse(cached);
+                    // Use cache if less than 1 hour old
+                    if (Date.now() - loc.timestamp < 3600000) {
+                        userLocation.postalCode = loc.postalCode;
+                        userLocation.city = loc.city;
+                        userLocation.source = 'cached';
+                        
+                        document.getElementById('postalCode').value = loc.postalCode;
+                        document.getElementById('city').value = loc.city;
+                        
+                        const locText = document.getElementById('locationText');
+                        const locDisplay = document.getElementById('locationDisplay');
+                        locText.innerHTML = `📍 ${loc.city} (${loc.postalCode}) - Cached <span class="cached-badge">1h</span>`;
+                        locDisplay.style.background = '#e6f7ff';
+                        locDisplay.style.borderColor = '#91d5ff';
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading cached location:', e);
+            }
+        }
         
         function detectLocation() {
             const locText = document.getElementById('locationText');
             const locDisplay = document.getElementById('locationDisplay');
+            const postalInput = document.getElementById('postalCode');
+            const cityInput = document.getElementById('city');
             
             if (!navigator.geolocation) {
-                locText.innerHTML = "❌ Not supported - using manual";
-                locDisplay.style.background = '#fee2e2';
+                locText.innerHTML = "❌ Geolocation not supported - using manual";
+                locDisplay.classList.add('location-error');
                 return;
             }
             
+            // Show loading state
+            locText.innerHTML = '<span class="spinner spinner-dark" style="border-top-color:#666;"></span> Detecting your location...';
+            locDisplay.classList.remove('location-error', 'location-warning');
+            
             navigator.geolocation.getCurrentPosition(
-                function() {
-                    userLocation.detected = true;
-                    locText.innerHTML = "📍 Nairobi (100) - Auto-detected";
-                    locDisplay.style.background = '#f0f9ff';
-                    locDisplay.style.borderColor = '#bae6fd';
+                async function(position) {
+                    const { latitude, longitude } = position.coords;
+                    
+                    try {
+                        // Using OpenStreetMap Nominatim API for reverse geocoding (free, no API key required)
+                        const response = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+                            {
+                                headers: {
+                                    'Accept-Language': 'en-US,en;q=0.9',
+                                    'User-Agent': 'DropMyElectronic-Pickup/1.0'
+                                }
+                            }
+                        );
+                        
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        
+                        const data = await response.json();
+                        
+                        if (data && data.address) {
+                            // Extract city/town and postal code with fallbacks
+                            const city = data.address.city || 
+                                        data.address.town || 
+                                        data.address.village || 
+                                        data.address.suburb || 
+                                        data.address.county ||
+                                        'Unknown';
+                            
+                            // Try to get postal code, use a default if not found
+                            let postalCode = data.address.postcode || 
+                                           data.address.postal_code || 
+                                           '';
+                            
+                            // Clean postal code - remove letters, keep only digits
+                            postalCode = postalCode.replace(/\D/g, '');
+                            
+                            // If no postal code found, use a default based on city
+                            if (!postalCode) {
+                                postalCode = getDefaultPostalCode(city);
+                            }
+                            
+                            // Update user location
+                            userLocation.detected = true;
+                            userLocation.postalCode = postalCode;
+                            userLocation.city = city;
+                            userLocation.source = 'gps';
+                            
+                            // Cache the location
+                            try {
+                                localStorage.setItem('lastLocation', JSON.stringify({
+                                    postalCode: postalCode,
+                                    city: city,
+                                    timestamp: Date.now()
+                                }));
+                            } catch (e) {
+                                console.error('Error caching location:', e);
+                            }
+                            
+                            // Update UI
+                            locText.innerHTML = `📍 ${city} (${postalCode}) - Auto-detected`;
+                            locDisplay.style.background = '#f0f9ff';
+                            locDisplay.style.borderColor = '#bae6fd';
+                            
+                            // Update manual fields
+                            postalInput.value = postalCode;
+                            cityInput.value = city;
+                        } else {
+                            throw new Error('Could not determine location from coordinates');
+                        }
+                    } catch (error) {
+                        console.error('Reverse geocoding failed:', error);
+                        // Fallback to approximate location based on coordinates
+                        const approx = getApproximateLocation(latitude, longitude);
+                        
+                        userLocation.detected = true;
+                        userLocation.postalCode = approx.postalCode;
+                        userLocation.city = approx.city;
+                        userLocation.source = 'approximate';
+                        
+                        locText.innerHTML = `📍 Approx: ${approx.city} (${approx.postalCode}) - Limited accuracy`;
+                        locDisplay.classList.add('location-warning');
+                        
+                        postalInput.value = approx.postalCode;
+                        cityInput.value = approx.city;
+                    }
                 },
-                function() {
+                function(error) {
                     userLocation.detected = false;
-                    locText.innerHTML = "❌ Failed - using manual";
-                    locDisplay.style.background = '#fee2e2';
-                    locDisplay.style.borderColor = '#fecaca';
+                    userLocation.source = 'manual';
+                    let errorMsg = "❌ Failed - using manual";
+                    
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMsg = "❌ Permission denied - using manual";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMsg = "❌ Position unavailable - using manual";
+                            break;
+                        case error.TIMEOUT:
+                            errorMsg = "❌ Timeout - using manual";
+                            break;
+                    }
+                    
+                    locText.innerHTML = errorMsg;
+                    locDisplay.classList.add('location-error');
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
                 }
             );
+        }
+        
+        function getDefaultPostalCode(city) {
+            // Default postal codes for Kenyan cities
+            const cityPostalCodes = {
+                'Nairobi': '100',
+                'Mombasa': '200',
+                'Kisumu': '300',
+                'Nakuru': '400',
+                'Eldoret': '500',
+                'Thika': '600',
+                'Kiambu': '700',
+                'Machakos': '800',
+                'Meru': '900'
+            };
+            
+            // Try to find the city in our map
+            for (const [key, value] of Object.entries(cityPostalCodes)) {
+                if (city.toLowerCase().includes(key.toLowerCase())) {
+                    return value;
+                }
+            }
+            
+            return '100'; // Default to Nairobi
+        }
+        
+        function getApproximateLocation(lat, lon) {
+            // Approximate mapping for major Kenyan cities
+            // This is a simple example - in production, use a proper geocoding service
+            
+            // Nairobi area
+            if (lat > -1.4 && lat < -1.1 && lon > 36.7 && lon < 37.0) {
+                return { city: 'Nairobi', postalCode: '100' };
+            }
+            // Mombasa area
+            else if (lat > -4.1 && lat < -3.9 && lon > 39.6 && lon < 39.7) {
+                return { city: 'Mombasa', postalCode: '200' };
+            }
+            // Kisumu area
+            else if (lat > -0.2 && lat < 0.0 && lon > 34.7 && lon < 34.8) {
+                return { city: 'Kisumu', postalCode: '300' };
+            }
+            // Nakuru area
+            else if (lat > -0.4 && lat < -0.2 && lon > 36.0 && lon < 36.2) {
+                return { city: 'Nakuru', postalCode: '400' };
+            }
+            // Default to Nairobi
+            else {
+                return { city: 'Nairobi', postalCode: '100' };
+            }
         }
         
         function findBestRecycler(type, qty) {
@@ -522,31 +732,52 @@
             
             const type = document.getElementById('itemType').value;
             const qty = document.getElementById('quantity').value;
-            if (!type) return alert('Select device');
+            if (!type) return alert('Please select a device type');
             
+            // Use manual inputs as final source of truth
             userLocation.postalCode = document.getElementById('postalCode').value || '100';
             userLocation.city = document.getElementById('city').value || 'Nairobi';
             
+            // Show loading
             document.getElementById('btnText').classList.add('hidden');
             document.getElementById('btnLoading').classList.remove('hidden');
             document.getElementById('submitBtn').disabled = true;
             
+            // Simulate API call
             setTimeout(() => {
                 const recycler = findBestRecycler(type, parseInt(qty));
                 
+                // Hide loading
                 document.getElementById('btnText').classList.remove('hidden');
                 document.getElementById('btnLoading').classList.add('hidden');
                 document.getElementById('submitBtn').disabled = false;
                 
                 if (recycler) {
-                    const names = {laptop:'💻 Laptop',smartphone:'📱 Phone',tablet:'📟 Tablet',monitor:'🖥️ Monitor',printer:'🖨️ Printer',tv:'📺 TV',battery:'🔋 Battery',other:'🔧 Other'};
+                    const names = {
+                        laptop:'💻 Laptop',
+                        smartphone:'📱 Phone',
+                        tablet:'📟 Tablet',
+                        monitor:'🖥️ Monitor',
+                        printer:'🖨️ Printer',
+                        tv:'📺 TV',
+                        battery:'🔋 Battery',
+                        other:'🔧 Other'
+                    };
+                    
+                    // Show location source in results
+                    const locationSource = userLocation.source === 'gps' ? '📍 GPS' : 
+                                          userLocation.source === 'cached' ? '💾 Cached' : 
+                                          userLocation.source === 'approximate' ? '📡 Approx' : '✏️ Manual';
                     
                     document.getElementById('assignedRecycler').innerHTML = `
                         <div class="recycler-header">
                             <span class="recycler-name">🏭 ${recycler.name}</span>
                             <span class="recycler-badge">⭐ ${recycler.rating}</span>
                         </div>
-                        <p style="color:#4b5563;margin-bottom:15px;">✓ Assigned: ${userLocation.city}, ${userLocation.postalCode}</p>
+                        <p style="color:#4b5563;margin-bottom:15px;">
+                            ✓ Assigned: ${userLocation.city}, ${userLocation.postalCode} 
+                            <span style="font-size:0.8em; color:#6b7280; margin-left:5px;">${locationSource}</span>
+                        </p>
                         <div class="recycler-details">
                             <div class="detail-item"><div class="detail-label">Distance</div><div class="detail-value">${recycler.distance} km</div></div>
                             <div class="detail-item"><div class="detail-label">Response</div><div class="detail-value">${recycler.responseTime}</div></div>
@@ -558,7 +789,9 @@
                     `;
                     
                     sessionStorage.setItem('currentPickup', JSON.stringify({
-                        recycler, itemType: names[type], quantity: qty,
+                        recycler, 
+                        itemType: names[type], 
+                        quantity: qty,
                         date: document.getElementById('pickupDate').value,
                         time: document.getElementById('pickupTime').value,
                         notes: document.getElementById('notes').value,
@@ -567,13 +800,16 @@
                     
                     document.getElementById('step1').classList.add('hidden');
                     document.getElementById('step2').classList.remove('hidden');
-                } else alert('No recycler available');
+                } else {
+                    alert('No recycler available in your area');
+                }
             }, 1500);
         }
         
         function confirmPickup() {
+            const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
             document.getElementById('confirmationNumber').innerHTML = 
-                `📋 #DME-${new Date().getFullYear()}-${Math.floor(Math.random()*10000)}`;
+                `📋 #DME-${new Date().getFullYear()}-${randomNum}`;
             document.getElementById('step2').classList.add('hidden');
             document.getElementById('step3').classList.remove('hidden');
         }
@@ -589,8 +825,7 @@
             sessionStorage.removeItem('currentPickup');
             document.getElementById('pickupForm').reset();
             document.getElementById('pickupDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('postalCode').value = '100';
-            document.getElementById('city').value = 'Nairobi';
+            loadCachedLocation();
             detectLocation();
         }
     </script>
