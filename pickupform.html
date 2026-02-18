@@ -29,7 +29,6 @@
         .btn:hover{background:#1b5e20;transform:translateY(-2px)}
         .btn-secondary{background:var(--secondary)}
         .btn-large{width:100%;padding:16px!important;font-size:1.1rem!important}
-        .btn-small{padding:8px 16px;font-size:.9rem}
         .hidden{display:none!important}
         .spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s infinite;margin-right:10px}
         @keyframes spin{to{transform:rotate(360deg)}}
@@ -52,15 +51,12 @@
         #dark-mode-checkbox:checked+.dark-mode-switch::after{transform:translateX(16px)}
         #dark-mode-checkbox{display:none}
         .location-hint{font-size:.85rem;color:#6b7280;margin-top:5px;display:flex;align-items:center;gap:5px}
-        
-        /* New styles for multi-device */
         .device-section{border:2px solid var(--primary);border-radius:16px;padding:20px;margin-bottom:20px}
         .device-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
         .device-title{font-size:1.1rem;font-weight:600;color:var(--primary)}
         .add-device-btn{background:var(--secondary);color:#fff;border:none;width:36px;height:36px;border-radius:50%;font-size:1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
         .add-device-btn:hover{background:#f57c00;transform:scale(1.1)}
         .device-row{display:grid;grid-template-columns:2fr 1fr 40px;gap:10px;margin-bottom:15px;align-items:center}
-        .device-row select,.device-row input{margin-bottom:0}
         .remove-device{background:#ef4444;color:#fff;border:none;width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
         .remove-device:hover{background:#dc2626;transform:scale(1.1)}
         .remove-device:disabled{background:#9ca3af;cursor:not-allowed;transform:none}
@@ -92,35 +88,23 @@
         <p style="color:#6b7280;margin-bottom:30px;">Add one or more devices for pickup.</p>
         
         <form id="pickupForm">
-            <!-- Multi-Device Section -->
             <div class="device-section">
                 <div class="device-header">
-                    <span class="device-title"><i class="fas fa-device"></i> Devices to Pick Up</span>
-                    <button type="button" id="addDeviceBtn" class="add-device-btn" title="Add another device">+</button>
+                    <span class="device-title"><i class="fas fa-device"></i> Devices</span>
+                    <button type="button" id="addDeviceBtn" class="add-device-btn">+</button>
                 </div>
-                
-                <div id="devicesContainer">
-                    <!-- Device rows will be added here dynamically -->
-                </div>
-                
-                <div id="totalPriceDisplay" class="total-price">
-                    Total Estimated Value: <span id="totalAmount">KSh 0</span>
-                </div>
-                <div id="deviceCount" class="device-summary">
-                    <i class="fas fa-info-circle"></i> <span id="deviceCountText">0 devices</span> added
-                </div>
+                <div id="devicesContainer"></div>
+                <div class="total-price">Total: <span id="totalAmount">KSh 0</span></div>
+                <div class="device-summary"><i class="fas fa-info-circle"></i> <span id="deviceCountText">0 devices</span></div>
             </div>
             
             <div class="form-group">
-                <label>📍 Your Location</label>
+                <label>📍 Location</label>
                 <div class="location-box">
                     <input type="text" id="location" placeholder="e.g., Nairobi, Westlands" value="Nairobi" required>
                     <i class="fas fa-map-marker-alt location-icon"></i>
                 </div>
-                <div class="location-hint">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Enter city, area, or specific location</span>
-                </div>
+                <div class="location-hint"><i class="fas fa-info-circle"></i><span>Enter city/area</span></div>
             </div>
             
             <div class="form-row">
@@ -141,7 +125,7 @@
             
             <div class="form-group">
                 <label>📝 Notes</label>
-                <textarea id="notes" rows="2" placeholder="Special instructions (e.g., gate code, floor number)"></textarea>
+                <textarea id="notes" rows="2" placeholder="Special instructions"></textarea>
             </div>
             
             <button type="submit" id="submitBtn" class="btn btn-large" style="background:var(--secondary);">
@@ -156,7 +140,7 @@
         <div class="confirmation">
             <div class="checkmark">✅</div>
             <h2>Recycler Found!</h2>
-            <p style="color:#6b7280;margin-bottom:20px;">Best match for your devices and location</p>
+            <p style="color:#6b7280;margin-bottom:20px;">Best match for your devices</p>
             <div id="assignedRecycler" class="recycler-card"></div>
             <div class="results-actions">
                 <button onclick="confirmPickup()" class="btn btn-large" style="background:var(--primary);">✅ Confirm</button>
@@ -174,11 +158,10 @@
             <div class="confirmation-details">
                 <p id="confirmationNumber" style="font-size:1.2em;font-weight:600;"></p>
                 <p id="confirmedDevices" style="margin-top:10px;"></p>
-                <p style="margin-top:10px;">Confirmation sent to your email</p>
             </div>
             <div class="results-actions">
                 <a href="index.html" class="btn btn-large" style="background:var(--primary);">🏠 Home</a>
-                <button onclick="scheduleAnother()" class="btn btn-large" style="background:var(--secondary);">📅 New Pickup</button>
+                <button onclick="scheduleAnother()" class="btn btn-large" style="background:var(--secondary);">📅 New</button>
             </div>
         </div>
     </div>
@@ -199,270 +182,136 @@
 })();
 
 // Data
-const recyclers = [
-    {id:1,name:"EcoRecycle Kenya",rating:4.8,distance:2.3,price:{laptop:150,smartphone:80,tablet:120,monitor:200,printer:180,tv:250,battery:50,other:100},areas:["Nairobi","Westlands","Kilimani","Kileleshwa"],workload:3,specialization:["laptop","smartphone","tablet","battery"],responseTime:"2-4h"},
-    {id:2,name:"GreenCycle EA",rating:4.6,distance:5.1,price:{laptop:140,smartphone:70,tablet:110,monitor:180,printer:160,tv:220,battery:45,other:90},areas:["Mombasa","Nyali","Bamburi"],workload:1,specialization:["monitor","printer","tv"],responseTime:"4-6h"},
-    {id:3,name:"Circuit Reclaim",rating:4.9,distance:3.7,price:{laptop:160,smartphone:90,tablet:130,monitor:220,printer:200,tv:280,battery:55,other:120},areas:["Kisumu","Milimani"],workload:2,specialization:["laptop","monitor","tv"],responseTime:"1-3h"},
-    {id:4,name:"Battery & Beyond",rating:4.7,distance:1.8,price:{laptop:130,smartphone:60,tablet:100,monitor:190,printer:170,tv:240,battery:40,other:80},areas:["Nairobi","Eastlands","Embakasi"],workload:5,specialization:["smartphone","tablet","battery","other"],responseTime:"3-5h"},
-    {id:5,name:"Eldoret Recyclers",rating:4.5,distance:4.2,price:{laptop:135,smartphone:65,tablet:105,monitor:185,printer:165,tv:230,battery:42,other:85},areas:["Eldoret","Langas"],workload:2,specialization:["laptop","smartphone","monitor"],responseTime:"3-5h"}
+const R = [
+    {id:1,n:"EcoRecycle Kenya",r:4.8,d:2.3,p:{laptop:150,s:80,t:120,m:200,pr:180,tv:250,b:50,o:100},a:["Nairobi","Westlands","Kilimani"],w:3,sp:["laptop","s","t","b"],rt:"2-4h"},
+    {id:2,n:"GreenCycle EA",r:4.6,d:5.1,p:{laptop:140,s:70,t:110,m:180,pr:160,tv:220,b:45,o:90},a:["Mombasa","Nyali"],w:1,sp:["m","pr","tv"],rt:"4-6h"},
+    {id:3,n:"Circuit Reclaim",r:4.9,d:3.7,p:{laptop:160,s:90,t:130,m:220,pr:200,tv:280,b:55,o:120},a:["Kisumu"],w:2,sp:["laptop","m","tv"],rt:"1-3h"},
+    {id:4,n:"Battery & Beyond",r:4.7,d:1.8,p:{laptop:130,s:60,t:100,m:190,pr:170,tv:240,b:40,o:80},a:["Nairobi","Eastlands"],w:5,sp:["s","t","b","o"],rt:"3-5h"},
+    {id:5,n:"Eldoret Recyclers",r:4.5,d:4.2,p:{laptop:135,s:65,t:105,m:185,pr:165,tv:230,b:42,o:85},a:["Eldoret"],w:2,sp:["laptop","s","m"],rt:"3-5h"}
 ];
 
-const deviceOptions = [
-    {value:"laptop",label:"💻 Laptop",price:150},
-    {value:"smartphone",label:"📱 Phone",price:80},
-    {value:"tablet",label:"📟 Tablet",price:120},
-    {value:"monitor",label:"🖥️ Monitor",price:200},
-    {value:"printer",label:"🖨️ Printer",price:180},
-    {value:"tv",label:"📺 TV",price:250},
-    {value:"battery",label:"🔋 Battery",price:50},
-    {value:"other",label:"🔧 Other",price:100}
+const D = [
+    {v:"laptop",l:"💻 Laptop",pr:150},{v:"s",l:"📱 Phone",pr:80},{v:"t",l:"📟 Tablet",pr:120},
+    {v:"m",l:"🖥️ Monitor",pr:200},{v:"pr",l:"🖨️ Printer",pr:180},{v:"tv",l:"📺 TV",pr:250},
+    {v:"b",l:"🔋 Battery",pr:50},{v:"o",l:"🔧 Other",pr:100}
 ];
 
-let userLocation = "Nairobi";
-let deviceCount = 1;
+let loc = "Nairobi";
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     const d = document.getElementById('pickupDate');
     d.min = d.value = new Date().toISOString().split('T')[0];
-    
-    document.getElementById('pickupForm').addEventListener('submit', handleSubmit);
-    document.getElementById('addDeviceBtn').addEventListener('click', addDeviceRow);
-    document.getElementById('location').addEventListener('input', (e) => userLocation = e.target.value || 'Nairobi');
-    
-    // Add first device row
-    addDeviceRow();
+    document.getElementById('pickupForm').addEventListener('submit', h);
+    document.getElementById('addDeviceBtn').addEventListener('click', addRow);
+    document.getElementById('location').addEventListener('input', e => loc = e.target.value || 'Nairobi');
+    addRow();
 });
 
-function createDeviceSelect(selectedValue = '') {
-    let options = '<option value="">Select device</option>';
-    deviceOptions.forEach(d => {
-        options += `<option value="${d.value}" ${d.value === selectedValue ? 'selected' : ''}>${d.label} - KSh ${d.price}</option>`;
-    });
-    return options;
-}
+const opt = (s='') => '<option value="">Select</option>' + D.map(d => `<option value="${d.v}" ${d.v===s?'selected':''}>${d.l} - KSh ${d.pr}</option>`).join('');
 
-function addDeviceRow() {
-    const container = document.getElementById('devicesContainer');
-    const rowCount = container.children.length + 1;
-    
-    const row = document.createElement('div');
+function addRow() {
+    const c = document.getElementById('devicesContainer'), row = document.createElement('div');
     row.className = 'device-row';
-    row.innerHTML = `
-        <select class="device-type" required ${rowCount === 1 ? '' : ''}>
-            ${createDeviceSelect()}
-        </select>
-        <input type="number" class="device-qty" min="1" value="1" required>
-        <button type="button" class="remove-device" ${rowCount === 1 ? 'disabled' : ''} title="Remove device">×</button>
-    `;
+    row.innerHTML = `<select class="dt" required>${opt()}</select><input type="number" class="dq" min="1" value="1" required><button type="button" class="remove-device" ${c.children.length===0?'':'x'}>×</button>`;
     
-    // Add event listeners
-    const select = row.querySelector('.device-type');
-    const qty = row.querySelector('.device-qty');
-    const removeBtn = row.querySelector('.remove-device');
+    row.querySelector('.dt').addEventListener('change', upd);
+    row.querySelector('.dq').addEventListener('input', upd);
+    c.children.length > 0 && row.querySelector('.remove-device').addEventListener('click', () => {row.remove(); upd(); updBtn();});
     
-    select.addEventListener('change', updateTotalPrice);
-    qty.addEventListener('input', updateTotalPrice);
-    
-    if (rowCount > 1) {
-        removeBtn.addEventListener('click', () => {
-            row.remove();
-            updateTotalPrice();
-            updateRemoveButtons();
-        });
-    }
-    
-    container.appendChild(row);
-    updateRemoveButtons();
-    updateTotalPrice();
+    c.appendChild(row);
+    updBtn(); upd();
 }
 
-function updateRemoveButtons() {
-    const container = document.getElementById('devicesContainer');
-    const removeBtns = container.querySelectorAll('.remove-device');
-    removeBtns.forEach((btn, index) => {
-        btn.disabled = index === 0 && container.children.length === 1;
+function updBtn() {
+    const c = document.getElementById('devicesContainer'), b = c.querySelectorAll('.remove-device');
+    b.forEach((btn,i) => btn.disabled = i===0 && c.children.length===1);
+    document.getElementById('deviceCountText').textContent = c.children.length + (c.children.length===1?' device':' devices');
+}
+
+function upd() {
+    let t = 0;
+    document.querySelectorAll('.device-row').forEach(r => {
+        const s = r.querySelector('.dt'), q = r.querySelector('.dq');
+        if(s.value && q.value) t += (D.find(d => d.v === s.value)?.pr||0) * parseInt(q.value);
     });
-    document.getElementById('deviceCountText').textContent = container.children.length + (container.children.length === 1 ? ' device' : ' devices');
+    document.getElementById('totalAmount').textContent = `KSh ${t}`;
 }
 
-function updateTotalPrice() {
-    const rows = document.querySelectorAll('.device-row');
-    let total = 0;
-    
-    rows.forEach(row => {
-        const select = row.querySelector('.device-type');
-        const qty = row.querySelector('.device-qty');
-        
-        if (select.value && qty.value) {
-            const device = deviceOptions.find(d => d.value === select.value);
-            if (device) {
-                total += device.price * parseInt(qty.value);
-            }
-        }
+function getD() {
+    const dev = [];
+    document.querySelectorAll('.device-row').forEach(r => {
+        const s = r.querySelector('.dt'), q = r.querySelector('.dq');
+        if(s.value && q.value) dev.push({t:s.v,l:D.find(d=>d.v===s.value)?.l||'',q:parseInt(q.value),pr:D.find(d=>d.v===s.value)?.pr||0});
     });
-    
-    document.getElementById('totalAmount').textContent = `KSh ${total}`;
+    return dev;
 }
 
-function getDevicesFromForm() {
-    const rows = document.querySelectorAll('.device-row');
-    const devices = [];
-    let totalPrice = 0;
+function findR(dev) {
+    const types = [...new Set(dev.map(d => d.t))], eligible = R.filter(r => types.some(t => r.sp.includes(t)||r.sp.includes('o')));
+    if(!eligible.length) return null;
     
-    rows.forEach(row => {
-        const select = row.querySelector('.device-type');
-        const qty = row.querySelector('.device-qty');
-        
-        if (select.value && qty.value) {
-            const device = deviceOptions.find(d => d.value === select.value);
-            if (device) {
-                const item = {
-                    type: select.value,
-                    label: device.label,
-                    qty: parseInt(qty.value),
-                    price: device.price
-                };
-                devices.push(item);
-                totalPrice += device.price * item.qty;
-            }
-        }
-    });
-    
-    return { devices, totalPrice };
+    return eligible.map(r => ({
+        ...r, score: Math.max(0,40-r.d*2) + (r.a.some(a => loc.toLowerCase().includes(a.toLowerCase())||a.toLowerCase().includes(loc.toLowerCase()))?40:10) + Math.max(0,20-r.w*3) + (types.filter(t=>r.sp.includes(t)).length/types.length)*20 + (r.r-4)*5,
+        total: dev.reduce((s,d)=> s + (r.p[d.t]||r.p.o)*d.q, 0)
+    })).sort((a,b)=>b.score-a.score)[0];
 }
 
-function findBestRecycler(devices) {
-    // Get all unique device types
-    const deviceTypes = [...new Set(devices.map(d => d.type))];
-    
-    // Filter recyclers that can handle at least one of the device types
-    const eligible = recyclers.filter(r => 
-        deviceTypes.some(type => r.specialization.includes(type) || r.specialization.includes('other'))
-    );
-    
-    if (!eligible.length) return null;
-    
-    return eligible.map(r => {
-        const areaMatch = r.areas.some(area => userLocation.toLowerCase().includes(area.toLowerCase()) || area.toLowerCase().includes(userLocation.toLowerCase()));
-        const distanceScore = Math.max(0, 40 - (r.distance * 2));
-        const locationScore = areaMatch ? 40 : 10;
-        const workloadScore = Math.max(0, 20 - (r.workload * 3));
-        
-        // Calculate specialization score based on how many device types they can handle
-        const specializedTypes = deviceTypes.filter(type => r.specialization.includes(type));
-        const specScore = (specializedTypes.length / deviceTypes.length) * 20;
-        
-        const ratingBonus = (r.rating - 4) * 5;
-        
-        // Calculate total price
-        const totalPrice = devices.reduce((sum, d) => {
-            return sum + (r.price[d.type] || r.price.other) * d.qty;
-        }, 0);
-        
-        return {
-            ...r,
-            score: distanceScore + locationScore + workloadScore + specScore + ratingBonus,
-            totalPrice,
-            specializedTypes: specializedTypes.length
-        };
-    }).sort((a,b) => b.score - a.score)[0];
-}
-
-function handleSubmit(e) {
+function h(e) {
     e.preventDefault();
+    const dev = getD();
+    if(!dev.length) return alert('Add at least one device');
     
-    const { devices, totalPrice } = getDevicesFromForm();
-    
-    if (devices.length === 0) {
-        return alert('Please add at least one device');
-    }
-    
-    userLocation = document.getElementById('location').value || 'Nairobi';
-    
+    loc = document.getElementById('location').value || 'Nairobi';
     document.getElementById('btnText').classList.add('hidden');
     document.getElementById('btnLoading').classList.remove('hidden');
     document.getElementById('submitBtn').disabled = !0;
     
     setTimeout(() => {
-        const r = findBestRecycler(devices);
-        
+        const r = findR(dev);
         document.getElementById('btnText').classList.remove('hidden');
         document.getElementById('btnLoading').classList.add('hidden');
         document.getElementById('submitBtn').disabled = !1;
         
-        if (r) {
-            // Create device list HTML
-            const deviceList = devices.map(d => `${d.label} x${d.qty}`).join(', ');
-            
+        if(r) {
             document.getElementById('assignedRecycler').innerHTML = `
-                <div class="recycler-header">
-                    <span class="recycler-name">🏭 ${r.name}</span>
-                    <span class="recycler-badge">⭐ ${r.rating}</span>
-                </div>
-                <p style="color:#4b5563;margin-bottom:15px;">
-                    ✓ Serving: ${userLocation}
-                </p>
-                <div style="margin-bottom:15px;padding:10px;background:var(--bg);border-radius:8px;">
-                    <strong>📦 Devices:</strong> ${deviceList}
-                </div>
+                <div class="recycler-header"><span class="recycler-name">🏭 ${r.n}</span><span class="recycler-badge">⭐ ${r.r}</span></div>
+                <p style="color:#4b5563;margin-bottom:15px;">✓ Serving: ${loc}</p>
+                <div style="margin-bottom:15px;padding:10px;background:var(--bg);border-radius:8px;"><strong>📦 Devices:</strong> ${dev.map(d=>`${d.l} x${d.q}`).join(', ')}</div>
                 <div class="recycler-details">
-                    <div class="detail-item"><div class="detail-label">Distance</div><div class="detail-value">${r.distance} km</div></div>
-                    <div class="detail-item"><div class="detail-label">Response</div><div class="detail-value">${r.responseTime}</div></div>
-                    <div class="detail-item"><div class="detail-label">Total Price</div><div class="detail-value">KSh ${r.totalPrice}</div></div>
+                    <div class="detail-item"><div class="detail-label">Distance</div><div class="detail-value">${r.d} km</div></div>
+                    <div class="detail-item"><div class="detail-label">Response</div><div class="detail-value">${r.rt}</div></div>
+                    <div class="detail-item"><div class="detail-label">Total</div><div class="detail-value">KSh ${r.total}</div></div>
                 </div>
-                <div style="margin-top:15px;padding-top:15px;border-top:1px solid #e5e7eb;">
-                    <p style="font-size:0.9em;color:#059669;"><strong>🏆 Best match</strong> for your devices</p>
-                </div>`;
+                <div style="margin-top:15px;padding-top:15px;border-top:1px solid #e5e7eb;"><p style="font-size:0.9em;color:#059669;"><strong>🏆 Best match</strong></p></div>`;
             
-            sessionStorage.setItem('currentPickup', JSON.stringify({
-                recycler: r, 
-                devices: devices,
-                totalPrice: r.totalPrice,
-                location: userLocation,
-                date: document.getElementById('pickupDate').value,
-                time: document.getElementById('pickupTime').value,
-                notes: document.getElementById('notes').value
-            }));
-            
+            sessionStorage.setItem('p', JSON.stringify({r,dev,total:r.total,loc,date:document.getElementById('pickupDate').value,time:document.getElementById('pickupTime').value,notes:document.getElementById('notes').value}));
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
-        } else {
-            alert('No recycler available for your devices. Please try different devices or location.');
-        }
+        } else alert('No recycler available');
     }, 1500);
 }
 
 function confirmPickup() {
-    const pickup = JSON.parse(sessionStorage.getItem('currentPickup'));
-    const deviceSummary = pickup.devices.map(d => `${d.label} x${d.qty}`).join(' • ');
-    
+    const p = JSON.parse(sessionStorage.getItem('p'));
     document.getElementById('confirmationNumber').innerHTML = `📋 #DME-${new Date().getFullYear()}-${Math.floor(Math.random()*1e4).toString().padStart(4,'0')}`;
-    document.getElementById('confirmedDevices').innerHTML = `<strong>Devices:</strong> ${deviceSummary}<br><strong>Total:</strong> KSh ${pickup.totalPrice}`;
-    
+    document.getElementById('confirmedDevices').innerHTML = `<strong>Devices:</strong> ${p.dev.map(d=>`${d.l} x${d.q}`).join(' • ')}<br><strong>Total:</strong> KSh ${p.total}`;
     document.getElementById('step2').classList.add('hidden');
     document.getElementById('step3').classList.remove('hidden');
 }
 
-function resetForm() {
-    document.getElementById('step2').classList.add('hidden');
-    document.getElementById('step1').classList.remove('hidden');
-}
+function resetForm() { document.getElementById('step2').classList.add('hidden'); document.getElementById('step1').classList.remove('hidden'); }
 
 function scheduleAnother() {
     document.getElementById('step3').classList.add('hidden');
     document.getElementById('step1').classList.remove('hidden');
-    sessionStorage.removeItem('currentPickup');
-    
-    // Reset form
+    sessionStorage.removeItem('p');
     document.getElementById('pickupForm').reset();
     document.getElementById('pickupDate').value = new Date().toISOString().split('T')[0];
     document.getElementById('location').value = 'Nairobi';
-    userLocation = 'Nairobi';
-    
-    // Clear and add initial device row
+    loc = 'Nairobi';
     document.getElementById('devicesContainer').innerHTML = '';
-    addDeviceRow();
+    addRow();
 }
 </script>
 </body>
