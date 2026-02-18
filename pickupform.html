@@ -91,15 +91,15 @@
         
         <form id="donationForm">
             <div class="form-row">
-                <div class="form-group"><label>👤 Name</label><input type="text" id="name" value="John Doe" required></div>
-                <div class="form-group"><label>📞 Phone</label><input type="tel" id="phone" value="+254712345678" required></div>
+                <div class="form-group"><label>👤 Name</label><input type="text" id="name" placeholder="Enter your full name" required></div>
+                <div class="form-group"><label>📞 Phone</label><input type="tel" id="phone" placeholder="+254 712 345 678" required></div>
             </div>
-            <div class="form-group"><label>✉️ Email</label><input type="email" id="email" value="test@example.com" required></div>
+            <div class="form-group"><label>✉️ Email</label><input type="email" id="email" placeholder="your@email.com" required></div>
             <div class="form-group">
                 <label>📍 Location</label>
-                <div class="location-box"><input type="text" id="location" value="Nairobi" required><i class="fas fa-map-marker-alt"></i></div>
+                <div class="location-box"><input type="text" id="location" placeholder="e.g., Nairobi, Westlands" required><i class="fas fa-map-marker-alt"></i></div>
             </div>
-            <div class="form-group"><label>📝 Items</label><textarea id="items" rows="3" required>2 old TVs, 3 phones</textarea></div>
+            <div class="form-group"><label>📝 Items</label><textarea id="items" rows="3" placeholder="Describe your e-waste items (e.g., 2 old TVs, 3 phones, 1 laptop...)" required></textarea></div>
             <button type="submit" id="submitBtn" class="btn"><span id="btnText">🔍 Find Recyclers</span><span id="btnLoading" class="hidden"><span class="spinner"></span> Finding...</span></button>
         </form>
         
@@ -240,8 +240,6 @@ window.reset = () => {
     $('matchesSection').classList.add('hidden');
     $('donationForm').classList.remove('hidden');
     $('donationForm').reset();
-    $('name').value = 'John Doe'; $('phone').value = '+254712345678'; $('email').value = 'test@example.com';
-    $('location').value = 'Nairobi'; $('items').value = '2 old TVs, 3 phones';
     matches = []; form = {}; selId = null;
 };
 </script>
