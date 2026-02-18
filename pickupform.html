@@ -23,19 +23,15 @@
         label{display:block;margin-bottom:8px;font-weight:600}
         select,input,textarea{width:100%;padding:14px 16px;border:2px solid #e0e0e0;border-radius:12px;font-size:1rem;background:var(--card);color:var(--text)}
         select:focus,input:focus,textarea:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(46,125,50,0.1)}
-        .location-status{background:#f0f9ff;border:2px solid #bae6fd;border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px}
-        .location-dot{width:12px;height:12px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite}
-        @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)}70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}}
+        .location-box{background:var(--bg);border-radius:12px;padding:20px;margin:20px 0;border:2px solid var(--primary);position:relative}
+        .location-icon{position:absolute;right:20px;top:50%;transform:translateY(-50%);color:var(--primary);font-size:1.5rem}
         .btn{background:var(--primary);color:#fff;padding:12px 24px;border-radius:12px;font-weight:600;border:none;cursor:pointer;font-size:1rem}
         .btn:hover{background:#1b5e20;transform:translateY(-2px)}
         .btn-secondary{background:var(--secondary)}
         .btn-large{width:100%;padding:16px!important;font-size:1.1rem!important}
-        .btn-small{padding:8px 16px!important;font-size:.9rem!important}
         .hidden{display:none!important}
         .spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s infinite;margin-right:10px}
-        .spinner-dark{border-top-color:#666}
         @keyframes spin{to{transform:rotate(360deg)}}
-        .manual-section{margin-top:20px;padding:20px;background:rgba(255,152,0,0.05);border-radius:12px;border:1px dashed var(--secondary)}
         .recycler-card{background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-radius:16px;padding:24px;margin:30px 0;border-left:6px solid var(--primary)}
         .dark-mode .recycler-card{background:linear-gradient(135deg,#2d2d2d,#1e1e1e)}
         .recycler-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
@@ -54,9 +50,7 @@
         .dark-mode-switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:.3s}
         #dark-mode-checkbox:checked+.dark-mode-switch::after{transform:translateX(16px)}
         #dark-mode-checkbox{display:none}
-        .location-error{background:#fee2e2!important;border-color:#fecaca!important}
-        .location-warning{background:#fff3cd!important;border-color:#ffeeba!important}
-        .cached-badge{font-size:.7rem;background:#6b7280;color:#fff;padding:2px 6px;border-radius:4px;margin-left:8px}
+        .location-hint{font-size:.85rem;color:#6b7280;margin-top:5px;display:flex;align-items:center;gap:5px}
         @media (max-width:768px){.form-row,.recycler-details,.results-actions{grid-template-columns:1fr;flex-direction:column}.card{padding:25px}h1{font-size:1.8rem}}
     </style>
 </head>
@@ -77,9 +71,9 @@
     
     <!-- Step 1: Form -->
     <div id="step1" class="card">
-        <div class="badge">✅ Auto-Routing by Location</div>
+        <div class="badge">📍 Manual Location Entry</div>
         <h1>Schedule E-Waste Pickup</h1>
-        <p style="color:#6b7280;margin-bottom:30px;">Auto-matching with best recycler near you.</p>
+        <p style="color:#6b7280;margin-bottom:30px;">Enter your location to find the best recycler near you.</p>
         
         <form id="pickupForm">
             <div class="form-row">
@@ -104,27 +98,14 @@
             </div>
             
             <div class="form-group">
-                <label>📍 Auto Location</label>
-                <div id="locationDisplay" class="location-status">
-                    <span class="location-dot"></span>
-                    <span id="locationText">Detecting...</span>
+                <label>📍 Your Location</label>
+                <div class="location-box">
+                    <input type="text" id="location" placeholder="e.g., Nairobi, Westlands" value="Nairobi" required>
+                    <i class="fas fa-map-marker-alt location-icon"></i>
                 </div>
-                <button type="button" id="retryLocation" class="btn btn-small" style="margin-top:10px;background:var(--secondary);">🔄 Retry Detection</button>
-            </div>
-            
-            <div class="manual-section">
-                <h4 style="display:flex;gap:8px;color:var(--secondary);margin-bottom:15px;">
-                    <i class="fas fa-pencil-alt"></i> Manual Entry (Override)
-                </h4>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>📮 Postal Code</label>
-                        <input type="text" id="postalCode" placeholder="e.g., 100" value="100">
-                    </div>
-                    <div class="form-group">
-                        <label>🏙️ City</label>
-                        <input type="text" id="city" placeholder="e.g., Nairobi" value="Nairobi">
-                    </div>
+                <div class="location-hint">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Enter city, area, or specific location</span>
                 </div>
             </div>
             
@@ -146,7 +127,7 @@
             
             <div class="form-group">
                 <label>📝 Notes</label>
-                <textarea id="notes" rows="2" placeholder="Special instructions"></textarea>
+                <textarea id="notes" rows="2" placeholder="Special instructions (e.g., gate code, floor number)"></textarea>
             </div>
             
             <button type="submit" id="submitBtn" class="btn btn-large" style="background:var(--secondary);">
@@ -161,7 +142,7 @@
         <div class="confirmation">
             <div class="checkmark">✅</div>
             <h2>Recycler Found!</h2>
-            <p style="color:#6b7280;margin-bottom:20px;">Auto-matched to best recycler</p>
+            <p style="color:#6b7280;margin-bottom:20px;">Best match for your location</p>
             <div id="assignedRecycler" class="recycler-card"></div>
             <div class="results-actions">
                 <button onclick="confirmPickup()" class="btn btn-large" style="background:var(--primary);">✅ Confirm</button>
@@ -178,7 +159,7 @@
             <p style="color:#6b7280;margin-bottom:20px;">Pickup scheduled</p>
             <div class="confirmation-details">
                 <p id="confirmationNumber" style="font-size:1.2em;font-weight:600;"></p>
-                <p style="margin-top:10px;">SMS/email updates sent</p>
+                <p style="margin-top:10px;">Confirmation sent to your email</p>
             </div>
             <div class="results-actions">
                 <a href="index.html" class="btn btn-large" style="background:var(--primary);">🏠 Home</a>
@@ -204,112 +185,49 @@
 
 // Data
 const recyclers = [
-    {id:1,name:"EcoRecycle Kenya",rating:4.8,distance:2.3,price:{laptop:150,smartphone:80,tablet:120,monitor:200,printer:180,tv:250,battery:50,other:100},coverage:["100","200","300"],workload:3,specialization:["laptop","smartphone","tablet","battery"],responseTime:"2-4h"},
-    {id:2,name:"GreenCycle EA",rating:4.6,distance:5.1,price:{laptop:140,smartphone:70,tablet:110,monitor:180,printer:160,tv:220,battery:45,other:90},coverage:["400","500","600"],workload:1,specialization:["monitor","printer","tv"],responseTime:"4-6h"},
-    {id:3,name:"Circuit Reclaim",rating:4.9,distance:3.7,price:{laptop:160,smartphone:90,tablet:130,monitor:220,printer:200,tv:280,battery:55,other:120},coverage:["700","800","900"],workload:2,specialization:["laptop","monitor","tv"],responseTime:"1-3h"},
-    {id:4,name:"Battery & Beyond",rating:4.7,distance:1.8,price:{laptop:130,smartphone:60,tablet:100,monitor:190,printer:170,tv:240,battery:40,other:80},coverage:["100","200","300"],workload:5,specialization:["smartphone","tablet","battery","other"],responseTime:"3-5h"}
+    {id:1,name:"EcoRecycle Kenya",rating:4.8,distance:2.3,price:{laptop:150,smartphone:80,tablet:120,monitor:200,printer:180,tv:250,battery:50,other:100},areas:["Nairobi","Westlands","Kilimani","Kileleshwa"],workload:3,specialization:["laptop","smartphone","tablet","battery"],responseTime:"2-4h"},
+    {id:2,name:"GreenCycle EA",rating:4.6,distance:5.1,price:{laptop:140,smartphone:70,tablet:110,monitor:180,printer:160,tv:220,battery:45,other:90},areas:["Mombasa","Nyali","Bamburi"],workload:1,specialization:["monitor","printer","tv"],responseTime:"4-6h"},
+    {id:3,name:"Circuit Reclaim",rating:4.9,distance:3.7,price:{laptop:160,smartphone:90,tablet:130,monitor:220,printer:200,tv:280,battery:55,other:120},areas:["Kisumu","Milimani"],workload:2,specialization:["laptop","monitor","tv"],responseTime:"1-3h"},
+    {id:4,name:"Battery & Beyond",rating:4.7,distance:1.8,price:{laptop:130,smartphone:60,tablet:100,monitor:190,printer:170,tv:240,battery:40,other:80},areas:["Nairobi","Eastlands","Embakasi"],workload:5,specialization:["smartphone","tablet","battery","other"],responseTime:"3-5h"},
+    {id:5,name:"Eldoret Recyclers",rating:4.5,distance:4.2,price:{laptop:135,smartphone:65,tablet:105,monitor:185,printer:165,tv:230,battery:42,other:85},areas:["Eldoret","Langas"],workload:2,specialization:["laptop","smartphone","monitor"],responseTime:"3-5h"}
 ];
 
-let userLocation = {detected:!1, postalCode:"100", city:"Nairobi", source:"default"};
+let userLocation = "Nairobi";
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     const d = document.getElementById('pickupDate');
     d.min = d.value = new Date().toISOString().split('T')[0];
     document.getElementById('pickupForm').addEventListener('submit', handleSubmit);
-    document.getElementById('retryLocation').addEventListener('click', detectLocation);
-    ['postalCode','city'].forEach(id => document.getElementById(id).addEventListener('input', function() { 
-        userLocation[this.id] = this.value || (this.id === 'postalCode' ? '100' : 'Nairobi'); 
-        userLocation.source = 'manual'; userLocation.detected = !1; 
-    }));
-    loadCachedLocation();
-    setTimeout(detectLocation, 500);
+    document.getElementById('location').addEventListener('input', (e) => userLocation = e.target.value || 'Nairobi');
 });
-
-function loadCachedLocation() {
-    try {
-        const c = JSON.parse(localStorage.getItem('lastLocation'));
-        if (c && Date.now() - c.timestamp < 3600000) {
-            userLocation = {...userLocation, postalCode: c.postalCode, city: c.city, source: 'cached'};
-            document.getElementById('postalCode').value = c.postalCode;
-            document.getElementById('city').value = c.city;
-            document.getElementById('locationText').innerHTML = `📍 ${c.city} (${c.postalCode}) - Cached <span class="cached-badge">1h</span>`;
-            document.getElementById('locationDisplay').style.background = '#e6f7ff';
-        }
-    } catch(e){}
-}
-
-function detectLocation() {
-    const locText = document.getElementById('locationText'), locDisplay = document.getElementById('locationDisplay'), postal = document.getElementById('postalCode'), city = document.getElementById('city');
-    if (!navigator.geolocation) return locText.innerHTML = "❌ Not supported - using manual", locDisplay.classList.add('location-error');
-    
-    locText.innerHTML = '<span class="spinner spinner-dark" style="border-top-color:#666;"></span> Detecting...';
-    locDisplay.classList.remove('location-error', 'location-warning');
-    
-    navigator.geolocation.getCurrentPosition(
-        async pos => {
-            try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&addressdetails=1`, 
-                    {headers: {'Accept-Language': 'en-US', 'User-Agent': 'DropMyElectronic/1.0'}});
-                const data = await res.json();
-                if (data?.address) {
-                    const cityName = data.address.city || data.address.town || data.address.village || data.address.suburb || 'Unknown';
-                    let pCode = (data.address.postcode || '').replace(/\D/g, '') || getDefaultPostalCode(cityName);
-                    userLocation = {detected:!0, postalCode:pCode, city:cityName, source:'gps'};
-                    localStorage.setItem('lastLocation', JSON.stringify({postalCode:pCode, city:cityName, timestamp:Date.now()}));
-                    locText.innerHTML = `📍 ${cityName} (${pCode}) - Auto-detected`;
-                    locDisplay.style.background = '#f0f9ff';
-                    postal.value = pCode; city.value = cityName;
-                } else throw new Error();
-            } catch {
-                const approx = getApproxLocation(pos.coords.latitude, pos.coords.longitude);
-                userLocation = {detected:!0, postalCode:approx.pCode, city:approx.city, source:'approximate'};
-                locText.innerHTML = `📍 Approx: ${approx.city} (${approx.pCode}) - Limited accuracy`;
-                locDisplay.classList.add('location-warning');
-                postal.value = approx.pCode; city.value = approx.city;
-            }
-        },
-        err => {
-            const msg = ["❌ Permission denied","❌ Position unavailable","❌ Timeout"][err.code-1] || "❌ Failed";
-            locText.innerHTML = msg + " - using manual";
-            locDisplay.classList.add('location-error');
-            userLocation.source = 'manual';
-        },
-        {enableHighAccuracy:!0, timeout:1e4}
-    );
-}
-
-function getDefaultPostalCode(city) {
-    const codes = {Nairobi:'100',Mombasa:'200',Kisumu:'300',Nakuru:'400',Eldoret:'500',Thika:'600',Kiambu:'700',Machakos:'800',Meru:'900'};
-    for (let [k,v] of Object.entries(codes)) if (city.toLowerCase().includes(k.toLowerCase())) return v;
-    return '100';
-}
-
-function getApproxLocation(lat, lon) {
-    if (lat > -1.4 && lat < -1.1 && lon > 36.7 && lon < 37.0) return {city:'Nairobi',pCode:'100'};
-    if (lat > -4.1 && lat < -3.9 && lon > 39.6 && lon < 39.7) return {city:'Mombasa',pCode:'200'};
-    if (lat > -0.2 && lat < 0 && lon > 34.7 && lon < 34.8) return {city:'Kisumu',pCode:'300'};
-    if (lat > -0.4 && lat < -0.2 && lon > 36.0 && lon < 36.2) return {city:'Nakuru',pCode:'400'};
-    return {city:'Nairobi',pCode:'100'};
-}
 
 function findBestRecycler(type, qty) {
     const eligible = recyclers.filter(r => r.specialization.includes(type) || r.specialization.includes('other'));
     if (!eligible.length) return null;
-    return eligible.map(r => ({
-        ...r,
-        score: Math.max(0,40-r.distance*2) + (r.coverage.includes(userLocation.postalCode)?30:r.distance<10?20:10) + Math.max(0,20-r.workload*3) + (r.specialization.includes(type)?10:5) + (r.rating-4)*5,
-        totalPrice: (r.price[type]||r.price.other)*qty
-    })).sort((a,b)=>b.score-a.score)[0];
+    
+    return eligible.map(r => {
+        const areaMatch = r.areas.some(area => userLocation.toLowerCase().includes(area.toLowerCase()) || area.toLowerCase().includes(userLocation.toLowerCase()));
+        const distanceScore = Math.max(0, 40 - (r.distance * 2));
+        const locationScore = areaMatch ? 40 : 10;
+        const workloadScore = Math.max(0, 20 - (r.workload * 3));
+        const specScore = r.specialization.includes(type) ? 10 : 5;
+        const ratingBonus = (r.rating - 4) * 5;
+        
+        return {
+            ...r,
+            score: distanceScore + locationScore + workloadScore + specScore + ratingBonus,
+            totalPrice: (r.price[type] || r.price.other) * qty
+        };
+    }).sort((a,b) => b.score - a.score)[0];
 }
 
 function handleSubmit(e) {
     e.preventDefault();
     const type = document.getElementById('itemType').value, qty = document.getElementById('quantity').value;
-    if (!type) return alert('Select device');
+    if (!type) return alert('Please select a device');
     
-    userLocation.postalCode = document.getElementById('postalCode').value || '100';
-    userLocation.city = document.getElementById('city').value || 'Nairobi';
+    userLocation = document.getElementById('location').value || 'Nairobi';
     
     document.getElementById('btnText').classList.add('hidden');
     document.getElementById('btnLoading').classList.remove('hidden');
@@ -317,27 +235,46 @@ function handleSubmit(e) {
     
     setTimeout(() => {
         const r = findBestRecycler(type, parseInt(qty));
+        
         document.getElementById('btnText').classList.remove('hidden');
         document.getElementById('btnLoading').classList.add('hidden');
         document.getElementById('submitBtn').disabled = !1;
         
         if (r) {
             const names = {laptop:'💻 Laptop',smartphone:'📱 Phone',tablet:'📟 Tablet',monitor:'🖥️ Monitor',printer:'🖨️ Printer',tv:'📺 TV',battery:'🔋 Battery',other:'🔧 Other'};
-            const src = {gps:'📍 GPS',cached:'💾 Cached',approximate:'📡 Approx',manual:'✏️ Manual'}[userLocation.source] || '📍';
+            
             document.getElementById('assignedRecycler').innerHTML = `
-                <div class="recycler-header"><span class="recycler-name">🏭 ${r.name}</span><span class="recycler-badge">⭐ ${r.rating}</span></div>
-                <p style="color:#4b5563;margin-bottom:15px;">✓ Assigned: ${userLocation.city}, ${userLocation.postalCode} <span style="font-size:0.8em;color:#6b7280;">${src}</span></p>
+                <div class="recycler-header">
+                    <span class="recycler-name">🏭 ${r.name}</span>
+                    <span class="recycler-badge">⭐ ${r.rating}</span>
+                </div>
+                <p style="color:#4b5563;margin-bottom:15px;">
+                    ✓ Serving: ${userLocation}
+                </p>
                 <div class="recycler-details">
                     <div class="detail-item"><div class="detail-label">Distance</div><div class="detail-value">${r.distance} km</div></div>
                     <div class="detail-item"><div class="detail-label">Response</div><div class="detail-value">${r.responseTime}</div></div>
-                    <div class="detail-item"><div class="detail-label">Price</div><div class="detail-value">KSh ${r.totalPrice}</div></div>
+                    <div class="detail-item"><div class="detail-label">Total Price</div><div class="detail-value">KSh ${r.totalPrice}</div></div>
                 </div>
-                <div style="margin-top:15px;padding-top:15px;border-top:1px solid #e5e7eb;"><p style="font-size:0.9em;color:#059669;"><strong>🏆 Score:</strong> ${Math.round(r.score)}% • Top match</p></div>`;
+                <div style="margin-top:15px;padding-top:15px;border-top:1px solid #e5e7eb;">
+                    <p style="font-size:0.9em;color:#059669;"><strong>🏆 Best match</strong> for your location</p>
+                </div>`;
             
-            sessionStorage.setItem('currentPickup', JSON.stringify({r,itemType:names[type],qty,date:document.getElementById('pickupDate').value,time:document.getElementById('pickupTime').value,notes:document.getElementById('notes').value,location:userLocation}));
+            sessionStorage.setItem('currentPickup', JSON.stringify({
+                recycler: r, 
+                itemType: names[type], 
+                quantity: qty,
+                location: userLocation,
+                date: document.getElementById('pickupDate').value,
+                time: document.getElementById('pickupTime').value,
+                notes: document.getElementById('notes').value
+            }));
+            
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
-        } else alert('No recycler available');
+        } else {
+            alert('No recycler available for your location. Please try another area.');
+        }
     }, 1500);
 }
 
@@ -358,8 +295,8 @@ function scheduleAnother() {
     sessionStorage.removeItem('currentPickup');
     document.getElementById('pickupForm').reset();
     document.getElementById('pickupDate').value = new Date().toISOString().split('T')[0];
-    loadCachedLocation();
-    detectLocation();
+    document.getElementById('location').value = 'Nairobi';
+    userLocation = 'Nairobi';
 }
 </script>
 </body>
