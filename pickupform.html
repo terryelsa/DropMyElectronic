@@ -17,7 +17,7 @@
         .back-btn{color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px;margin-bottom:20px}
         .hero{text-align:center;margin-bottom:40px}
         .hero h1{font-size:2.5rem;color:var(--primary);margin-bottom:20px}
-        .hero p{font-size:1.1rem;color:#6b7280;margin-bottom:15px;max-width:600px;margin-left:auto;margin-right:auto}
+        .hero p{font-weight:600;color:var(--primary)}
         .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
         .step{text-align:center;padding:20px;background:var(--card);border-radius:16px;box-shadow:var(--shadow)}
         .step i{font-size:2rem;color:var(--primary);margin-bottom:10px}
@@ -41,7 +41,9 @@
         .footer-text{text-align:center;color:#6b7280;margin-top:20px}
         .recycler-match{background:var(--bg);border-radius:16px;padding:20px;margin-top:20px;border:2px solid var(--primary)}
         .recycler-match h3{color:var(--primary);margin-bottom:15px;display:flex;align-items:center;gap:10px}
-        .match-card{background:var(--card);border-radius:12px;padding:20px;margin-bottom:15px;border-left:4px solid var(--primary)}
+        .match-card{background:var(--card);border-radius:12px;padding:20px;margin-bottom:15px;border:2px solid transparent;cursor:pointer;transition:all .2s ease}
+        .match-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+        .match-card.selected{border-color:var(--primary);background:rgba(46,125,50,0.05)}
         .match-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
         .match-name{font-size:1.2rem;font-weight:600}
         .match-rating{background:var(--primary);color:#fff;padding:4px 10px;border-radius:20px;font-size:.8rem}
@@ -49,9 +51,13 @@
         .match-detail{text-align:center}
         .match-detail .label{font-size:.7rem;color:#6b7280;text-transform:uppercase}
         .match-detail .value{font-size:1.1rem;font-weight:600}
+        .selection-indicator{text-align:right;color:var(--primary);font-size:.9rem;margin-top:5px}
+        .selection-indicator i{color:var(--primary)}
         .spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s infinite;margin-right:10px}
         @keyframes spin{to{transform:rotate(360deg)}}
         .hidden{display:none!important}
+        .email-preview{background:#f0f9ff;border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--primary);font-family:monospace;white-space:pre-wrap;font-size:.9rem}
+        .dark-mode .email-preview{background:#1e293b;color:#e2e8f0}
         @media (max-width:768px){.steps,.form-row{grid-template-columns:1fr}.hero h1{font-size:2rem}.match-details{grid-template-columns:1fr}}
     </style>
 </head>
@@ -73,10 +79,7 @@
     <!-- Hero Section -->
     <div class="hero">
         <h1>How to donate your e-waste</h1>
-        <p>Find your nearest collection point using our recycler matching system below.</p>
-        <p>Bring your items clean and dry, in a closed box/bag.</p>
-        <p>Items too big or too bulky? Request a free pick-up through the form.</p>
-        <p style="font-weight:600;color:var(--primary)">Together, we're turning electronic waste into opportunity.</p>
+        <p>Together, we're turning electronic waste into opportunity.</p>
     </div>
     
     <!-- Steps -->
@@ -91,7 +94,7 @@
         </div>
         <div class="step">
             <i class="fas fa-truck"></i>
-            <p>We'll match you with nearest recycler</p>
+            <p>Choose recycler & schedule pickup</p>
         </div>
     </div>
     
@@ -139,9 +142,13 @@
         <!-- Recycler Matches (Hidden by default) -->
         <div id="matchesSection" class="hidden">
             <div class="recycler-match">
-                <h3><i class="fas fa-recycle"></i> Nearest Recyclers to You</h3>
+                <h3><i class="fas fa-recycle"></i> Select Your Preferred Recycler</h3>
+                <p style="color:#6b7280;margin-bottom:15px;">Click on a recycler to select them for your pickup</p>
                 <div id="matchesList"></div>
-                <button onclick="confirmRequest()" id="confirmBtn" class="btn" style="background:var(--secondary);margin-top:20px;">
+                <div id="selectionStatus" style="margin:15px 0;padding:10px;background:var(--bg);border-radius:8px;text-align:center;" class="hidden">
+                    ✅ <span id="selectedRecyclerName"></span> selected
+                </div>
+                <button onclick="confirmRequest()" id="confirmBtn" class="btn" style="background:var(--secondary);margin-top:20px;" disabled>
                     ✅ Confirm & Send Request
                 </button>
             </div>
@@ -152,6 +159,13 @@
             <i class="fas fa-check-circle" style="font-size:3rem;margin-bottom:10px;"></i>
             <h3>Request Sent Successfully!</h3>
             <div id="successDetails" style="margin-top:15px;"></div>
+            
+            <!-- Email Preview -->
+            <div class="email-preview" id="emailPreview">
+                <strong><i class="fas fa-envelope"></i> Confirmation Email Sent to:</strong> <span id="confirmEmail"></span><br><br>
+                <div id="emailContent"></div>
+            </div>
+            
             <button onclick="resetForm()" class="btn" style="margin-top:20px;background:var(--secondary);">📅 New Request</button>
         </div>
     </div>
@@ -175,15 +189,15 @@
     });
 })();
 
-// Recyclers Data (from map.html)
+// Recyclers Data
 const recyclers = [
-    {id:1,name:"WEEE Centre - Nairobi",lat:-1.278398296907602,lng:36.952653695036254,address:"Mihango, Embakasi, Off the Eastern By-pass",phone:"0701819559",hours:"Mon-Fri: 8AM-5PM\nSat: 9AM-1PM\nSun: Closed",accepts:"Computers, phones, TVs, printers, batteries",rating:4.8,responseTime:"2-4h"},
-    {id:2,name:"Safaricom E-Waste Drop-off",lat:-1.2733,lng:36.8067,address:"Safaricom House, Westlands, Nairobi",phone:"0722000000",hours:"Mon-Fri: 8AM-5PM",accepts:"Mobile phones, tablets, accessories, batteries",rating:4.6,responseTime:"1-3h"},
-    {id:3,name:"Eco Create & Innovate - ECANDI",lat:-1.2156578760311965,lng:36.797297222022095,address:"32824, Limuru Rd, Nairobi",phone:"0741777986",hours:"Mon-Fri: 9AM-6PM \n Sat: 9AM-4PM \n Sun: Closed",accepts:"All electronics, appliances, batteries",rating:4.9,responseTime:"3-5h"},
-    {id:4,name:"GreenTech Solutions",lat:-1.2762636825707399,lng:36.8267353691281,address:"Next to Nyayo Market, Ngara, Nairobi.",phone:"0722969219",hours:"Mon-Sat: 9AM-5PM\nSun: Closed",accepts:"Phones, laptops, small electronics",rating:4.7,responseTime:"2-4h"}
+    {id:1,name:"WEEE Centre - Nairobi",lat:-1.278398296907602,lng:36.952653695036254,address:"Mihango, Embakasi, Off the Eastern By-pass",phone:"0701819559",hours:"Mon-Fri: 8AM-5PM\nSat: 9AM-1PM\nSun: Closed",accepts:"Computers, phones, TVs, printers, batteries",rating:4.8,responseTime:"2-4h",email:"weecentre@example.com"},
+    {id:2,name:"Safaricom E-Waste Drop-off",lat:-1.2733,lng:36.8067,address:"Safaricom House, Westlands, Nairobi",phone:"0722000000",hours:"Mon-Fri: 8AM-5PM",accepts:"Mobile phones, tablets, accessories, batteries",rating:4.6,responseTime:"1-3h",email:"ewaste@safaricom.co.ke"},
+    {id:3,name:"Eco Create & Innovate - ECANDI",lat:-1.2156578760311965,lng:36.797297222022095,address:"32824, Limuru Rd, Nairobi",phone:"0741777986",hours:"Mon-Fri: 9AM-6PM \n Sat: 9AM-4PM \n Sun: Closed",accepts:"All electronics, appliances, batteries",rating:4.9,responseTime:"3-5h",email:"info@ecandi.org"},
+    {id:4,name:"GreenTech Solutions",lat:-1.2762636825707399,lng:36.8267353691281,address:"Next to Nyayo Market, Ngara, Nairobi.",phone:"0722969219",hours:"Mon-Sat: 9AM-5PM\nSun: Closed",accepts:"Phones, laptops, small electronics",rating:4.7,responseTime:"2-4h",email:"greentech@example.com"}
 ];
 
-// Popular areas coordinates (from map.html)
+// Popular areas coordinates
 const areas = {
     nairobi:[-1.286389,36.817223],cbd:[-1.286389,36.817223],westlands:[-1.2659,36.8067],
     kilimani:[-1.2950,36.7860],karen:[-1.3159,36.8342],industrial:[-1.3083,36.8469],
@@ -196,9 +210,10 @@ const areas = {
 
 let currentMatches = [];
 let formData = {};
+let selectedRecyclerId = null;
 
 function calculateDistance(lat1,lon1,lat2,lon2){
-    const R=6371; // Earth's radius in km
+    const R=6371;
     const dLat=(lat2-lat1)*Math.PI/180;
     const dLon=(lon2-lon1)*Math.PI/180;
     const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
@@ -208,22 +223,72 @@ function calculateDistance(lat1,lon1,lat2,lon2){
 function getLocationCoordinates(locationInput){
     const loc = locationInput.toLowerCase().trim();
     
-    // Check if it matches any known area
     for(let [key,coords] of Object.entries(areas)){
         if(loc.includes(key) || key.includes(loc)){
             return {lat:coords[0],lng:coords[1],name:key};
         }
     }
     
-    // Default to Nairobi CBD if no match
     return {lat:-1.286389,lng:36.817223,name:"Nairobi CBD"};
 }
 
-function findNearestRecyclers(lat,lng,limit=3){
+function findNearestRecyclers(lat,lng,limit=5){
     return recyclers.map(r => ({
         ...r,
         distance: calculateDistance(lat,lng,r.lat,r.lng)
     })).sort((a,b) => a.distance - b.distance).slice(0,limit);
+}
+
+function selectRecycler(id){
+    selectedRecyclerId = id;
+    
+    // Update UI
+    document.querySelectorAll('.match-card').forEach(card => {
+        const cardId = parseInt(card.dataset.id);
+        if(cardId === id){
+            card.classList.add('selected');
+        } else {
+            card.classList.remove('selected');
+        }
+    });
+    
+    const selected = currentMatches.find(r => r.id === id);
+    if(selected){
+        document.getElementById('selectedRecyclerName').textContent = selected.name;
+        document.getElementById('selectionStatus').classList.remove('hidden');
+        document.getElementById('confirmBtn').disabled = false;
+    }
+}
+
+function sendConfirmationEmail(userEmail, userName, requestId, recycler, items, location){
+    // In a real application, this would be an API call to your backend
+    // For demo purposes, we'll simulate it and show the email content
+    
+    console.log(`Sending email to: ${userEmail}`);
+    console.log(`CC: ${recycler.email}`);
+    
+    const emailContent = `
+        Dear ${userName},
+        
+        Thank you for your e-waste pickup request (ID: ${requestId}).
+        
+        Your request has been sent to ${recycler.name}.
+        They will contact you within 24 hours to schedule the pickup.
+        
+        Request Details:
+        • Recycler: ${recycler.name} (${recycler.phone})
+        • Location: ${location}
+        • Items: ${items}
+        
+        A copy of this request has also been sent to the recycler.
+        
+        Thank you for helping us turn electronic waste into opportunity!
+        
+        Best regards,
+        DropMyElectronic Team
+    `;
+    
+    return emailContent;
 }
 
 document.getElementById('donationForm').addEventListener('submit', function(e) {
@@ -240,29 +305,25 @@ document.getElementById('donationForm').addEventListener('submit', function(e) {
         return;
     }
     
-    // Store form data
     formData = {name,phone,email,location,message};
+    selectedRecyclerId = null;
     
-    // Show loading
     document.getElementById('btnText').classList.add('hidden');
     document.getElementById('btnLoading').classList.remove('hidden');
     document.getElementById('submitBtn').disabled = true;
     
-    // Get coordinates and find nearest recyclers
     setTimeout(() => {
         const coords = getLocationCoordinates(location);
         currentMatches = findNearestRecyclers(coords.lat, coords.lng);
         
-        // Hide form, show matches
         document.getElementById('btnText').classList.remove('hidden');
         document.getElementById('btnLoading').classList.add('hidden');
         document.getElementById('submitBtn').disabled = false;
         document.getElementById('donationForm').classList.add('hidden');
         
-        // Display matches
         const matchesList = document.getElementById('matchesList');
         matchesList.innerHTML = currentMatches.map((r, i) => `
-            <div class="match-card">
+            <div class="match-card" data-id="${r.id}" onclick="selectRecycler(${r.id})">
                 <div class="match-header">
                     <span class="match-name">${i+1}. ${r.name}</span>
                     <span class="match-rating">⭐ ${r.rating}</span>
@@ -274,34 +335,58 @@ document.getElementById('donationForm').addEventListener('submit', function(e) {
                     <div class="match-detail"><span class="label">Response</span><span class="value">${r.responseTime}</span></div>
                     <div class="match-detail"><span class="label">Accepts</span><span class="value">${r.accepts.substring(0,15)}...</span></div>
                 </div>
+                <div class="selection-indicator">
+                    <i class="far fa-circle"></i> Click to select
+                </div>
             </div>
         `).join('');
         
-        matchesList.innerHTML += `<p style="text-align:center;color:#6b7280;margin-top:15px;"><i class="fas fa-info-circle"></i> These recyclers will be notified of your pickup request</p>`;
-        
         document.getElementById('matchesSection').classList.remove('hidden');
+        document.getElementById('selectionStatus').classList.add('hidden');
+        document.getElementById('confirmBtn').disabled = true;
     }, 1000);
 });
 
 function confirmRequest() {
-    // Show success message
+    if(!selectedRecyclerId){
+        alert('Please select a recycler first');
+        return;
+    }
+    
+    const selected = currentMatches.find(r => r.id === selectedRecyclerId);
+    const requestId = 'DME-' + new Date().getFullYear() + '-' + Math.floor(Math.random()*10000).toString().padStart(4,'0');
+    
+    // Send email (simulated)
+    const emailContent = sendConfirmationEmail(
+        formData.email,
+        formData.name,
+        requestId,
+        selected,
+        formData.message,
+        formData.location
+    );
+    
+    // Show success message with email preview
     document.getElementById('matchesSection').classList.add('hidden');
     document.getElementById('successMessage').classList.remove('hidden');
     
-    // Generate pickup ID
-    const id = 'DME-' + Math.floor(Math.random()*10000).toString().padStart(4,'0');
-    
-    // Find the nearest recycler name
-    const nearestRecycler = currentMatches[0]?.name || 'a recycler';
+    document.getElementById('confirmEmail').textContent = formData.email;
+    document.getElementById('emailContent').innerHTML = emailContent.replace(/\n/g, '<br>');
     
     document.getElementById('successDetails').innerHTML = `
-        <strong>Request ID:</strong> ${id}<br>
+        <strong>Request ID:</strong> ${requestId}<br>
         <strong>Name:</strong> ${formData.name}<br>
+        <strong>Email:</strong> ${formData.email}<br>
         <strong>Location:</strong> ${formData.location}<br>
-        <strong>Assigned to:</strong> ${nearestRecycler}<br>
-        <strong>Items:</strong> ${formData.message.substring(0,50)}${formData.message.length>50?'...':''}<br><br>
-        <i class="fas fa-check"></i> ${currentMatches[0]?.name} has been notified and will contact you within 24 hours to schedule pickup.
+        <strong>Selected Recycler:</strong> ${selected.name}<br>
+        <strong>Recycler Contact:</strong> ${selected.phone}<br>
+        <strong>Items:</strong> ${formData.message.substring(0,100)}${formData.message.length>100?'...':''}<br><br>
+        <i class="fas fa-check"></i> Confirmation email sent to ${formData.email}<br>
+        <i class="fas fa-check"></i> ${selected.name} has been notified
     `;
+    
+    // In a real application, you would also send an email to the recycler
+    console.log(`Email also sent to recycler: ${selected.email}`);
 }
 
 function resetForm() {
@@ -312,6 +397,7 @@ function resetForm() {
     document.getElementById('location').value = 'Nairobi';
     currentMatches = [];
     formData = {};
+    selectedRecyclerId = null;
 }
 </script>
 </body>
