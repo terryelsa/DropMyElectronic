@@ -6,26 +6,31 @@
   <title>DropMyElectronic · schedule pickup</title>
   <!-- font awesome (same as index) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- minimal critical CSS, all theme/ layout combined & optimised -->
+  <!-- critical CSS: exact index header structure + pickup styles -->
   <style>
     *{margin:0;padding:0;box-sizing:border-box;transition:background-color .3s,border-color .3s,color .2s}
     :root{--primary:#2e7d32;--primary-light:#4caf50;--primary-dark:#1b5e20;--secondary:#ff9800;--text:#333;--bg:#f5f5f5;--card:#fff;--footer-bg:#1a1a1a;--footer-text:#fff;--shadow:0 4px 6px #0000001a;--header-bg:#fff}
     .dark-mode{--primary:#4caf50;--primary-light:#66bb6a;--primary-dark:#388e3c;--secondary:#ffb74d;--text:#e0e0e0;--bg:#121212;--card:#2d2d2d;--footer-bg:#0a0a0a;--footer-text:#e0e0e0;--shadow:0 4px 6px #0000004d;--header-bg:#1e1e1e}
     body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
     .container{width:min(90%,1200px);margin:0 auto;padding:0 15px}
-    /* header (identical to index, smaller footprint) */
+    
+    /* ----- HEADER (exact structure as index) ----- */
     header{background:var(--header-bg);box-shadow:var(--shadow);position:sticky;top:0;z-index:100}
-    .header-container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:12px 0;gap:15px}
-    .logo{font-size:1.8rem;font-weight:700;color:var(--primary);text-decoration:none}
-    .nav-links{display:flex;gap:25px;list-style:none;margin:0 auto 0 0}
-    .nav-links a{font-weight:500;color:var(--text);text-decoration:none}
-    .nav-links a:hover{color:var(--primary)}
-    .header-right{display:flex;align-items:center;gap:15px}
-    .btn{display:inline-block;background:var(--primary);color:#fff;padding:8px 16px;border-radius:6px;font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:.2s}
+    .header-container{display:flex;justify-content:space-between;align-items:center;padding:12px 0;flex-wrap:wrap;gap:15px}
+    .logo{font-size:1.8rem;font-weight:700;color:var(--primary);text-decoration:none;white-space:nowrap}
+    /* navigation links: exactly as index */
+    .nav-links{display:flex;align-items:center;list-style:none;gap:25px;margin-left:auto;margin-right:25px}
+    .nav-links a{font-weight:500;color:var(--text);text-decoration:none;transition:color .2s}
+    .nav-links a:hover,.nav-links .active{color:var(--primary);font-weight:600}
+    .header-right{display:flex;align-items:center;gap:15px;flex-shrink:0}
+    
+    /* buttons */
+    .btn{display:inline-block;background:var(--primary);color:#fff;padding:8px 16px;border-radius:6px;font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:.2s;font-size:.9rem}
     .btn:hover{background:var(--primary-dark);transform:translateY(-2px)}
     .btn-secondary{background:var(--secondary)}
     .btn-secondary:hover{background:#e68900}
-    /* dark mode toggle (exact copy) */
+    
+    /* dark mode toggle (exact from index) */
     .dark-mode-toggle{display:flex;align-items:center;gap:8px;background:rgba(128,128,128,0.1);backdrop-filter:blur(10px);padding:6px 12px;border-radius:30px}
     .dark-mode-label{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.85rem;color:var(--text)}
     .dark-mode-switch{position:relative;width:34px;height:18px;background:#ccc;border-radius:34px}
@@ -33,13 +38,14 @@
     #dark-mode-checkbox:checked+.dark-mode-switch{background:var(--primary)}
     #dark-mode-checkbox:checked+.dark-mode-switch::after{transform:translateX(16px)}
     #dark-mode-checkbox{display:none}
-    /* hero (compact, same index style) */
+
+    /* page hero (same style) */
     .hero{background:linear-gradient(135deg,var(--primary-light),var(--primary));color:#fff;text-align:center;padding:30px 0;position:relative;overflow:hidden}
     .hero::before{content:"";position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=1473&auto=format')center/cover;opacity:.1;animation:slowZoom 20s infinite alternate;pointer-events:none}
     @keyframes slowZoom{0%{transform:scale(1)}to{transform:scale(1.05)}}
-    .hero .container{position:relative;z-index:2}
     .hero h1{font-size:2.2rem;margin-bottom:5px}
-    /* pickup card – mixed from pickupform but using theme */
+
+    /* pickup card */
     .pickup-card{background:var(--card);border-radius:24px;padding:40px;box-shadow:var(--shadow);margin:30px auto 40px;border:1px solid rgba(128,128,128,0.15)}
     .pickup-card h2{display:flex;gap:10px;color:var(--primary);margin-bottom:30px}
     .form-group{margin-bottom:25px}
@@ -51,7 +57,8 @@
     .location-box{position:relative}
     .location-box i{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--primary)}
     .btn-large{width:100%;padding:16px;font-size:1.1rem;border-radius:40px}
-    /* match cards (same recycler style) */
+
+    /* match cards */
     .recycler-match{background:var(--bg);border-radius:24px;padding:20px;margin-top:30px;border:2px solid var(--primary)}
     .recycler-match h3{color:var(--primary);display:flex;gap:8px;margin-bottom:20px}
     .match-card{background:var(--card);border-radius:16px;padding:20px;margin-bottom:15px;border:2px solid transparent;cursor:pointer}
@@ -72,7 +79,8 @@
     #successMessage{text-align:center;background:#f0fdf4;border-radius:24px;padding:30px;color:#166534}
     .dark-mode #successMessage{background:#1e3a2e;color:#b9f5c5}
     #successDetails{background:#dcfce7;border-radius:12px;padding:15px;text-align:left}
-    /* footer (identical to index) */
+
+    /* footer (exact index) */
     footer{background:var(--footer-bg);color:var(--footer-text);padding:50px 0 20px;margin-top:auto}
     .footer-content{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px}
     .footer-column h3{font-size:1.2rem;margin-bottom:1.5rem;color:var(--primary-light)}
@@ -81,13 +89,26 @@
     .footer-links a{color:inherit;text-decoration:none}
     .footer-links a:hover{color:var(--primary-light)}
     .copyright{text-align:center;padding-top:20px;border-top:1px solid #333;font-size:.9rem;color:#aaa}
-    @media (max-width:600px){.form-row{grid-template-columns:1fr}.nav-links{order:1;width:100%;justify-content:center}.header-right{width:100%;justify-content:center}}
+
+    /* responsive – keep nav on one line if possible */
+    @media (max-width:800px){
+      .header-container{flex-wrap:wrap}
+      .nav-links{margin-left:0;margin-right:0;order:1;width:100%;justify-content:center}
+      .header-right{width:auto;justify-content:flex-end}
+    }
+    @media (max-width:600px){
+      .form-row{grid-template-columns:1fr}
+      .nav-links{gap:15px}
+      .header-right{gap:8px}
+    }
   </style>
 </head>
 <body>
+  <!-- HEADER – structure identical to index: logo, nav-links (with margin-left auto + margin-right 25px) and header-right -->
   <header>
     <div class="container header-container">
       <a href="index.html" class="logo">DropMyElectronic</a>
+      <!-- nav links exactly as index, same order and classes -->
       <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="about.html">About</a></li>
@@ -111,7 +132,7 @@
     <section class="hero">
       <div class="container">
         <h1>Request e‑waste pickup</h1>
-        <p>We’ll connect you with a certified recycler</p>
+        <p>We'll connect you with a certified recycler</p>
       </div>
     </section>
 
@@ -136,7 +157,7 @@
           </button>
         </form>
 
-        <!-- matches panel (shown after submit) -->
+        <!-- matches panel -->
         <div id="matchesSection" class="hidden">
           <div class="recycler-match">
             <h3><i class="fas fa-recycle"></i> Select a recycler</h3>
@@ -154,7 +175,7 @@
         <div id="successMessage" class="hidden">
           <i class="fas fa-check-circle" style="font-size:3.5rem;color:#16a34a;display:block;margin-bottom:15px;"></i>
           <h3>Request sent! 🎉</h3>
-          <p>You’ll be contacted shortly.</p>
+          <p>You'll be contacted shortly.</p>
           <div id="successDetails"></div>
           <button onclick="resetForm()" class="btn btn-large" style="background:var(--secondary);margin-top:20px">📅 New request</button>
         </div>
@@ -162,22 +183,23 @@
     </div>
   </main>
 
+  <!-- FOOTER (exact copy of index) -->
   <footer>
     <div class="container">
       <div class="footer-content">
-        <div><h3>DropMyElectronic</h3><p>Making e‑waste simple.</p></div>
-        <div><h3>Quick</h3><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="reward.html">Rewards</a></li><li><a href="support.html">Support</a></li></ul></div>
-        <div><h3>Resources</h3><ul class="footer-links"><li><a href="#">FAQ</a></li><li><a href="#">Support</a></li></ul></div>
-        <div><h3>Contact</h3><ul class="footer-links"><li><a href="mailto:info@dropmyelectronic.com">Email</a></li><li><a href="#">Twitter</a></li></ul></div>
+        <div class="footer-column"><h3>DropMyElectronic</h3><p>Making e‑waste simple.</p></div>
+        <div class="footer-column"><h3>Quick</h3><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="reward.html">Rewards</a></li><li><a href="support.html">Support</a></li></ul></div>
+        <div class="footer-column"><h3>Resources</h3><ul class="footer-links"><li><a href="#">FAQ</a></li><li><a href="#">Support</a></li></ul></div>
+        <div class="footer-column"><h3>Contact</h3><ul class="footer-links"><li><a href="mailto:info@dropmyelectronic.com">Email</a></li><li><a href="#">Twitter</a></li></ul></div>
       </div>
       <div class="copyright"><p>© 2023 DropMyElectronic · ♻️ for future</p></div>
     </div>
   </footer>
 
-  <!-- optimised JS: dark mode + pickup logic (minified & deduplicated) -->
+  <!-- JavaScript: dark mode + pickup logic (header alignment fully preserved) -->
   <script>
     (function() {
-      // ---------- DARK MODE (compact) ----------
+      // DARK MODE (same as index)
       const toggle = document.getElementById('darkToggle');
       const body = document.body;
       const stored = localStorage.getItem('theme');
@@ -206,7 +228,7 @@
         }
       });
 
-      // ---------- PICKUP FORM (consolidated, no duplicate queries) ----------
+      // PICKUP FORM (recycler data & logic)
       const recyclers = [
         {id:1,n:"WEEE Centre",lat:-1.2784,lng:36.9527,a:"Mihango, Embakasi",p:"0701819559",rt:4.8,sp:"2-4h",e:"elsaterry4@gmail.com"},
         {id:2,n:"Safaricom E-Waste",lat:-1.2733,lng:36.8067,a:"Westlands, Nairobi",p:"0722000000",rt:4.6,sp:"1-3h",e:"elsaterry5@gmail.com"},
