@@ -121,7 +121,7 @@
         <div id="successMessage" class="hidden" style="text-align:center;margin-top:30px;padding:30px;background:#f0fdf4;border-radius:16px;color:#166534">
             <i class="fas fa-check-circle" style="font-size:3.5rem;margin-bottom:15px;color:#16a34a;display:block;"></i>
             <h3 style="font-size:1.5rem;margin-bottom:10px;">Request Sent! 🎉</h3>
-            <p style="color:#15803d;margin-bottom:15px;">A confirmation email has been sent to your inbox.</p>
+            <p style="color:#15803d;margin-bottom:15px;">Your request has been sent received and you'll be contacted shortly.</p>
             <div id="successDetails" style="background:#dcfce7;border-radius:10px;padding:15px;margin-top:15px;text-align:left;line-height:1.8;"></div>
             <button onclick="resetForm()" class="btn" style="margin-top:20px;background:var(--secondary);">📅 New Request</button>
         </div>
@@ -147,8 +147,8 @@ const FORMSPREE_ID = "xjgabpgy";
 })();
 
 const R = [
-    {id:1,n:"WEEE Centre",lat:-1.2784,lng:36.9527,a:"Mihango, Embakasi",p:"0701819559",rt:4.8,sp:"2-4h",e:"weecentre@ex.com"},
-    {id:2,n:"Safaricom E-Waste",lat:-1.2733,lng:36.8067,a:"Westlands, Nairobi",p:"0722000000",rt:4.6,sp:"1-3h",e:"ewaste@safaricom.co.ke"},
+    {id:1,n:"WEEE Centre",lat:-1.2784,lng:36.9527,a:"Mihango, Embakasi",p:"0701819559",rt:4.8,sp:"2-4h",e:"elsaterry4@gmail.com"},
+    {id:2,n:"Safaricom E-Waste",lat:-1.2733,lng:36.8067,a:"Westlands, Nairobi",p:"0722000000",rt:4.6,sp:"1-3h",e:"elsaterry5@gmail.com"},
     {id:3,n:"ECANDI",lat:-1.2157,lng:36.7973,a:"Limuru Rd, Nairobi",p:"0741777986",rt:4.9,sp:"3-5h",e:"info@ecandi.org"},
     {id:4,n:"GreenTech",lat:-1.2763,lng:36.8267,a:"Ngara, Nairobi",p:"0722969219",rt:4.7,sp:"2-4h",e:"greentech@ex.com"}
 ];
@@ -235,6 +235,7 @@ window.confirmRequest = async () => {
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({
                 _replyto: formData.e,
+                _cc: r.e,
                 "Request ID": requestId,
                 "Donor Name": formData.n,
                 "Donor Email": formData.e,
