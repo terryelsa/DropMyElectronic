@@ -32,6 +32,7 @@
         .location-box i{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--primary)}
         .btn{background:var(--primary);color:#fff;padding:16px 32px;border-radius:12px;font-weight:600;border:none;cursor:pointer;font-size:1.1rem;width:100%}
         .btn:hover{background:#1b5e20;transform:translateY(-2px)}
+        .btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
         .dark-mode-switch{position:relative;width:34px;height:18px;background:#ccc;border-radius:34px}
         .dark-mode-switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:.3s}
         #dark-mode-checkbox:checked+.dark-mode-switch::after{transform:translateX(16px)}
@@ -54,9 +55,7 @@
         .spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s infinite;margin-right:10px}
         @keyframes spin{to{transform:rotate(360deg)}}
         .hidden{display:none!important}
-        .email-preview{background:#f0f9ff;border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--primary);font-family:monospace;font-size:.9rem;text-align:left;white-space:pre-wrap}
-        .dark-mode .email-preview{background:#1e293b;color:#e2e8f0}
-        .warning-box{background:#fff3cd;border:1px solid #ffeeba;color:#856404;padding:15px;border-radius:8px;margin:20px 0}
+        .error-box{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:15px;border-radius:12px;margin:20px 0}
         @media (max-width:768px){.steps,.form-row{grid-template-columns:1fr}.hero h1{font-size:2rem}.match-details{grid-template-columns:1fr}}
     </style>
 </head>
@@ -72,23 +71,23 @@
             </label>
         </div>
     </div>
-    
+
     <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
-    
+
     <div class="hero">
         <h1>Donate E-Waste</h1>
         <p>Together, we're turning waste into opportunity.</p>
     </div>
-    
+
     <div class="steps">
         <div class="step"><i class="fas fa-map-marked-alt"></i><p>Enter location</p></div>
         <div class="step"><i class="fas fa-box"></i><p>Pack items securely</p></div>
         <div class="step"><i class="fas fa-truck"></i><p>Choose recycler</p></div>
     </div>
-    
+
     <div class="pickup-section">
         <h2><i class="fas fa-truck"></i> Request Pickup</h2>
-        
+
         <form id="donationForm">
             <div class="form-row">
                 <div class="form-group"><label>👤 Name</label><input type="text" id="name" placeholder="Enter your full name" required></div>
@@ -100,31 +99,40 @@
                 <div class="location-box"><input type="text" id="location" placeholder="e.g., Nairobi, Westlands" required><i class="fas fa-map-marker-alt"></i></div>
             </div>
             <div class="form-group"><label>📝 Items</label><textarea id="items" rows="3" placeholder="Describe your e-waste items (e.g., 2 old TVs, 3 phones, 1 laptop...)" required></textarea></div>
-            <button type="submit" id="submitBtn" class="btn"><span id="btnText">🔍 Find Recyclers</span><span id="btnLoading" class="hidden"><span class="spinner"></span> Finding...</span></button>
+            <button type="submit" id="submitBtn" class="btn">
+                <span id="btnText">🔍 Find Recyclers</span>
+                <span id="btnLoading" class="hidden"><span class="spinner"></span> Finding...</span>
+            </button>
         </form>
-        
+
         <div id="matchesSection" class="hidden">
             <div class="recycler-match">
                 <h3><i class="fas fa-recycle"></i> Select Recycler</h3>
                 <div id="matchesList"></div>
                 <div id="selectionStatus" class="hidden" style="margin:15px 0;padding:10px;background:var(--bg);border-radius:8px;text-align:center;">✅ <span id="selectedName"></span> selected</div>
-                <button onclick="confirm()" id="confirmBtn" class="btn" style="background:var(--secondary);margin-top:20px;" disabled>✅ Confirm Request</button>
+                <div id="sendError" class="hidden error-box"></div>
+                <button onclick="confirmRequest()" id="confirmBtn" class="btn" style="background:var(--secondary);margin-top:20px;" disabled>
+                    <span id="confirmBtnText">✅ Confirm Request</span>
+                    <span id="confirmBtnLoading" class="hidden"><span class="spinner"></span> Sending...</span>
+                </button>
             </div>
         </div>
-        
-        <div id="successMessage" class="hidden" style="text-align:center;margin-top:30px;padding:20px;background:#f0fdf4;border-radius:12px;color:#166534">
-            <i class="fas fa-check-circle" style="font-size:3rem;margin-bottom:10px;"></i>
-            <h3>Request Received!</h3>
-            <div id="successDetails" style="margin-top:15px;"></div>
-            <div class="email-preview" id="emailPreview"><strong>📧 Email Preview (not sent):</strong><br><div id="emailContent"></div></div>
-            <button onclick="reset()" class="btn" style="margin-top:20px;background:var(--secondary);">📅 New Request</button>
+
+        <div id="successMessage" class="hidden" style="text-align:center;margin-top:30px;padding:30px;background:#f0fdf4;border-radius:16px;color:#166534">
+            <i class="fas fa-check-circle" style="font-size:3.5rem;margin-bottom:15px;color:#16a34a;display:block;"></i>
+            <h3 style="font-size:1.5rem;margin-bottom:10px;">Request Sent! 🎉</h3>
+            <p style="color:#15803d;margin-bottom:15px;">A confirmation email has been sent to your inbox.</p>
+            <div id="successDetails" style="background:#dcfce7;border-radius:10px;padding:15px;margin-top:15px;text-align:left;line-height:1.8;"></div>
+            <button onclick="resetForm()" class="btn" style="margin-top:20px;background:var(--secondary);">📅 New Request</button>
         </div>
     </div>
-    
+
     <div class="footer-text"><p>♻️ Turning e-waste into opportunity</p></div>
 </div>
 
 <script>
+const FORMSPREE_ID = "xjgabpgy";
+
 // Dark Mode
 (() => {
     const t = document.getElementById('dark-mode-checkbox'), b = document.body;
@@ -138,7 +146,6 @@
     });
 })();
 
-// Data
 const R = [
     {id:1,n:"WEEE Centre",lat:-1.2784,lng:36.9527,a:"Mihango, Embakasi",p:"0701819559",rt:4.8,sp:"2-4h",e:"weecentre@ex.com"},
     {id:2,n:"Safaricom E-Waste",lat:-1.2733,lng:36.8067,a:"Westlands, Nairobi",p:"0722000000",rt:4.6,sp:"1-3h",e:"ewaste@safaricom.co.ke"},
@@ -152,13 +159,13 @@ const areas = {
     kasarani:[-1.2186,36.8925],ngong:[-1.3000,36.7800],thika:[-1.2300,36.8700]
 };
 
-let matches = [], form = {}, selId = null;
+let matches = [], formData = {}, selId = null;
 
 const $ = id => document.getElementById(id);
 const dist = (lat1,lng1,lat2,lng2) => {
-    const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLng=(lng2-lng1)*Math.PI/180;
+    const Rk=6371, dLat=(lat2-lat1)*Math.PI/180, dLng=(lng2-lng1)*Math.PI/180;
     const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return Rk * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 };
 
 const getCoord = loc => {
@@ -174,23 +181,24 @@ const select = id => {
     document.querySelectorAll('.match-card').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.id)===id));
     const s = matches.find(r=>r.id===id);
     if(s) { $('selectedName').textContent = s.n; $('selectionStatus').classList.remove('hidden'); $('confirmBtn').disabled = false; }
+    $('sendError').classList.add('hidden');
 };
 
 $('donationForm').addEventListener('submit', e => {
     e.preventDefault();
-    form = {n:$('name').value, p:$('phone').value, e:$('email').value, l:$('location').value, i:$('items').value};
-    if(!form.n||!form.p||!form.e||!form.l||!form.i) return alert('Fill all fields');
-    
+    formData = {n:$('name').value, p:$('phone').value, e:$('email').value, l:$('location').value, i:$('items').value};
+    if(!formData.n||!formData.p||!formData.e||!formData.l||!formData.i) return alert('Please fill in all fields');
+
     selId = null;
     $('btnText').classList.add('hidden'); $('btnLoading').classList.remove('hidden'); $('submitBtn').disabled = true;
-    
+
     setTimeout(() => {
-        const c = getCoord(form.l);
+        const c = getCoord(formData.l);
         matches = findNear(c.lat, c.lng);
-        
+
         $('btnText').classList.remove('hidden'); $('btnLoading').classList.add('hidden'); $('submitBtn').disabled = false;
         $('donationForm').classList.add('hidden');
-        
+
         $('matchesList').innerHTML = matches.map((r,i) => `
             <div class="match-card" data-id="${r.id}" onclick="select(${r.id})">
                 <div class="match-header"><span class="match-name">${i+1}. ${r.n}</span><span class="match-rating">⭐ ${r.rt}</span></div>
@@ -203,44 +211,76 @@ $('donationForm').addEventListener('submit', e => {
                 <div class="selection-indicator"><i class="far fa-circle"></i> Click to select</div>
             </div>
         `).join('');
-        
+
         $('matchesSection').classList.remove('hidden');
         $('selectionStatus').classList.add('hidden');
         $('confirmBtn').disabled = true;
     }, 1000);
 });
 
-window.confirm = () => {
-    if(!selId) return alert('Select a recycler');
-    const r = matches.find(r=>r.id===selId), id = 'DME-'+Date.now().toString().slice(-6);
-    
-    const email = `TO: ${form.e}
-FROM: noreply@dropmyelectronic.com
-SUBJECT: Pickup Request ${id}
+window.confirmRequest = async () => {
+    if(!selId) return alert('Please select a recycler');
 
-Dear ${form.n},
+    const r = matches.find(r => r.id === selId);
+    const requestId = 'DME-' + Date.now().toString().slice(-6);
 
-Request sent to ${r.n} (${r.p}) for pickup at ${form.l}.
+    $('confirmBtn').disabled = true;
+    $('confirmBtnText').classList.add('hidden');
+    $('confirmBtnLoading').classList.remove('hidden');
+    $('sendError').classList.add('hidden');
 
-Items: ${form.i}
+    try {
+        const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                _replyto: formData.e,
+                "Request ID": requestId,
+                "Donor Name": formData.n,
+                "Donor Email": formData.e,
+                "Donor Phone": formData.p,
+                "Pickup Location": formData.l,
+                "Items to Donate": formData.i,
+                "Selected Recycler": r.n,
+                "Recycler Address": r.a,
+                "Recycler Phone": r.p,
+                "Recycler Email": r.e,
+                "Estimated Response Time": r.sp,
+            })
+        });
 
-Thank you for helping us turn e-waste into opportunity!`;
-    
-    $('matchesSection').classList.add('hidden');
-    $('successMessage').classList.remove('hidden');
-    $('emailContent').innerHTML = email.replace(/\n/g,'<br>');
-    $('successDetails').innerHTML = `<strong>ID:</strong> ${id}<br><strong>Recycler:</strong> ${r.n}<br><strong>Email:</strong> ${form.e}`;
-    
-    console.log('📧 Demo - Email would be sent to:', form.e);
-    console.log('📧 Demo - Recycler notified:', r.e);
+        if (response.ok) {
+            $('matchesSection').classList.add('hidden');
+            $('successMessage').classList.remove('hidden');
+            $('successDetails').innerHTML = `
+                <strong>📋 Request ID:</strong> ${requestId}<br>
+                <strong>♻️ Recycler:</strong> ${r.n}<br>
+                <strong>📍 Pickup:</strong> ${formData.l}<br>
+                <strong>⏱️ Response Time:</strong> ${r.sp}<br>
+                <strong>📧 Confirmation sent to:</strong> ${formData.e}
+            `;
+        } else {
+            const data = await response.json();
+            throw new Error(data.error || 'Submission failed');
+        }
+
+    } catch (err) {
+        $('sendError').textContent = `❌ Failed to send: ${err.message}. Please try again.`;
+        $('sendError').classList.remove('hidden');
+        $('confirmBtn').disabled = false;
+        $('confirmBtnText').classList.remove('hidden');
+        $('confirmBtnLoading').classList.add('hidden');
+    }
 };
 
-window.reset = () => {
+window.resetForm = () => {
     $('successMessage').classList.add('hidden');
     $('matchesSection').classList.add('hidden');
     $('donationForm').classList.remove('hidden');
     $('donationForm').reset();
-    matches = []; form = {}; selId = null;
+    matches = []; formData = {}; selId = null;
+    $('confirmBtnText').classList.remove('hidden');
+    $('confirmBtnLoading').classList.add('hidden');
 };
 </script>
 </body>
