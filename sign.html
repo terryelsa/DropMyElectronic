@@ -94,6 +94,8 @@
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase-client.js"></script>
 </head>
 <body>
     <div class="dark-mode-toggle">
@@ -142,7 +144,7 @@
                     </label>
                     <a href="#" onclick="alert('Password reset link will be sent to your email')">Forgot Password?</a>
                 </div>
-                <button type="submit" class="submit-btn">Sign In</button>
+                <button type="submit" class="submit-btn" id="signinSubmitBtn">Sign In</button>
                 <div class="divider">
                     <span>OR</span>
                 </div>
@@ -206,11 +208,21 @@
                     <span class="error-message" id="signup-confirm-error"></span>
                 </div>
                 <div class="form-group">
+                    <label for="signup-role">I'm signing up as</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-tag"></i>
+                        <select id="signup-role" name="role" style="width:100%;padding:12px 15px 12px 45px;border:2px solid var(--light-bg);border-radius:10px;font-size:1rem;background:var(--white);color:var(--text-color);">
+                            <option value="user">Household / Donor — I want to request pickups & earn points</option>
+                            <option value="recycler">Recycler — I verify pickups & manage a drop-off point (requires approval)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label>
                         <input type="checkbox" name="terms" required> I agree to the <a href="#" style="color: var(--primary-color)">Terms & Conditions</a>
                     </label>
                 </div>
-                <button type="submit" class="submit-btn">Create Account</button>
+                <button type="submit" class="submit-btn" id="signupSubmitBtn">Create Account</button>
                 <div class="divider">
                     <span>OR</span>
                 </div>
@@ -297,7 +309,19 @@
             error.classList.remove('show');
         }
         
-        function handleSignIn(e) {
+        // Where to send the user after a successful sign-in. Set via ?next=xyz.html
+        const nextParam = new URLSearchParams(window.location.search).get('next');
+
+        function redirectAfterAuth(role, recyclerStatus) {
+            if (role === 'recycler' && recyclerStatus !== 'approved') {
+                window.location.href = 'recycler-pending.html';
+                return;
+            }
+            if (nextParam) { window.location.href = nextParam; return; }
+            window.location.href = (role === 'recycler') ? 'recycler.html' : 'index.html';
+        }
+
+        async function handleSignIn(e) {
             e.preventDefault();
             const email = document.getElementById('signin-email').value;
             const password = document.getElementById('signin-password').value;
@@ -310,19 +334,31 @@
                 showError('signin-password', 'Password must be at least 6 characters');
                 isValid = false;
             } else showSuccess('signin-password');
-            if (isValid) {
-                alert('Sign in successful! Welcome back.');
-                window.location.href = 'index.html';
+            if (!isValid) return;
+
+            const btn = document.getElementById('signinSubmitBtn');
+            btn.disabled = true; btn.textContent = 'Signing in…';
+
+            const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                btn.disabled = false; btn.textContent = 'Sign In';
+                showError('signin-password', error.message);
+                return;
             }
+
+            const profile = await getProfile();
+            redirectAfterAuth(profile ? profile.role : 'user', profile ? profile.recycler_status : 'none');
         }
-        
-        function handleSignUp(e) {
+
+        async function handleSignUp(e) {
             e.preventDefault();
             const name = document.getElementById('signup-name').value;
             const email = document.getElementById('signup-email').value;
             const phone = document.getElementById('signup-phone').value;
             const password = document.getElementById('signup-password').value;
             const confirm = document.getElementById('signup-confirm').value;
+            const role = document.getElementById('signup-role').value;
             let isValid = true;
             if (name.length < 2) {
                 showError('signup-name', 'Please enter your full name');
@@ -344,10 +380,33 @@
                 showError('signup-confirm', 'Passwords do not match');
                 isValid = false;
             } else showSuccess('signup-confirm');
-            if (isValid) {
-                alert('Account created successfully! Welcome to DropMyElectronic.');
-                window.location.href = 'index.html';
+            if (!isValid) return;
+
+            const btn = document.getElementById('signupSubmitBtn');
+            btn.disabled = true; btn.textContent = 'Creating account…';
+
+            const { data, error } = await sb.auth.signUp({
+                email,
+                password,
+                options: { data: { full_name: name, phone: phone, role: role } }
+            });
+
+            if (error) {
+                btn.disabled = false; btn.textContent = 'Create Account';
+                showError('signup-email', error.message);
+                return;
             }
+
+            // If email confirmation is enabled in your Supabase project, there
+            // won't be a session yet — let the user know to check their inbox.
+            if (!data.session) {
+                alert('Account created! Please check your email to confirm your address, then sign in.');
+                btn.disabled = false; btn.textContent = 'Create Account';
+                switchTab('signin');
+                return;
+            }
+
+            redirectAfterAuth(role, role === 'recycler' ? 'pending' : 'none');
         }
 
         const darkModeToggle = document.getElementById('dark-mode-checkbox');

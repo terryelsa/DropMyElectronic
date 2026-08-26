@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Recycler Approvals - DropMyElectronic</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <style>
+    :root{--primary-color:#2e7d32;--primary-light:#4caf50;--primary-dark:#1b5e20;--secondary-color:#ff9800;--text-color:#333;--light-bg:#f5f5f5;--white:#fff;--card-bg:#fff;--shadow:0 4px 6px #0000001a;--header-bg:#fff;--hero-gradient:linear-gradient(135deg,var(--primary-light),var(--primary-color))}
+    .dark-mode{--primary-color:#4caf50;--primary-light:#66bb6a;--primary-dark:#388e3c;--secondary-color:#ffb74d;--text-color:#e0e0e0;--light-bg:#121212;--white:#1e1e1e;--card-bg:#2d2d2d;--shadow:0 4px 6px #0000004d;--header-bg:#1e1e1e;--hero-gradient:linear-gradient(135deg,#1b5e20,#2e7d32)}
+    *{margin:0;padding:0;box-sizing:border-box;transition:background-color .3s,color .3s}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--light-bg);color:var(--text-color)}
+    a{text-decoration:none;color:inherit}
+    .container{width:90%;max-width:900px;margin:0 auto;padding:0 15px}
+    .btn{display:inline-block;background:var(--primary-color);color:#fff;padding:8px 16px;border-radius:8px;font-weight:600;border:none;cursor:pointer;font-size:.9rem}
+    .btn-reject{background:#c62828}
+    .btn:hover{opacity:.9}
+    header{background:var(--header-bg);box-shadow:var(--shadow);position:sticky;top:0}
+    .header-container{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+    .logo{font-size:1.8rem;font-weight:700;color:var(--primary-color)}
+    .header-right{display:flex;align-items:center;gap:15px}
+    .dark-mode-toggle{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:6px 12px;border-radius:30px;box-shadow:var(--shadow)}
+    .dark-mode-label{display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:500;color:var(--text-color);font-size:.85rem}
+    .dark-mode-switch{position:relative;width:34px;height:18px;background:#ccc;border-radius:34px;transition:background .3s}
+    .dark-mode-switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .3s}
+    #dark-mode-checkbox:checked+.dark-mode-switch{background:var(--primary-color)}
+    #dark-mode-checkbox:checked+.dark-mode-switch::after{transform:translateX(16px)}
+    #dark-mode-checkbox{display:none}
+    .page-hero{background:var(--hero-gradient);color:#fff;text-align:center;padding:35px 0}
+    main{padding:40px 0}
+    .card{background:var(--card-bg);border-radius:16px;box-shadow:var(--shadow);padding:25px;margin-bottom:20px}
+    .app-item{display:flex;justify-content:space-between;align-items:center;padding:16px;background:var(--light-bg);border-radius:10px;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+    .app-actions{display:flex;gap:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+      <a href="index.html" class="logo">DropMyElectronic</a>
+      <div class="header-right">
+        <button class="btn" onclick="signOut()">Sign out</button>
+        <div class="dark-mode-toggle">
+          <label for="dark-mode-checkbox" class="dark-mode-label">
+            <i class="fas fa-moon"></i><span>Dark Mode</span>
+            <input type="checkbox" id="dark-mode-checkbox">
+            <div class="dark-mode-switch"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </header>
+  <section class="page-hero">
+    <div class="container">
+      <h1><i class="fas fa-user-shield"></i> Recycler Approvals</h1>
+      <p>Review and approve pending recycler applications</p>
+    </div>
+  </section>
+  <main>
+    <div class="container">
+      <div class="card">
+        <h2 style="margin-bottom:15px;">Pending applications</h2>
+        <div id="pendingList"><p>Loading…</p></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const darkModeToggle = document.getElementById('dark-mode-checkbox');
+    const body = document.body;
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const currentTheme = localStorage.getItem('theme');
+    function updateDarkModeIcon(isDark) {
+      const icon = document.querySelector('.dark-mode-label i');
+      const label = document.querySelector('.dark-mode-label span');
+      icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+      label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+    }
+    if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+      body.classList.add('dark-mode'); darkModeToggle.checked = true; updateDarkModeIcon(true);
+    }
+    darkModeToggle.addEventListener('change', function() {
+      body.classList.toggle('dark-mode', this.checked);
+      localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+      updateDarkModeIcon(this.checked);
+    });
+
+    async function loadApplications() {
+      const { data, error } = await sb
+        .from('profiles')
+        .select('*')
+        .eq('role', 'recycler')
+        .eq('recycler_status', 'pending')
+        .order('created_at', { ascending: true });
+
+      const list = document.getElementById('pendingList');
+      if (error) { list.innerHTML = `<p>Error: ${error.message}</p>`; return; }
+      if (!data || data.length === 0) { list.innerHTML = '<p style="opacity:0.7;">No pending applications.</p>'; return; }
+
+      list.innerHTML = data.map(p => `
+        <div class="app-item">
+          <div><strong>${p.full_name || '(no name)'}</strong> — ${p.phone || 'no phone'}</div>
+          <div class="app-actions">
+            <button class="btn" onclick="review('${p.id}','approved')">Approve</button>
+            <button class="btn btn-reject" onclick="review('${p.id}','rejected')">Reject</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function review(userId, decision) {
+      const { error } = await sb.rpc('review_recycler', { p_user_id: userId, p_decision: decision });
+      if (error) { alert('Error: ' + error.message); return; }
+      loadApplications();
+    }
+
+    (async () => {
+      const profile = await requireAdmin();
+      if (!profile) return;
+      loadApplications();
+    })();
+  </script>
+</body>
+</html>

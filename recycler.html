@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recycler Dashboard - DropMyElectronic</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    :root{--primary-color:#2e7d32;--primary-light:#4caf50;--primary-dark:#1b5e20;--secondary-color:#ff9800;--accent-color:#2196f3;--text-color:#333;--light-bg:#f5f5f5;--white:#fff;--card-bg:#fff;--shadow:0 4px 6px #0000001a;--radius:8px;--footer-bg:#1a1a1a;--footer-text:#fff;--hero-gradient:linear-gradient(135deg,var(--primary-light),var(--primary-color));--header-bg:#fff}
+    .dark-mode{--primary-color:#4caf50;--primary-light:#66bb6a;--primary-dark:#388e3c;--secondary-color:#ffb74d;--accent-color:#64b5f6;--text-color:#e0e0e0;--light-bg:#121212;--white:#1e1e1e;--card-bg:#2d2d2d;--shadow:0 4px 6px #0000004d;--footer-bg:#0a0a0a;--footer-text:#e0e0e0;--hero-gradient:linear-gradient(135deg,#1b5e20,#2e7d32);--header-bg:#1e1e1e}
+    *{margin:0;padding:0;box-sizing:border-box;transition:background-color .3s,color .3s,border-color .3s}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:var(--text-color);background:var(--light-bg)}
+    a{text-decoration:none;color:inherit}
+    .container{width:90%;max-width:900px;margin:0 auto;padding:0 15px}
+    .btn{display:inline-block;background:var(--primary-color);color:#fff;padding:10px 20px;border-radius:8px;font-weight:600;border:none;cursor:pointer;font-size:1rem}
+    .btn:hover{background:var(--primary-dark)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .btn-secondary{background:var(--secondary-color)}
+    .btn-secondary:hover{background:#e68900}
+    header{background:var(--header-bg);box-shadow:var(--shadow);position:sticky;top:0;z-index:100}
+    .header-container{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+    .logo{font-size:1.8rem;font-weight:700;color:var(--primary-color)}
+    .header-right{display:flex;align-items:center;gap:15px}
+    .dark-mode-toggle{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:6px 12px;border-radius:30px;box-shadow:var(--shadow)}
+    .dark-mode-label{display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:500;color:var(--text-color);font-size:.85rem}
+    .dark-mode-switch{position:relative;width:34px;height:18px;background:#ccc;border-radius:34px;transition:background .3s}
+    .dark-mode-switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .3s}
+    #dark-mode-checkbox:checked+.dark-mode-switch{background:var(--primary-color)}
+    #dark-mode-checkbox:checked+.dark-mode-switch::after{transform:translateX(16px)}
+    #dark-mode-checkbox{display:none}
+    .page-hero{background:var(--hero-gradient);color:#fff;text-align:center;padding:35px 0}
+    .page-hero h1{font-size:2rem}
+    main{padding:40px 0}
+    .card{background:var(--card-bg);border-radius:16px;box-shadow:var(--shadow);padding:30px;margin-bottom:25px}
+    .scan-toggle{display:flex;gap:10px;margin-bottom:20px}
+    .scan-toggle button{flex:1;padding:12px;border-radius:10px;border:2px solid var(--light-bg);background:var(--card-bg);color:var(--text-color);font-weight:600;cursor:pointer}
+    .scan-toggle button.active{border-color:var(--primary-color);color:var(--primary-color)}
+    #qr-reader{max-width:400px;margin:0 auto;border-radius:12px;overflow:hidden}
+    .manual-entry{display:flex;gap:10px;max-width:400px;margin:0 auto}
+    .manual-entry input{flex:1;padding:14px;border:2px solid #e0e0e0;border-radius:10px;font-size:1.1rem;text-transform:uppercase;letter-spacing:1px;text-align:center;background:var(--white);color:var(--text-color)}
+    .hidden{display:none!important}
+    .result-box{margin-top:20px;padding:20px;border-radius:12px}
+    .result-success{background:#dcfce7;color:#166534}
+    .result-error{background:#fef2f2;color:#991b1b}
+    .pending-list{display:grid;gap:12px;margin-top:10px}
+    .pending-item{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--light-bg);border-radius:10px;flex-wrap:wrap;gap:8px}
+    .pending-item .code{font-weight:700;color:var(--primary-color)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+      <a href="index.html" class="logo">DropMyElectronic</a>
+      <div class="header-right">
+        <span id="recyclerName" style="font-weight:600;"></span>
+        <button class="btn btn-secondary" onclick="signOut()">Sign out</button>
+        <div class="dark-mode-toggle">
+          <label for="dark-mode-checkbox" class="dark-mode-label">
+            <i class="fas fa-moon"></i><span>Dark Mode</span>
+            <input type="checkbox" id="dark-mode-checkbox">
+            <div class="dark-mode-switch"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1><i class="fas fa-recycle"></i> Recycler Dashboard</h1>
+      <p>Scan or enter a pickup code to verify it and credit the user's points</p>
+    </div>
+  </section>
+
+  <main>
+    <div class="container">
+      <div class="card">
+        <div class="scan-toggle">
+          <button id="tabScan" class="active" onclick="switchMode('scan')"><i class="fas fa-camera"></i> Scan QR</button>
+          <button id="tabManual" onclick="switchMode('manual')"><i class="fas fa-keyboard"></i> Enter code</button>
+        </div>
+
+        <div id="scanPanel">
+          <div id="qr-reader"></div>
+          <p style="text-align:center;margin-top:10px;font-size:0.85rem;opacity:0.75;">Allow camera access, then point it at the customer's QR code.</p>
+        </div>
+
+        <div id="manualPanel" class="hidden">
+          <form class="manual-entry" onsubmit="handleManualSubmit(event)">
+            <input type="text" id="manualCode" placeholder="DME-XXXXXX" required>
+            <button type="submit" class="btn">Verify</button>
+          </form>
+        </div>
+
+        <div id="resultBox" class="result-box hidden"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-bottom:5px;"><i class="fas fa-clock"></i> Pending pickups</h2>
+        <p style="opacity:0.75;margin-bottom:10px;">Codes waiting to be verified</p>
+        <div id="pendingList" class="pending-list"><p>Loading…</p></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const darkModeToggle = document.getElementById('dark-mode-checkbox');
+    const body = document.body;
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const currentTheme = localStorage.getItem('theme');
+    function updateDarkModeIcon(isDark) {
+      const icon = document.querySelector('.dark-mode-label i');
+      const label = document.querySelector('.dark-mode-label span');
+      icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+      label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+    }
+    if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+      body.classList.add('dark-mode'); darkModeToggle.checked = true; updateDarkModeIcon(true);
+    }
+    darkModeToggle.addEventListener('change', function() {
+      body.classList.toggle('dark-mode', this.checked);
+      localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+      updateDarkModeIcon(this.checked);
+    });
+
+    let html5QrCode = null;
+    let processing = false;
+
+    async function init() {
+      const profile = await requireAuth('recycler');
+      if (!profile) return;
+      document.getElementById('recyclerName').textContent = profile.full_name || 'Recycler';
+      startScanner();
+      loadPending();
+    }
+
+    function switchMode(mode) {
+      document.getElementById('tabScan').classList.toggle('active', mode === 'scan');
+      document.getElementById('tabManual').classList.toggle('active', mode === 'manual');
+      document.getElementById('scanPanel').classList.toggle('hidden', mode !== 'scan');
+      document.getElementById('manualPanel').classList.toggle('hidden', mode !== 'manual');
+      if (mode === 'scan') startScanner(); else stopScanner();
+    }
+
+    function startScanner() {
+      if (html5QrCode) return;
+      html5QrCode = new Html5Qrcode("qr-reader");
+      Html5Qrcode.getCameras().then(cameras => {
+        if (!cameras || !cameras.length) {
+          document.getElementById('qr-reader').innerHTML = '<p style="text-align:center;padding:20px;">No camera found — use "Enter code" instead.</p>';
+          return;
+        }
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 220 },
+          (decodedText) => verifyCode(decodedText),
+          () => {} // ignore per-frame scan failures
+        ).catch(() => {
+          document.getElementById('qr-reader').innerHTML = '<p style="text-align:center;padding:20px;">Camera unavailable — use "Enter code" instead.</p>';
+        });
+      }).catch(() => {
+        document.getElementById('qr-reader').innerHTML = '<p style="text-align:center;padding:20px;">Camera permission denied — use "Enter code" instead.</p>';
+      });
+    }
+
+    function stopScanner() {
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().catch(() => {});
+      }
+    }
+
+    function handleManualSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('manualCode');
+      verifyCode(input.value.trim().toUpperCase());
+      input.value = '';
+    }
+
+    async function verifyCode(code) {
+      if (processing) return; // avoid double-fires while camera keeps scanning
+      processing = true;
+      const box = document.getElementById('resultBox');
+      box.classList.remove('hidden', 'result-success', 'result-error');
+      box.textContent = 'Verifying ' + code + '…';
+
+      const { data, error } = await sb.rpc('verify_pickup', { p_code: code });
+
+      if (error) {
+        box.classList.add('result-error');
+        box.textContent = '❌ ' + error.message;
+      } else {
+        box.classList.add('result-success');
+        box.innerHTML = `✅ Verified! <strong>${data.full_name}</strong> earned <strong>${data.points_awarded} points</strong> for "${data.items}".`;
+        loadPending();
+      }
+      // brief cooldown so the camera loop doesn't instantly re-fire the same code
+      setTimeout(() => { processing = false; }, 2000);
+    }
+
+    async function loadPending() {
+      const { data, error } = await sb
+        .from('pickups')
+        .select('*')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: true });
+
+      const list = document.getElementById('pendingList');
+      if (error) { list.innerHTML = `<p>Error: ${error.message}</p>`; return; }
+      if (!data || data.length === 0) { list.innerHTML = '<p style="opacity:0.7;">No pending pickups right now.</p>'; return; }
+
+      list.innerHTML = data.map(p => `
+        <div class="pending-item">
+          <div><span class="code">${p.code}</span> — ${p.full_name} · ${p.items}</div>
+          <button class="btn" onclick="verifyCode('${p.code}')">Verify</button>
+        </div>
+      `).join('');
+    }
+
+    init();
+  </script>
+</body>
+</html>
