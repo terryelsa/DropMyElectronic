@@ -4,15 +4,11 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>My Profile - DropMyElectronic</title>
 
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
 
@@ -35,7 +31,6 @@
             --shadow: 0 10px 35px rgba(0,0,0,0.08);
         }
 
-
         .dark-mode {
 
             --text: #eeeeee;
@@ -52,13 +47,11 @@
             --shadow: 0 10px 35px rgba(0,0,0,0.5);
         }
 
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
 
         body {
 
@@ -75,7 +68,6 @@
 
             color: var(--text);
         }
-
 
         /* NAVBAR */
 
@@ -97,7 +89,6 @@
             padding: 0 40px;
         }
 
-
         .logo {
 
             display: flex;
@@ -113,11 +104,9 @@
             font-weight: 700;
         }
 
-
         .logo i {
             font-size: 1.4rem;
         }
-
 
         .nav-actions {
 
@@ -128,7 +117,6 @@
             gap: 15px;
         }
 
-
         .nav-link {
 
             color: var(--text);
@@ -138,11 +126,9 @@
             font-weight: 500;
         }
 
-
         .nav-link:hover {
             color: var(--primary);
         }
-
 
         .logout-btn {
 
@@ -159,7 +145,6 @@
             font-weight: 600;
         }
 
-
         /* PAGE */
 
         .page {
@@ -171,12 +156,10 @@
             padding: 0 20px;
         }
 
-
         .page-header {
 
             margin-bottom: 25px;
         }
-
 
         .page-header h1 {
 
@@ -185,14 +168,12 @@
             margin-bottom: 8px;
         }
 
-
         .page-header p {
 
             color: var(--muted);
 
             font-size: 0.95rem;
         }
-
 
         /* PROFILE CARD */
 
@@ -206,7 +187,6 @@
 
             padding: 35px;
         }
-
 
         .profile-top {
 
@@ -223,7 +203,6 @@
             border-bottom:
                 1px solid var(--border);
         }
-
 
         .profile-avatar {
 
@@ -246,14 +225,12 @@
             font-size: 30px;
         }
 
-
         .profile-top h2 {
 
             font-size: 1.4rem;
 
             margin-bottom: 5px;
         }
-
 
         .profile-top p {
 
@@ -262,14 +239,12 @@
             font-size: 0.9rem;
         }
 
-
         /* FORM */
 
         .form-group {
 
             margin-bottom: 22px;
         }
-
 
         .form-group label {
 
@@ -280,12 +255,10 @@
             font-weight: 600;
         }
 
-
         .input-wrapper {
 
             position: relative;
         }
-
 
         .input-wrapper i {
 
@@ -300,7 +273,6 @@
 
             color: var(--muted);
         }
-
 
         .form-group input {
 
@@ -324,7 +296,6 @@
             font-size: 1rem;
         }
 
-
         .form-group input:focus {
 
             outline: none;
@@ -337,7 +308,6 @@
                 rgba(46,125,50,0.08);
         }
 
-
         .form-group input:disabled {
 
             background:
@@ -345,7 +315,6 @@
 
             cursor: not-allowed;
         }
-
 
         .help-text {
 
@@ -355,7 +324,6 @@
 
             font-size: 0.82rem;
         }
-
 
         /* BUTTON */
 
@@ -381,13 +349,11 @@
             cursor: pointer;
         }
 
-
         .save-btn:hover {
 
             background:
                 var(--primary-dark);
         }
-
 
         .save-btn:disabled {
 
@@ -395,7 +361,6 @@
 
             cursor: not-allowed;
         }
-
 
         /* MESSAGE */
 
@@ -412,11 +377,9 @@
             font-size: 0.9rem;
         }
 
-
         .message.show {
             display: block;
         }
-
 
         .message.success {
 
@@ -425,14 +388,12 @@
             color: #2e7d32;
         }
 
-
         .message.error {
 
             background: #ffebee;
 
             color: #c62828;
         }
-
 
         /* MOBILE */
 
@@ -442,21 +403,17 @@
                 padding: 0 20px;
             }
 
-
             .nav-link {
                 display: none;
             }
-
 
             .page {
                 margin: 30px auto;
             }
 
-
             .profile-card {
                 padding: 25px 20px;
             }
-
 
             .profile-top {
                 align-items: flex-start;
@@ -473,17 +430,13 @@
 
 </head>
 
-
 <body>
-
 
     <!-- NAVBAR -->
 
     <nav class="navbar">
 
-        <a
-            href="index.html"
-            class="logo">
+        <a href="index.html" class="logo">
 
             <i class="fas fa-recycle"></i>
 
@@ -491,21 +444,15 @@
 
         </a>
 
-
         <div class="nav-actions">
 
-            <a
-                href="index.html"
-                class="nav-link">
+            <a href="index.html" class="nav-link">
 
                 Home
 
             </a>
 
-
-            <button
-                class="logout-btn"
-                onclick="logout()">
+            <button class="logout-btn" onclick="logout()">
 
                 <i class="fas fa-sign-out-alt"></i>
 
@@ -516,7 +463,6 @@
         </div>
 
     </nav>
-
 
     <!-- PAGE -->
 
@@ -532,7 +478,6 @@
 
         </div>
 
-
         <div class="profile-card">
 
             <!-- PROFILE HEADER -->
@@ -544,7 +489,6 @@
                     <i class="fas fa-user"></i>
 
                 </div>
-
 
                 <div>
 
@@ -560,21 +504,14 @@
 
             </div>
 
-
             <!-- MESSAGE -->
 
-            <div
-                id="message"
-                class="message">
+            <div id="message" class="message">
             </div>
-
 
             <!-- PROFILE FORM -->
 
-            <form
-                id="profileForm"
-                onsubmit="updateProfile(event)">
-
+            <form id="profileForm" onsubmit="updateProfile(event)">
 
                 <!-- FULL NAME -->
 
@@ -588,16 +525,11 @@
 
                         <i class="fas fa-user"></i>
 
-                        <input
-                            type="text"
-                            id="full-name"
-                            placeholder="Your full name"
-                            required>
+                        <input type="text" id="full-name" placeholder="Your full name" required>
 
                     </div>
 
                 </div>
-
 
                 <!-- EMAIL -->
 
@@ -611,10 +543,7 @@
 
                         <i class="fas fa-envelope"></i>
 
-                        <input
-                            type="email"
-                            id="email"
-                            disabled>
+                        <input type="email" id="email" disabled>
 
                     </div>
 
@@ -624,19 +553,13 @@
 
                 </div>
 
-
                 <!-- PHONE -->
 
                 <div class="form-group">
 
                     <label for="phone">
                         Phone Number
-                        <span
-                            style="
-                            color:var(--muted);
-                            font-weight:400;
-                            font-size:0.85rem;
-                            ">
+                        <span style=" color:var(--muted); font-weight:400; font-size:0.85rem; ">
                             (Optional)
                         </span>
                     </label>
@@ -645,10 +568,7 @@
 
                         <i class="fas fa-phone"></i>
 
-                        <input
-                            type="tel"
-                            id="phone"
-                            placeholder="+254 700 000000">
+                        <input type="tel" id="phone" placeholder="+254 700 000000">
 
                     </div>
 
@@ -658,11 +578,7 @@
 
                 </div>
 
-
-                <button
-                    type="submit"
-                    class="save-btn"
-                    id="saveBtn">
+                <button type="submit" class="save-btn" id="saveBtn">
 
                     Save Changes
 
@@ -674,109 +590,52 @@
 
     </main>
 
-
     <script>
 
         let currentUser = null;
-
 
         /* ================================
            SHOW MESSAGE
         ================================= */
 
         function showMessage(message, type) {
-
-            const box =
-                document.getElementById(
-                    'message'
-                );
-
-
+            const box = document.getElementById('message');
             box.textContent = message;
-
-            box.className =
-                `message show ${type}`;
-
-
+            box.className = `message show ${type}`;
             setTimeout(() => {
-
-                box.classList.remove(
-                    'show'
-                );
-
-            }, 5000);
+                box.classList.remove('show'); }, 5000);
         }
-
 
         /* ================================
            LOAD PROFILE
         ================================= */
 
         async function loadProfile() {
-
             try {
-
                 const {
-                    data,
-                    error
+                    data, error
                 } = await sb.auth.getUser();
-
-
                 if (error || !data.user) {
-
-                    window.location.href =
-                        'sign.html';
-
+                    window.location.href = 'sign.html';
                     return;
                 }
-
-
                 currentUser = data.user;
-
 
                 /* Email */
 
-                document.getElementById(
-                    'email'
-                ).value =
-                    currentUser.email || '';
-
-
-                document.getElementById(
-                    'profile-email'
-                ).textContent =
-                    currentUser.email || '';
-
+                document.getElementById('email').value = currentUser.email || '';
+                document.getElementById('profile-email').textContent = currentUser.email || '';
 
                 /*
                  * Get profile from your
                  * existing helper.
                  */
 
-                const profile =
-                    await getProfile();
-
-
+                const profile = await getProfile();
                 if (profile) {
-
-                    document.getElementById(
-                        'full-name'
-                    ).value =
-                        profile.full_name || '';
-
-
-                    document.getElementById(
-                        'phone'
-                    ).value =
-                        profile.phone || '';
-
-
-                    document.getElementById(
-                        'profile-name'
-                    ).textContent =
-                        profile.full_name ||
-                        'My Profile';
-
+                    document.getElementById('full-name').value = profile.full_name || '';
+                    document.getElementById('phone').value = profile.phone || '';
+                    document.getElementById('profile-name').textContent = profile.full_name || 'My Profile';
                 } else {
 
                     /*
@@ -784,119 +643,47 @@
                      * authentication metadata.
                      */
 
-                    const metadata =
-                        currentUser.user_metadata || {};
-
-
-                    document.getElementById(
-                        'full-name'
-                    ).value =
-                        metadata.full_name || '';
-
-
-                    document.getElementById(
-                        'phone'
-                    ).value =
-                        metadata.phone || '';
-
-
-                    document.getElementById(
-                        'profile-name'
-                    ).textContent =
-                        metadata.full_name ||
-                        'My Profile';
-                }
-
+                    const metadata = currentUser.user_metadata || {};
+                    document.getElementById('full-name').value = metadata.full_name || '';
+                    document.getElementById('phone').value = metadata.phone || '';
+                    document.getElementById('profile-name').textContent = metadata.full_name || 'My Profile'; }
             } catch (error) {
-
-                console.error(
-                    'Profile loading error:',
-                    error
-                );
-
-                showMessage(
-                    'Unable to load your profile.',
-                    'error'
-                );
-            }
+                console.error('Profile loading error:', error);
+                showMessage('Unable to load your profile.', 'error'); }
         }
-
 
         /* ================================
            VALIDATE PHONE
         ================================= */
 
         function validatePhone(phone) {
-
-            return /^(\+254|0)[17]\d{8}$/
-                .test(
-                    phone.replace(/\s/g, '')
-                );
+            return /^(\+254|0)[17]\d{8}$/.test(phone.replace(/\s/g, ''));
         }
-
 
         /* ================================
            UPDATE PROFILE
         ================================= */
 
         async function updateProfile(e) {
-
             e.preventDefault();
-
-
-            const fullName =
-                document.getElementById(
-                    'full-name'
-                ).value.trim();
-
-
-            const phone =
-                document.getElementById(
-                    'phone'
-                ).value.trim();
-
-
+            const fullName = document.getElementById('full-name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
             if (fullName.length < 2) {
-
-                showMessage(
-                    'Please enter your full name.',
-                    'error'
-                );
-
+                showMessage('Please enter your full name.', 'error');
                 return;
             }
-
 
             /*
              * Phone remains optional.
              */
 
-            if (
-                phone !== '' &&
-                !validatePhone(phone)
-            ) {
-
-                showMessage(
-                    'Please enter a valid Kenyan phone number.',
-                    'error'
-                );
-
+            if (phone !== '' && !validatePhone(phone)) {
+                showMessage('Please enter a valid Kenyan phone number.', 'error');
                 return;
             }
-
-
-            const saveBtn =
-                document.getElementById(
-                    'saveBtn'
-                );
-
-
+            const saveBtn = document.getElementById('saveBtn');
             saveBtn.disabled = true;
-
-            saveBtn.textContent =
-                'Saving...';
-
-
+            saveBtn.textContent = 'Saving...';
             try {
 
                 /*
@@ -904,27 +691,12 @@
                  * metadata.
                  */
 
-                const {
-                    error: authError
-                } =
-                    await sb.auth.updateUser({
-
-                        data: {
-
-                            full_name: fullName,
-
-                            phone: phone || null
-
-                        }
-
-                    });
-
-
+                const { error: authError } = await sb.auth.updateUser({
+                    data: { full_name: fullName, phone: phone || null }
+                });
                 if (authError) {
-
                     throw authError;
                 }
-
 
                 /*
                  * Update the profiles table.
@@ -936,97 +708,40 @@
 
                 const {
                     error: profileError
-                } =
-                    await sb
-                        .from('profiles')
-                        .update({
-
-                            full_name: fullName,
-
-                            phone: phone || null
-
-                        })
-                        .eq(
-                            'id',
-                            currentUser.id
-                        );
-
-
+                } = await sb.from('profiles').update({full_name: fullName, phone: phone || null }).eq('id', currentUser.id);
                 if (profileError) {
-
                     throw profileError;
                 }
-
-
-                document.getElementById(
-                    'profile-name'
-                ).textContent =
-                    fullName;
-
-
-                showMessage(
-                    'Your profile has been updated successfully.',
-                    'success'
-                );
-
-
+                document.getElementById('profile-name').textContent = fullName;
+                showMessage('Your profile has been updated successfully.', 'success');
             } catch (error) {
-
-                console.error(
-                    'Profile update error:',
-                    error
-                );
-
-
-                showMessage(
-                    error.message ||
-                    'Unable to update your profile.',
-                    'error'
-                );
-
+                console.error('Profile update error:', error);
+                showMessage(error.message || 'Unable to update your profile.', 'error');
             } finally {
-
                 saveBtn.disabled = false;
-
-                saveBtn.textContent =
-                    'Save Changes';
-            }
+                saveBtn.textContent = 'Save Changes'; }
         }
-
 
         /* ================================
            LOGOUT
         ================================= */
 
         async function logout() {
-
             const {
                 error
             } = await sb.auth.signOut();
-
-
             if (error) {
-
-                alert(
-                    'Unable to sign out. Please try again.'
-                );
-
+                alert('Unable to sign out. Please try again.');
                 return;
             }
-
-
-            window.location.href =
-                'sign.html';
+            window.location.href = 'sign.html';
         }
-
 
         /* ================================
            START
         ================================= */
 
-        loadProfile();
-
-    </script>
+        loadProfile();</script>
 
 </body>
 </html>

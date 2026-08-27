@@ -7,19 +7,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #2e7d32; --primary-light: #4caf50; --primary-dark: #1b5e20;
-            --secondary-color: #ff9800; --accent-color: #2196f3; --text-color: #333;
-            --light-bg: #f5f5f5; --white: #ffffff; --card-bg: #ffffff;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1); --radius: 8px; --footer-bg: #1a1a1a;
-            --footer-text: #ffffff; --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            --primary-color: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --secondary-color: #ff9800;
+            --accent-color: #2196f3;
+            --text-color: #333;
+            --light-bg: #f5f5f5;
+            --white: #ffffff;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --radius: 8px;
+            --footer-bg: #1a1a1a;
+            --footer-text: #ffffff;
+            --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
             --header-bg: #ffffff;
         }
         .dark-mode {
-            --primary-color: #4caf50; --primary-light: #66bb6a; --primary-dark: #388e3c;
-            --secondary-color: #ffb74d; --accent-color: #64b5f6; --text-color: #e0e0e0;
-            --light-bg: #121212; --white: #1e1e1e; --card-bg: #2d2d2d;
-            --shadow: 0 4px 6px rgba(0,0,0,0.3); --footer-bg: #0a0a0a; --footer-text: #e0e0e0;
-            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); --header-bg: #1e1e1e;
+            --primary-color: #4caf50;
+            --primary-light: #66bb6a;
+            --primary-dark: #388e3c;
+            --secondary-color: #ffb74d;
+            --accent-color: #64b5f6;
+            --text-color: #e0e0e0;
+            --light-bg: #121212;
+            --white: #1e1e1e;
+            --card-bg: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0,0,0,0.3);
+            --footer-bg: #0a0a0a;
+            --footer-text: #e0e0e0;
+            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            --header-bg: #1e1e1e;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: var(--text-color); background-color: var(--light-bg); }
@@ -58,7 +76,35 @@
         .option-icon { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px; }
         .option-card h3 { font-size: 1.5rem; color: var(--primary-dark); margin-bottom: 15px; }
         .option-card p { color: var(--text-color); opacity: 0.9; flex-grow: 1; }
-        .faq-section { background-color: var(--light-bg); }
+        .inquiry-section { background-color: var(--light-bg); }
+        .inquiry-card {
+            background-color: var(--card-bg); border-radius: var(--radius);
+            box-shadow: var(--shadow); padding: 40px; max-width: 700px;
+            margin: 0 auto;
+        }
+        .inquiry-card .form-group { margin-bottom: 22px; }
+        .inquiry-card label {
+            display: block; margin-bottom: 8px; font-weight: 600;
+        }
+        .inquiry-card input,
+        .inquiry-card select,
+        .inquiry-card textarea {
+            width: 100%; padding: 12px 14px; border-radius: 8px;
+            border: 2px solid rgba(128,128,128,0.25); font-size: 1rem;
+            font-family: inherit; background-color: var(--white);
+            color: var(--text-color);
+        }
+        .inquiry-card input:focus,
+        .inquiry-card select:focus,
+        .inquiry-card textarea:focus {
+            outline: none; border-color: var(--primary-color);
+        }
+        .inquiry-card .btn { width: 100%; padding: 12px; font-size: 1rem; }
+        .inquiry-note {
+            margin-top: 15px; font-size: 0.85rem; opacity: 0.75;
+            text-align: center;
+        }
+        .faq-section { background-color: var(--white); }
         .faq-container { max-width: 800px; margin: 0 auto; }
         .faq-item { background-color: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 15px; overflow: hidden; transition: transform 0.3s ease; }
         .faq-item:hover { transform: translateY(-3px); }
@@ -160,6 +206,42 @@
             </div>
         </div>
     </section>
+    <section class="inquiry-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Send Us an Inquiry</h2>
+                <p>Fill out the form below and we'll route it to the right team.</p>
+            </div>
+            <div class="inquiry-card">
+                <form id="inquiryForm">
+                    <div class="form-group">
+                        <label for="inquiryName">Full name</label>
+                        <input type="text" id="inquiryName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inquiryEmail">Email</label>
+                        <input type="email" id="inquiryEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inquiryType">Inquiry type</label>
+                        <select id="inquiryType" required>
+                            <option value="general">General Support</option>
+                            <option value="partnership">Partnership Inquiry</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inquiryMessage">Message</label>
+                        <textarea id="inquiryMessage" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Send Inquiry</button>
+                </form>
+                <p class="inquiry-note">
+                    This opens your email app with the message pre-filled,
+                    addressed to our support or partnerships team.
+                </p>
+            </div>
+        </div>
+    </section>
     <section class="faq-section">
         <div class="container">
             <div class="section-title">
@@ -248,8 +330,8 @@
                 <div class="footer-column">
                     <h3>Contact</h3>
                     <ul class="footer-links">
-                        <li><a href="mailto:info@dropmyelectronic.com">Email</a></li>
-                        <li><a href="#">Twitter</a></li>
+                        <li><a href="mailto:dropmyelectronic@gmail.com">Email</a></li>
+                        <li><a href="https://www.linkedin.com/company/dropmyelectronic/" target="_blank" rel="noopener">LinkedIn</a></li>
                     </ul>
                 </div>
             </div>
@@ -259,6 +341,37 @@
         </div>
     </footer>
     <script>
+        const inquiryEmails = {
+            general: 'support@dropmyelectronic.com',
+            partnership: 'partnerships@dropmyelectronic.com'
+        };
+
+        document.getElementById('inquiryForm')
+            .addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const name = document.getElementById('inquiryName').value;
+                const email = document.getElementById('inquiryEmail').value;
+                const type = document.getElementById('inquiryType').value;
+                const message = document.getElementById('inquiryMessage').value;
+
+                const to = inquiryEmails[type];
+                const label = type === 'partnership'
+                    ? 'Partnership Inquiry' : 'General Support';
+                const subject = `${label} from ${name}`;
+                const body =
+                    `Name: ${name}\n` +
+                    `Email: ${email}\n\n` +
+                    `${message}`;
+
+                const mailtoUrl =
+                    `mailto:${to}` +
+                    `?subject=${encodeURIComponent(subject)}` +
+                    `&body=${encodeURIComponent(body)}`;
+
+                window.location.href = mailtoUrl;
+            });
+
         document.querySelectorAll('.faq-question').forEach(question => {
             question.addEventListener('click', () => {
                 const answer = question.nextElementSibling;

@@ -70,17 +70,37 @@
     
     <style>
         :root {
-            --primary-color: #2e7d32; --primary-light: #4caf50; --primary-dark: #1b5e20;
-            --secondary-color: #ff9800; --accent-color: #2196f3; --text-color: #333;
-            --light-bg: #f5f5f5; --white: #fff; --card-bg: #fff; --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --radius: 8px; --footer-bg: #1a1a1a; --footer-text: #fff; --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            --primary-color: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --secondary-color: #ff9800;
+            --accent-color: #2196f3;
+            --text-color: #333;
+            --light-bg: #f5f5f5;
+            --white: #fff;
+            --card-bg: #fff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --radius: 8px;
+            --footer-bg: #1a1a1a;
+            --footer-text: #fff;
+            --hero-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
             --header-bg: #fff;
         }
         .dark-mode {
-            --primary-color: #4caf50; --primary-light: #66bb6a; --primary-dark: #388e3c;
-            --secondary-color: #ffb74d; --accent-color: #64b5f6; --text-color: #e0e0e0;
-            --light-bg: #121212; --white: #1e1e1e; --card-bg: #2d2d2d; --shadow: 0 4px 6px rgba(0,0,0,0.3);
-            --footer-bg: #0a0a0a; --footer-text: #e0e0e0; --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); --header-bg: #1e1e1e;
+            --primary-color: #4caf50;
+            --primary-light: #66bb6a;
+            --primary-dark: #388e3c;
+            --secondary-color: #ffb74d;
+            --accent-color: #64b5f6;
+            --text-color: #e0e0e0;
+            --light-bg: #121212;
+            --white: #1e1e1e;
+            --card-bg: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0,0,0,0.3);
+            --footer-bg: #0a0a0a;
+            --footer-text: #e0e0e0;
+            --hero-gradient: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            --header-bg: #1e1e1e;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease; }
@@ -245,6 +265,10 @@
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
+
+    <!-- Supabase (for the account link in the header) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase-client.js"></script>
 </head>
 <body>
     <!-- Skip to main content link for accessibility -->
@@ -262,7 +286,9 @@
                 <li><a href="support.html">Support</a></li>
             </ul>
             <div class="header-right">
-                <a href="sign.html" class="btn" aria-label="Start recycling e-waste now">Start now</a>
+                <span id="accountArea">
+                    <a href="sign.html" class="btn" aria-label="Start recycling e-waste now">Start now</a>
+                </span>
                 <div class="dark-mode-toggle">
                     <label for="dark-mode-checkbox" class="dark-mode-label" aria-label="Toggle dark mode">
                         <i class="fas fa-moon" aria-hidden="true"></i>
@@ -428,8 +454,8 @@
                 <div class="footer-column">
                     <h3>Contact</h3>
                     <ul class="footer-links">
-                        <li><a href="mailto:info@dropmyelectronic.com" aria-label="Email DropMyElectronic">Email</a></li>
-                        <li><a href="#" aria-label="Follow us on Twitter">Twitter</a></li>
+                        <li><a href="mailto:dropmyelectronic@gmail.com" aria-label="Email DropMyElectronic">Email</a></li>
+                        <li><a href="https://www.linkedin.com/company/dropmyelectronic/" aria-label="Follow us on LinkedIn" target="_blank" rel="noopener">LinkedIn</a></li>
                     </ul>
                 </div>
             </div>
@@ -439,6 +465,27 @@
         </div>
     </footer>
     
+    <script>
+        (async () => {
+            const profile = await getProfile();
+            if (!profile) return;
+
+            const homeLink = profile.role === 'recycler'
+                ? (profile.recycler_status === 'approved'
+                    ? 'recycler.html' : 'recycler-pending.html')
+                : 'profile.html';
+
+            document.getElementById('accountArea').innerHTML = `
+                <a href="${homeLink}" class="btn" style="margin-right:10px;">
+                    ${profile.role === 'recycler' ? 'Dashboard' : 'My Profile'}
+                </a>
+                <a href="#" class="btn btn-secondary" onclick="signOut(); return false;">
+                    Sign out
+                </a>
+            `;
+        })();
+    </script>
+
     <script>
         const darkModeToggle = document.getElementById('dark-mode-checkbox');
         const body = document.body;
