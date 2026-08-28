@@ -939,7 +939,7 @@
             }
             window.location.href = role === 'recycler'
                     ? 'recycler.html'
-                    : 'index.html';
+                    : 'reward.html';
         }
 
         /* ================================
@@ -1075,6 +1075,7 @@
                 btn.disabled = false;
                 btn.textContent = 'Create Account';
                 switchTab('signin');
+                document.getElementById('signin-email').value = email;
                 return;
             }
             redirectAfterAuth(role, role === 'recycler'

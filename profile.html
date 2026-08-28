@@ -14,43 +14,65 @@
 
         :root {
 
-            --primary: #2e7d32;
+            --primary-color: #2e7d32;
+            --primary-light: #4caf50;
             --primary-dark: #1b5e20;
+            --secondary-color: #ff9800;
 
-            --text: #333;
+            --text-color: #333;
             --muted: #6b7280;
 
-            --page-bg: #eef1f3;
+            --light-bg: #eef1f3;
+            --white: #ffffff;
             --card-bg: #ffffff;
 
-            --border: #e1e5e8;
+            --border-color: #e1e5e8;
 
             --success: #2e7d32;
             --error: #d32f2f;
 
-            --shadow: 0 10px 35px rgba(0,0,0,0.08);
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --radius: 8px;
+
+            /* aliases used elsewhere in this file */
+            --primary: var(--primary-color);
+            --text: var(--text-color);
+            --border: var(--border-color);
+            --page-bg: var(--light-bg);
         }
 
         .dark-mode {
 
-            --text: #eeeeee;
+            --primary-color: #4caf50;
+            --primary-light: #66bb6a;
+            --primary-dark: #388e3c;
+            --secondary-color: #ffb74d;
+
+            --text-color: #eeeeee;
             --muted: #aaaaaa;
 
-            --page-bg: #121212;
+            --light-bg: #121212;
+            --white: #1e1e1e;
             --card-bg: #1e1e1e;
 
-            --border: #444;
+            --border-color: #444;
 
             --success: #66bb6a;
             --error: #ff6b6b;
 
-            --shadow: 0 10px 35px rgba(0,0,0,0.5);
+            --shadow: 0 4px 6px rgba(0,0,0,0.4);
+
+            --primary: var(--primary-color);
+            --text: var(--text-color);
+            --border: var(--border-color);
+            --page-bg: var(--light-bg);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
@@ -115,6 +137,57 @@
             align-items: center;
 
             gap: 15px;
+        }
+
+        .dark-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.05);
+            padding: 6px 12px;
+            border-radius: 30px;
+        }
+
+        .dark-mode-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 0.85rem;
+        }
+
+        .dark-mode-switch {
+            position: relative;
+            width: 34px;
+            height: 18px;
+            background-color: #ccc;
+            border-radius: 34px;
+        }
+
+        .dark-mode-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        #dark-mode-checkbox:checked + .dark-mode-switch {
+            background-color: var(--primary-color);
+        }
+
+        #dark-mode-checkbox:checked + .dark-mode-switch::after {
+            transform: translateX(16px);
+        }
+
+        #dark-mode-checkbox {
+            display: none;
         }
 
         .nav-link {
@@ -237,6 +310,23 @@
             color: var(--muted);
 
             font-size: 0.9rem;
+        }
+
+        .points-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #e8f5e9;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .points-badge i {
+            color: var(--secondary-color);
         }
 
         /* FORM */
@@ -460,6 +550,14 @@
 
             </button>
 
+            <div class="dark-mode-toggle">
+                <label for="dark-mode-checkbox" class="dark-mode-label">
+                    <i class="fas fa-moon"></i><span>Dark Mode</span>
+                    <input type="checkbox" id="dark-mode-checkbox">
+                    <div class="dark-mode-switch"></div>
+                </label>
+            </div>
+
         </div>
 
     </nav>
@@ -498,6 +596,11 @@
 
                     <p id="profile-email">
                         Loading...
+                    </p>
+
+                    <p class="points-badge">
+                        <i class="fas fa-star"></i>
+                        <span id="profile-points">0</span> points earned
                     </p>
 
                 </div>
@@ -595,6 +698,34 @@
         let currentUser = null;
 
         /* ================================
+           DARK MODE
+        ================================= */
+
+        const darkModeToggle = document.getElementById('dark-mode-checkbox');
+        const body = document.body;
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        const currentTheme = localStorage.getItem('theme');
+
+        function updateDarkModeIcon(isDark) {
+            const icon = document.querySelector('.dark-mode-label i');
+            const label = document.querySelector('.dark-mode-label span');
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        }
+
+        if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+            body.classList.add('dark-mode');
+            darkModeToggle.checked = true;
+            updateDarkModeIcon(true);
+        }
+
+        darkModeToggle.addEventListener('change', function () {
+            body.classList.toggle('dark-mode', this.checked);
+            localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+            updateDarkModeIcon(this.checked);
+        });
+
+        /* ================================
            SHOW MESSAGE
         ================================= */
 
@@ -636,6 +767,7 @@
                     document.getElementById('full-name').value = profile.full_name || '';
                     document.getElementById('phone').value = profile.phone || '';
                     document.getElementById('profile-name').textContent = profile.full_name || 'My Profile';
+                    document.getElementById('profile-points').textContent = profile.points || 0;
                 } else {
 
                     /*

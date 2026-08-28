@@ -233,12 +233,9 @@
                         <label for="inquiryMessage">Message</label>
                         <textarea id="inquiryMessage" rows="5" required></textarea>
                     </div>
-                    <button type="submit" class="btn">Send Inquiry</button>
+                    <button type="submit" class="btn" id="inquirySubmitBtn">Send Inquiry</button>
                 </form>
-                <p class="inquiry-note">
-                    This opens your email app with the message pre-filled,
-                    addressed to our support or partnerships team.
-                </p>
+                <div id="inquiryStatus" class="inquiry-note"></div>
             </div>
         </div>
     </section>
@@ -330,8 +327,8 @@
                 <div class="footer-column">
                     <h3>Contact</h3>
                     <ul class="footer-links">
-                        <li><a href="mailto:dropmyelectronic@gmail.com">Email</a></li>
-                        <li><a href="https://www.linkedin.com/company/dropmyelectronic/" target="_blank" rel="noopener">LinkedIn</a></li>
+                        <li><a href="mailto:dropmyelectronic@gmail.com">dropmyelectronic@gmail.com</a></li>
+                        <li><a href="https://www.linkedin.com/company/dropmyelectronic/" target="_blank" rel="noopener">@dropmyelectronic</a></li>
                     </ul>
                 </div>
             </div>
@@ -341,35 +338,60 @@
         </div>
     </footer>
     <script>
-        const inquiryEmails = {
-            general: 'support@dropmyelectronic.com',
-            partnership: 'partnerships@dropmyelectronic.com'
-        };
+        const INQUIRY_FORMSPREE_ID = 'xjgabpgy';
 
         document.getElementById('inquiryForm')
-            .addEventListener('submit', function (e) {
+            .addEventListener('submit', async function (e) {
                 e.preventDefault();
 
                 const name = document.getElementById('inquiryName').value;
                 const email = document.getElementById('inquiryEmail').value;
                 const type = document.getElementById('inquiryType').value;
                 const message = document.getElementById('inquiryMessage').value;
-
-                const to = inquiryEmails[type];
                 const label = type === 'partnership'
                     ? 'Partnership Inquiry' : 'General Support';
-                const subject = `${label} from ${name}`;
-                const body =
-                    `Name: ${name}\n` +
-                    `Email: ${email}\n\n` +
-                    `${message}`;
 
-                const mailtoUrl =
-                    `mailto:${to}` +
-                    `?subject=${encodeURIComponent(subject)}` +
-                    `&body=${encodeURIComponent(body)}`;
+                const btn = document.getElementById('inquirySubmitBtn');
+                const status = document.getElementById('inquiryStatus');
+                btn.disabled = true;
+                btn.textContent = 'Sending...';
+                status.className = 'inquiry-note';
+                status.textContent = '';
 
-                window.location.href = mailtoUrl;
+                try {
+                    const res = await fetch(
+                        `https://formspree.io/f/${INQUIRY_FORMSPREE_ID}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                _replyto: email,
+                                _cc: 'dropmyelectronic@gmail.com',
+                                _subject: `${label} from ${name}`,
+                                'Inquiry Type': label,
+                                Name: name,
+                                Email: email,
+                                Message: message
+                            })
+                        }
+                    );
+                    if (!res.ok) throw new Error('Submission failed');
+
+                    status.textContent =
+                        'Thanks! Your inquiry has been sent — we\'ll get back to you soon.';
+                    status.style.color = 'var(--primary-color)';
+                    document.getElementById('inquiryForm').reset();
+                } catch (err) {
+                    status.textContent =
+                        'Something went wrong sending your inquiry. Please try again ' +
+                        'or email us directly at dropmyelectronic@gmail.com.';
+                    status.style.color = '#c62828';
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Send Inquiry';
+                }
             });
 
         document.querySelectorAll('.faq-question').forEach(question => {
