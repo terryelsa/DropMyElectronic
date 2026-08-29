@@ -265,7 +265,7 @@ box.innerHTML=matches.map((key,i)=>{
 const label=titleCase(key),term=input.value.trim();
 const idx=label.toLowerCase().indexOf(term.toLowerCase());
 const highlighted=idx>=0?`${label.slice(0,idx)}<strong>${label.slice(idx,idx+term.length)}</strong>${label.slice(idx+term.length)}`:label;
-return`<div class="suggestion-item" data-index="${i}" data-key="${key}" onclick="selectSuggestion('${key}')"><i class="fas fa-map-marker-alt"></i> ${highlighted}, Nairobi</div>`;
+return`<div class="suggestion-item" data-index="${i}" data-key="${key}" onclick="selectSuggestion('${key}')"><i class="fas fa-map-marker-alt"></i><span>${highlighted}, Nairobi</span></div>`;
 }).join('');
 box.classList.add('active');
 }
