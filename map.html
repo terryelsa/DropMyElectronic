@@ -61,8 +61,7 @@ header{background-color:var(--header-bg);box-shadow:var(--shadow);position:stick
 .map-wrapper{background-color:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;height:100%}
 #map{height:100%;width:100%}
 .dark-mode .leaflet-layer,.dark-mode .leaflet-control-zoom-in,.dark-mode .leaflet-control-zoom-out,.dark-mode .leaflet-control-attribution{filter:brightness(.6) invert(1) hue-rotate(180deg) contrast(3)}
-.recycler-marker,.user-marker,.search-marker{background:transparent;border:none;font-size:24px;text-align:center}
-.user-marker{filter:drop-shadow(2px 2px 2px rgba(0,0,0,.5))}
+.map-pin{background:transparent!important;border:none!important}
 .leaflet-popup-content{font-family:'Segoe UI',sans-serif}
 .leaflet-popup-content-wrapper{border-radius:var(--radius);box-shadow:var(--shadow);background-color:var(--card-bg);color:var(--text-color)}
 .leaflet-popup-tip{background-color:var(--card-bg)}
@@ -240,16 +239,25 @@ popularAreas={
 };
 let map,userMarker,searchMarker,markers=[],activeCenterId=null,currentSearchLocation=null;
 
+function pinIcon(color,iconClass,size=32){
+const iconSize=Math.round(size*0.42);
+return L.divIcon({
+html:`<div style="width:${size}px;height:${size}px;background:#fff;border:2px solid ${color};border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 5px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center"><i class="${iconClass}" style="color:${color};font-size:${iconSize}px;transform:rotate(45deg)"></i></div>`,
+className:'map-pin',
+iconSize:[size,size],
+iconAnchor:[size/2,size]
+});
+}
+
 function initMap(){
 map=L.map('map').setView([-1.286389,36.817223],11);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',maxZoom:18}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',maxZoom:19,subdomains:'abcd'}).addTo(map);
 centers.forEach(c=>{
-const icon=L.divIcon({html:'<i class="fas fa-recycle" style="color:#2e7d32;font-size:24px"></i>',className:'recycler-marker',iconSize:[30,30],iconAnchor:[15,30]});
+const icon=pinIcon('#2e7d32','fas fa-recycle',32);
 const m=L.marker([c.lat,c.lng],{icon}).addTo(map).bindPopup(`<div style="text-align:left;min-width:250px;font-family:'Segoe UI',sans-serif"><h4 style="margin:0 0 10px;color:#1b5e20">${c.name}</h4><p style="margin:5px 0"><strong><i class="fas fa-phone"></i> Phone:</strong> ${c.phone}</p><p style="margin:5px 0"><strong><i class="fas fa-map-marker-alt"></i> Address:</strong> ${c.address}</p><p style="margin:5px 0"><strong><i class="fas fa-clock"></i> Hours:</strong> ${c.hours}</p><p style="margin:5px 0"><strong><i class="fas fa-check-circle"></i> Accepts:</strong> ${c.accepts}</p><button onclick="focusOnCenter(${c.id})" style="width:100%;padding:10px;margin-top:10px;background:#4CAF50;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:bold">View Details</button></div>`);
 m.on('click',()=>setActiveCenter(c.id));
 markers.push({marker:m,centerId:c.id});
 });
-L.polygon([[-1.510,36.650],[-1.510,37.050],[-1.050,37.050],[-1.050,36.650],[-1.510,36.650]],{color:'#4caf50',weight:2,opacity:.3,fillColor:'#4caf50',fillOpacity:.05}).addTo(map).bindPopup('Nairobi County Area');
 updateCenterList();
 const searchInputEl=document.getElementById('locationSearch');
 searchInputEl.addEventListener('input',handleSearchInput);
@@ -416,13 +424,13 @@ highlightNearbyCenters(nearbyCenters);
 
 function addSearchMarker(lat,lng,name){
 if(searchMarker)map.removeLayer(searchMarker);
-const icon=L.divIcon({html:'<i class="fas fa-search-location" style="color:#2196f3;font-size:24px"></i>',className:'search-marker',iconSize:[30,30],iconAnchor:[15,30]});
+const icon=pinIcon('#2196f3','fas fa-search-location',32);
 searchMarker=L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<b>${name}</b><br>Searched location`).openPopup();
 }
 
 function highlightNearbyCenters(nearbyCenters){
-markers.forEach(m=>{const icon=m.marker.getIcon();icon.options.html='<i class="fas fa-recycle" style="color:#2e7d32;font-size:24px"></i>';m.marker.setIcon(icon);});
-nearbyCenters.forEach(c=>{const m=markers.find(m=>m.centerId===c.id);if(m){const icon=m.marker.getIcon();icon.options.html='<i class="fas fa-recycle" style="color:#ff9800;font-size:28px"></i>';m.marker.setIcon(icon);}});
+markers.forEach(m=>m.marker.setIcon(pinIcon('#2e7d32','fas fa-recycle',32)));
+nearbyCenters.forEach(c=>{const m=markers.find(m=>m.centerId===c.id);if(m)m.marker.setIcon(pinIcon('#ff9800','fas fa-recycle',36));});
 }
 
 function useCurrentLocation(){
@@ -434,7 +442,7 @@ const lat=p.coords.latitude,lng=p.coords.longitude,isInNairobi=lat>=-1.55&&lat<=
 if(isInNairobi){
 currentSearchLocation={lat,lng};
 map.setView([lat,lng],14);
-const icon=L.divIcon({html:'<i class="fas fa-user" style="color:#ff9800;font-size:24px"></i>',className:'user-marker',iconSize:[30,30],iconAnchor:[15,30]});
+const icon=pinIcon('#ff9800','fas fa-user',32);
 if(userMarker)userMarker.setLatLng([lat,lng]);
 else userMarker=L.marker([lat,lng],{icon}).addTo(map).bindPopup('Your Current Location').openPopup();
 const nearbyCenters=findNearbyCenters(lat,lng,10);
