@@ -1,4 +1,3 @@
-
 /* =====================================================================
    DropMyElectronic — shared Supabase client & auth helpers
 
