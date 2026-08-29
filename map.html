@@ -266,6 +266,17 @@ if(!e.target.closest('.search-box'))hideSuggestions();
 
 let suggestionIndex=-1;
 
+/* Areas in this list are in Nairobi's environs but not Nairobi County itself */
+const areaRegion={
+'kinoo':'Kiambu County','banana hill':'Kiambu County','ruaka':'Kiambu County',
+'kiambu road':'Kiambu County','limuru':'Kiambu County','kikuyu':'Kiambu County',
+'ruiru':'Kiambu County','juja':'Kiambu County','kahawa sukari':'Kiambu County',
+'membley':'Kiambu County','saika':'Kiambu County','witeithie':'Kiambu County',
+'rongai':'Kajiado County','ongata rongai':'Kajiado County','kiserian':'Kajiado County',
+'ngong':'Kajiado County','kitengela':'Kajiado County',
+'athi river':'Machakos County','syokimau':'Machakos County','mlolongo':'Machakos County'
+};
+
 function titleCase(s){return s.replace(/\b\w/g,c=>c.toUpperCase());}
 
 function getMatches(term){
@@ -285,10 +296,10 @@ const matches=getMatches(input.value);
 suggestionIndex=-1;
 if(matches.length===0){hideSuggestions();return;}
 box.innerHTML=matches.map((key,i)=>{
-const label=titleCase(key),term=input.value.trim();
+const label=titleCase(key),term=input.value.trim(),region=areaRegion[key]||'Nairobi';
 const idx=label.toLowerCase().indexOf(term.toLowerCase());
 const highlighted=idx>=0?`${label.slice(0,idx)}<strong>${label.slice(idx,idx+term.length)}</strong>${label.slice(idx+term.length)}`:label;
-return`<div class="suggestion-item" data-index="${i}" data-key="${key}" onclick="selectSuggestion('${key}')"><i class="fas fa-map-marker-alt"></i><span>${highlighted}, Nairobi</span></div>`;
+return`<div class="suggestion-item" data-index="${i}" data-key="${key}" onclick="selectSuggestion('${key}')"><i class="fas fa-map-marker-alt"></i><span>${highlighted}, ${region}</span></div>`;
 }).join('');
 box.classList.add('active');
 }
