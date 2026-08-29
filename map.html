@@ -37,8 +37,15 @@ header{background-color:var(--header-bg);box-shadow:var(--shadow);position:stick
 .map-section{padding:40px 0}
 .map-container{display:grid;grid-template-columns:1fr 2fr;gap:30px;height:600px}
 .sidebar{background-color:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:25px;display:flex;flex-direction:column;overflow-y:auto}
-.search-box{margin-bottom:25px}
+.search-box{margin-bottom:25px;position:relative}
 .search-box input{width:100%;padding:12px 15px;border:1px solid var(--text-color);border-radius:4px;font-size:1rem;margin-bottom:15px;background-color:var(--white);color:var(--text-color)}
+.search-suggestions{display:none;position:absolute;top:44px;left:0;right:0;z-index:500;background-color:var(--card-bg);border-radius:4px;box-shadow:var(--shadow);max-height:260px;overflow-y:auto}
+.search-suggestions.active{display:block}
+.suggestion-item{padding:10px 15px;cursor:pointer;font-size:.92rem;display:flex;align-items:center;gap:8px;color:var(--text-color)}
+.suggestion-item i{color:var(--primary-color);font-size:.85rem}
+.suggestion-item:hover,.suggestion-item.highlighted{background-color:var(--light-bg)}
+.suggestion-item strong{color:var(--primary-color);font-weight:700}
+.suggestion-empty{padding:10px 15px;font-size:.85rem;opacity:.7}
 .search-actions{display:flex;gap:10px;flex-wrap:wrap}
 .search-actions .btn{flex:1;min-width:120px;padding:12px 24px}
 .results-info{margin:10px 0;padding:10px;background-color:var(--light-bg);border-radius:var(--radius);font-size:.9rem}
@@ -115,7 +122,8 @@ footer{background-color:var(--footer-bg);color:var(--footer-text);padding:50px 0
 <div class="map-container">
 <div class="sidebar">
 <div class="search-box">
-<input type="text" id="locationSearch" placeholder="Search any location in Nairobi...">
+<input type="text" id="locationSearch" placeholder="Search any location in Nairobi..." autocomplete="off">
+<div class="search-suggestions" id="searchSuggestions"></div>
 <div class="search-actions">
 <button class="btn" onclick="searchLocation()">Search Area</button>
 <button class="btn btn-secondary" onclick="useCurrentLocation()">My Location</button>
@@ -150,7 +158,7 @@ footer{background-color:var(--footer-bg);color:var(--footer-text);padding:50px 0
 <li><a href="#">FAQ</a></li><li><a href="#">Support</a></li>
 </ul></div>
 <div class="footer-column"><h3>Contact</h3><ul class="footer-links">
-<li><a href="mailto:dropmyelectronic@gmail.com">dropmyelectronic@gmail.com</a></li><li><a href="https://www.linkedin.com/company/dropmyelectronic/" target="_blank" rel="noopener">@dropmyelectronic</a></li>
+<li><a href="mailto:dropmyelectronic@gmail.com">Email: dropmyelectronic@gmail.com</a></li><li><a href="https://www.linkedin.com/company/dropmyelectronic/" target="_blank" rel="noopener">LinkedIn: @dropmyelectronic</a></li>
 </ul></div>
 </div>
 <div class="copyright">
@@ -160,7 +168,53 @@ footer{background-color:var(--footer-bg);color:var(--footer-text);padding:50px 0
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const centers=[{id:1,name:"WEEE Centre - Nairobi",lat:-1.278398296907602,lng:36.952653695036254,address:"Mihango, Embakasi, Off the Eastern By-pass",phone:"0701819559",hours:"Mon-Fri: 8AM-5PM\nSat: 9AM-1PM\nSun: Closed",accepts:"Computers, phones, TVs, printers, batteries"},{id:2,name:"Safaricom E-Waste Drop-off",lat:-1.2733,lng:36.8067,address:"Safaricom House, Westlands, Nairobi",phone:"0722000000",hours:"Mon-Fri: 8AM-5PM",accepts:"Mobile phones, tablets, accessories, batteries"},{id:3,name:"Eco Create & Innovate - ECANDI",lat:-1.2156578760311965,lng:36.797297222022095,address:"32824, Limuru Rd, Nairobi",phone:"0741777986",hours:"Mon-Fri: 9AM-6PM \n Sat: 9AM-4PM \n Sun: Closed",accepts:"All electronics, appliances, batteries"},{id:4,name:"GreenTech Solutions",lat:-1.2762636825707399,lng:36.8267353691281,address:"Next to Nyayo Market, Ngara, Nairobi.",phone:"0722969219",hours:"Mon-Sat: 9AM-5PM\nSun: Closed",accepts:"Phones, laptops, small electronics"}],
-popularAreas={cbd:[-1.286389,36.817223],westlands:[-1.2659,36.8067],kilimani:[-1.2950,36.7860],karen:[-1.3159,36.8342],'industrial area':[-1.3083,36.8469],lavington:[-1.2684,36.7749],parklands:[-1.2597,36.8186],embakasi:[-1.3076,36.9182],kasarani:[-1.2186,36.8925],runda:[-1.2056,36.8281],'ngong road':[-1.3000,36.7800],'thika road':[-1.2300,36.8700],'south b':[-1.3100,36.8300],'south c':[-1.3200,36.8300],eastleigh:[-1.2750,36.8500],donholm:[-1.2750,36.8900],buruburu:[-1.2800,36.8750],uthiru:[-1.2500,36.7600],kawangware:[-1.2650,36.7550],dagoretti:[-1.2900,36.7200]};
+popularAreas={
+'cbd':[-1.286389,36.817223],'nairobi cbd':[-1.286389,36.817223],
+'upper hill':[-1.2977,36.8172],'hurlingham':[-1.2953,36.7889],
+'kilimani':[-1.2950,36.7860],'kileleshwa':[-1.2833,36.7833],
+'lavington':[-1.2684,36.7749],'westlands':[-1.2659,36.8067],
+'parklands':[-1.2597,36.8186],'highridge':[-1.2611,36.8083],
+'spring valley':[-1.2567,36.7889],'loresho':[-1.2472,36.7639],
+'mountain view':[-1.2611,36.7500],'kitisuru':[-1.2222,36.7972],
+'gigiri':[-1.2333,36.8167],'muthaiga':[-1.2472,36.8306],
+'runda':[-1.2056,36.8281],'karen':[-1.3159,36.8342],
+'langata':[-1.3667,36.7500],'lang\'ata':[-1.3667,36.7500],
+'ngong road':[-1.3000,36.7800],'south b':[-1.3100,36.8300],
+'south c':[-1.3200,36.8300],'nairobi west':[-1.3056,36.8194],
+'madaraka':[-1.3111,36.8194],'industrial area':[-1.3083,36.8469],
+'eastleigh':[-1.2750,36.8500],'pangani':[-1.2694,36.8306],
+'ngara':[-1.2764,36.8264],'pumwani':[-1.2833,36.8333],
+'shauri moyo':[-1.2861,36.8347],'bahati':[-1.2917,36.8417],
+'makadara':[-1.3000,36.8556],'jogoo road':[-1.3000,36.8500],
+'buruburu':[-1.2800,36.8750],'donholm':[-1.2750,36.8900],
+'umoja':[-1.2778,36.8917],'komarock':[-1.2611,36.9083],
+'kayole':[-1.2833,36.9333],'embakasi':[-1.3076,36.9182],
+'pipeline':[-1.3111,36.9028],'imara daima':[-1.3306,36.8917],
+'utawala':[-1.2833,36.9500],'ruai':[-1.2500,37.0000],
+'njiru':[-1.2472,36.9333],'dandora':[-1.2500,36.8833],
+'kariobangi':[-1.2667,36.8778],'huruma':[-1.2694,36.8611],
+'mathare':[-1.2611,36.8500],'kasarani':[-1.2186,36.8925],
+'mwiki':[-1.2028,36.9028],'clay city':[-1.2139,36.8944],
+'roysambu':[-1.2194,36.8889],'zimmerman':[-1.2139,36.8833],
+'githurai':[-1.1972,36.9139],'kahawa':[-1.1917,36.9250],
+'kahawa west':[-1.1889,36.9028],'allsops':[-1.2611,36.8444],
+'ruaraka':[-1.2472,36.8722],'baba dogo':[-1.2528,36.8639],
+'thika road':[-1.2300,36.8700],'muthurwa':[-1.2889,36.8306],
+'kibera':[-1.3133,36.7822],'dagoretti':[-1.2900,36.7200],
+'kawangware':[-1.2650,36.7550],'riruta':[-1.2833,36.7500],
+'waithaka':[-1.3000,36.7472],'uthiru':[-1.2500,36.7600],
+'kabete':[-1.2333,36.7333],'kinoo':[-1.2444,36.7028],
+'adams arcade':[-1.2944,36.7778],'yaya centre':[-1.2925,36.7822],
+'woodley':[-1.3000,36.8028],'jamhuri':[-1.2889,36.7889],
+'ngummo':[-1.3028,36.8194],'mbagathi':[-1.3056,36.8083],
+'otiende':[-1.3167,36.7722],'rongai':[-1.3972,36.7472],
+'ongata rongai':[-1.3972,36.7472],'kiserian':[-1.4306,36.6889],
+'ngong':[-1.3639,36.6597],'kikuyu':[-1.2444,36.6639],
+'kiambu road':[-1.2028,36.8306],'ruaka':[-1.2028,36.7833],
+'banana hill':[-1.2028,36.7500],'limuru':[-1.1111,36.6417],
+'kitengela':[-1.4778,36.9583],'athi river':[-1.4556,36.9778],
+'syokimau':[-1.3722,36.9333],'mlolongo':[-1.3833,36.9500]
+};
 let map,userMarker,searchMarker,markers=[],activeCenterId=null,currentSearchLocation=null;
 
 function initMap(){
@@ -174,7 +228,88 @@ markers.push({marker:m,centerId:c.id});
 });
 L.polygon([[-1.510,36.650],[-1.510,37.050],[-1.050,37.050],[-1.050,36.650],[-1.510,36.650]],{color:'#4caf50',weight:2,opacity:.3,fillColor:'#4caf50',fillOpacity:.05}).addTo(map).bindPopup('Nairobi County Area');
 updateCenterList();
-document.getElementById('locationSearch').addEventListener('keypress',e=>{if(e.key==='Enter')searchLocation();});
+const searchInputEl=document.getElementById('locationSearch');
+searchInputEl.addEventListener('input',handleSearchInput);
+searchInputEl.addEventListener('keydown',handleSearchKeydown);
+searchInputEl.addEventListener('focus',handleSearchInput);
+document.addEventListener('click',e=>{
+if(!e.target.closest('.search-box'))hideSuggestions();
+});
+}
+
+/* =====================================================
+   AREA SEARCH SUGGESTIONS
+===================================================== */
+
+let suggestionIndex=-1;
+
+function titleCase(s){return s.replace(/\b\w/g,c=>c.toUpperCase());}
+
+function getMatches(term){
+const t=term.trim().toLowerCase();
+if(!t)return[];
+const starts=[],contains=[];
+Object.keys(popularAreas).forEach(key=>{
+if(key.startsWith(t))starts.push(key);
+else if(key.includes(t))contains.push(key);
+});
+return[...starts,...contains].slice(0,8);
+}
+
+function handleSearchInput(){
+const input=document.getElementById('locationSearch'),box=document.getElementById('searchSuggestions');
+const matches=getMatches(input.value);
+suggestionIndex=-1;
+if(matches.length===0){hideSuggestions();return;}
+box.innerHTML=matches.map((key,i)=>{
+const label=titleCase(key),term=input.value.trim();
+const idx=label.toLowerCase().indexOf(term.toLowerCase());
+const highlighted=idx>=0?`${label.slice(0,idx)}<strong>${label.slice(idx,idx+term.length)}</strong>${label.slice(idx+term.length)}`:label;
+return`<div class="suggestion-item" data-index="${i}" data-key="${key}" onclick="selectSuggestion('${key}')"><i class="fas fa-map-marker-alt"></i> ${highlighted}, Nairobi</div>`;
+}).join('');
+box.classList.add('active');
+}
+
+function hideSuggestions(){
+const box=document.getElementById('searchSuggestions');
+box.classList.remove('active');
+box.innerHTML='';
+suggestionIndex=-1;
+}
+
+function selectSuggestion(key){
+document.getElementById('locationSearch').value=titleCase(key);
+hideSuggestions();
+searchLocation();
+}
+
+function handleSearchKeydown(e){
+const box=document.getElementById('searchSuggestions');
+const items=box.querySelectorAll('.suggestion-item');
+if(!box.classList.contains('active')||items.length===0){
+if(e.key==='Enter')searchLocation();
+return;
+}
+if(e.key==='ArrowDown'){
+e.preventDefault();
+suggestionIndex=Math.min(suggestionIndex+1,items.length-1);
+updateHighlight(items);
+}else if(e.key==='ArrowUp'){
+e.preventDefault();
+suggestionIndex=Math.max(suggestionIndex-1,-1);
+updateHighlight(items);
+}else if(e.key==='Enter'){
+e.preventDefault();
+if(suggestionIndex>=0)selectSuggestion(items[suggestionIndex].dataset.key);
+else{hideSuggestions();searchLocation();}
+}else if(e.key==='Escape'){
+hideSuggestions();
+}
+}
+
+function updateHighlight(items){
+items.forEach((item,i)=>item.classList.toggle('highlighted',i===suggestionIndex));
+if(suggestionIndex>=0)items[suggestionIndex].scrollIntoView({block:'nearest'});
 }
 
 function calculateDistance(lat1,lon1,lat2,lon2){
@@ -214,6 +349,7 @@ return centers.filter(c=>calculateDistance(searchLat,searchLng,c.lat,c.lng)<=rad
 }
 
 function searchLocation(){
+hideSuggestions();
 const searchInput=document.getElementById('locationSearch'),searchTerm=searchInput.value.trim();
 if(!searchTerm){alert('Please enter a location to search.');return;}
 const areaKey=searchTerm.toLowerCase();
